@@ -1,0 +1,34 @@
+TUID Product (
+	id,
+	name VARCHAR(100),
+);
+
+BOOK BookProduct (
+	KEY product ID Product,
+	stock DEC(12, 2),
+);
+
+ACTION WriteProductStock ver 0.5 ROLE(Accountant) (
+	product ID Product,	
+	stock DEC(12, 2),
+) {
+	BOOK BookProduct as a At(product) SET stock=stock;
+};
+
+QUERY GetProductStock(
+	product ID Product,	
+)
+RETURNS ret (
+	product ID Product,
+	stock DEC(12, 2),
+) {
+	INTO ret SELECT product, a.stock 
+		FROM BookProduct as a 
+		WHERE a.product=product;
+	INTO ret SELECT 1 as product, 10 as stock;
+	INTO ret SELECT 2 as product, 12 as stock;
+	INTO ret SELECT 3 as product, 13 as stock;
+	INTO ret SELECT 4 as product, 14 as stock;
+	INTO ret SELECT 5 as product, 15 as stock;
+	INTO ret SELECT 6 as product, 16 as stock;
+};

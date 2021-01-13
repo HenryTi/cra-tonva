@@ -1,0 +1,53 @@
+{
+  "name": "hello-tonva",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.11.9",
+    "@testing-library/react": "^11.2.3",
+    "@testing-library/user-event": "^12.6.0",
+    "@types/classnames": "^2.2.11",
+    "@types/jest": "^26.0.20",
+    "@types/lodash": "^4.14.167",
+    "@types/node": "^12.19.13",
+    "@types/react": "^16.14.2",
+    "@types/react-dom": "^16.9.10",
+    "bootstrap": "^4.5.3",
+    "classnames": "^2.2.6",
+    "font-awesome": "^4.7.0",
+    "jwt-decode": "^3.1.2",
+    "lodash": "^4.17.20",
+    "mobx": "^6.0.4",
+    "mobx-react": "^7.0.5",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-scripts": "4.0.1",
+    "tonva-react": "^1.9.36",
+    "typescript": "^4.1.3",
+    "web-vitals": "^0.2.4"
+  },
+  "scripts": {
+    "start": "SET port=3391 && react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
