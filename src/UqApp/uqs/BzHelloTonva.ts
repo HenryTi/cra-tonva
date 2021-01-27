@@ -1,5 +1,5 @@
-//=== UqApp builder created on Tue Jan 12 2021 19:32:20 GMT-0500 (GMT-05:00) ===//
-import { UqTuid, UqAction, UqBook, UqQuery } from "tonva-react";
+//=== UqApp builder created on Tue Jan 26 2021 17:21:56 GMT-0500 (GMT-05:00) ===//
+import { UqBase, UqTuid, UqAction, UqBook, UqQuery } from "tonva-react";
 
 
 //===============================
@@ -7,18 +7,6 @@ import { UqTuid, UqAction, UqBook, UqQuery } from "tonva-react";
 //===============================
 
 export declare namespace BzHelloTonva {
-export interface TuidProduct {
-	name: string;
-}
-
-export interface Tuid$user {
-	name: string;
-	nick: string;
-	icon: string;
-	assigned: string;
-	poke: number;
-}
-
 export interface Tuid$sheet {
 	no: string;
 	user: number;
@@ -33,21 +21,38 @@ export interface Tuid$sheet {
 	processing: number;
 }
 
+export interface Tuid$user {
+	name: string;
+	nick: string;
+	icon: string;
+	assigned: string;
+	poke: number;
+}
+
+export interface TuidProduct {
+	name: string;
+}
+
 export interface ParamWriteProductStock {
 	product: number;
-	stock: any;
+	stock: number;
 }
 interface ResultWriteProductStock {
 }
 
-export interface Param$poked {
+export interface ParamTestArr {
+	rows: {
+		a: number;
+		b: number;
+	}[];
+
 }
-interface Return$pokedRet {
-	poke: number;
-	$id: number;
+interface ReturnTestArrRet {
+	a: number;
+	b: number;
 }
-interface Result$poked {
-	ret: Return$pokedRet[];
+interface ResultTestArr {
+	ret: ReturnTestArrRet[];
 }
 
 export interface ParamGetProductStock {
@@ -55,32 +60,43 @@ export interface ParamGetProductStock {
 }
 interface ReturnGetProductStockRet {
 	product: number;
-	stock: any;
-	$id: number;
+	stock: number;
 }
 interface ResultGetProductStock {
 	ret: ReturnGetProductStockRet[];
+}
+
+export interface Param$poked {
+}
+interface Return$pokedRet {
+	poke: number;
+}
+interface Result$poked {
+	ret: Return$pokedRet[];
 }
 
 export interface ParamBookProduct {
 }
 interface ReturnBookProduct$page {
 	product: number;
-	stock: any;
+	stock: number;
 }
 interface ResultBookProduct {
 	$page: ReturnBookProduct$page[];
 }
 
+export interface ParamIDActs {
+}
 
-export interface UqBzHelloTonva {
-	$name: string;
-	Product: UqTuid<TuidProduct>;
-	$user: UqTuid<Tuid$user>;
+
+export interface Uq extends UqBase<ParamIDActs> {
 	$sheet: UqTuid<Tuid$sheet>;
+	$user: UqTuid<Tuid$user>;
+	Product: UqTuid<TuidProduct>;
 	WriteProductStock: UqAction<ParamWriteProductStock, ResultWriteProductStock>;
+	TestArr: UqAction<ParamTestArr, ResultTestArr>;
 	BookProduct: UqBook<ParamBookProduct, ResultBookProduct>;
-	$poked: UqQuery<Param$poked, Result$poked>;
 	GetProductStock: UqQuery<ParamGetProductStock, ResultGetProductStock>;
+	$poked: UqQuery<Param$poked, Result$poked>;
 }
 }

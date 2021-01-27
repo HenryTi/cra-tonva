@@ -1,7 +1,7 @@
 import { CMe } from './CMe';
 import { Image, VPage, nav, IconText, PropGrid, LMR, FA, Prop } from 'tonva-react';
 import { observer } from 'mobx-react';
-import { appConfig } from '../UqApp';
+import { name, version } from '../../package.json';
 
 export class VMe extends VPage<CMe> {
 	header() {return this.t('me')}
@@ -14,7 +14,7 @@ export class VMe extends VPage<CMe> {
                 type: 'component',
                 component: <div className="w-100 d-flex justify-content-between">
                     <IconText iconClass="text-info mr-2" icon="smile-o" text={this.t('aboutTheApp')} />
-                    <div className="py-2 small">V{appConfig.app?.version}</div>
+                    <div className="py-2 small"><b>{name}</b> {version}</div>
                 </div>,
             }
         ];

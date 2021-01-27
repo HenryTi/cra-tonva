@@ -13,7 +13,9 @@ export class VBug extends VPage<CBug> {
 			<div>
 				{this.controller.debugItems.map(this.renderItem)}
 			</div>
-			<button onClick={this.controller.test}>test</button>
+			<div className="px-3 py-2">
+				<button className="btn btn-primary" onClick={this.controller.test}>test</button>
+			</div>
 		</div>;
 	}
 

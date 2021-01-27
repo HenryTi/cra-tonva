@@ -15,6 +15,21 @@ ACTION WriteProductStock ver 0.5 ROLE(Accountant) (
 	BOOK BookProduct as a At(product) SET stock=stock;
 };
 
+ACTION TestArr ver 0.1 (
+	arr rows (
+		a int,
+		b int,
+	)
+)
+RETURNS ret (
+	a int,
+	b int,
+) {
+	FOREACH rows {
+		INTO ret SELECT a, b;
+	}
+};
+
 QUERY GetProductStock(
 	product ID Product,	
 )

@@ -1,5 +1,5 @@
-//=== UqApp builder created on Tue Jan 12 2021 19:32:59 GMT-0500 (GMT-05:00) ===//
-import { UqTuid, UqAction, UqBook, UqQuery, UqMap, UqHistory } from "tonva-react";
+//=== UqApp builder created on Tue Jan 26 2021 17:21:56 GMT-0500 (GMT-05:00) ===//
+import { UqBase, UqTuid, UqAction, UqBook, UqQuery, UqMap, UqHistory } from "tonva-react";
 
 
 //===============================
@@ -7,6 +7,18 @@ import { UqTuid, UqAction, UqBook, UqQuery, UqMap, UqHistory } from "tonva-react
 //===============================
 
 export declare namespace BzTest {
+export interface Tuid$user {
+	name: string;
+	nick: string;
+	icon: string;
+	assigned: string;
+	poke: number;
+}
+
+export interface TuidProduct {
+	name: string;
+}
+
 export interface Tuid$sheet {
 	no: string;
 	user: number;
@@ -26,19 +38,6 @@ export interface TuidT1 {
 	t2: string;
 }
 
-export interface TuidProduct {
-	name: string;
-}
-
-export interface Tuid$user {
-	name: string;
-	nick: string;
-	icon: string;
-	assigned: string;
-	roles: number;
-	poke: number;
-}
-
 export interface TuidTestTuid {
 	name: string;
 	t: number;
@@ -49,34 +48,13 @@ export interface TuidSubject {
 	discription: string;
 }
 
-export interface ParamTestQueryBus {
-	p: number;
+export interface ParamNotify {
+	subject: string;
+	discription: string;
+	delta: number;
+	balance: number;
 }
-interface ReturnTestQueryBusMain {
-	p1: string;
-	p2: any;
-	p3: number;
-}
-interface ReturnTestQueryBusRetArr {
-	a1: string;
-	a2: any;
-	a3: any;
-	a4: number;
-}
-interface ReturnTestQueryBusRetArr2 {
-	b3: string;
-	cb2: any;
-	aa3: any;
-}
-interface ResultTestQueryBus {
-	main: ReturnTestQueryBusMain[];
-	retArr: ReturnTestQueryBusRetArr[];
-	retArr2: ReturnTestQueryBusRetArr2[];
-}
-
-export interface ParamAct {
-}
-interface ResultAct {
+interface ResultNotify {
 }
 
 export interface ParamA {
@@ -84,13 +62,37 @@ export interface ParamA {
 interface ResultA {
 }
 
-export interface ParamNotify {
-	subject: string;
-	discription: string;
-	delta: any;
-	balance: any;
+export interface ParamAct {
 }
-interface ResultNotify {
+interface ResultAct {
+}
+
+export interface ParamTestQueryBus {
+	p: number;
+}
+interface ReturnTestQueryBusMain {
+	p1: string;
+	p2: number;
+	p3: number;
+	$id: number;
+}
+interface ReturnTestQueryBusRetArr {
+	a1: string;
+	a2: number;
+	a3: number;
+	a4: number;
+	$id: number;
+}
+interface ReturnTestQueryBusRetArr2 {
+	b3: string;
+	cb2: number;
+	aa3: number;
+	$id: number;
+}
+interface ResultTestQueryBus {
+	main: ReturnTestQueryBusMain[];
+	retArr: ReturnTestQueryBusRetArr[];
+	retArr2: ReturnTestQueryBusRetArr2[];
 }
 
 export interface ParamBusSubject {
@@ -101,24 +103,31 @@ export interface ParamBusSubject {
 interface ResultBusSubject {
 }
 
-export interface ParamTest {
-	aB: number;
+export interface ParamAct1 {
 }
-interface ReturnTestRet {
-	aE: number;
-	cD: number;
-}
-interface ResultTest {
-	ret: ReturnTestRet[];
+interface ResultAct1 {
 }
 
 export interface Param$poked {
 }
 interface Return$pokedRet {
 	poke: number;
+	$id: number;
 }
 interface Result$poked {
 	ret: Return$pokedRet[];
+}
+
+export interface ParamTest {
+	aB: number;
+}
+interface ReturnTestRet {
+	aE: number;
+	cD: number;
+	$id: number;
+}
+interface ResultTest {
+	ret: ReturnTestRet[];
 }
 
 export interface ParamCall1 {
@@ -126,6 +135,7 @@ export interface ParamCall1 {
 interface ReturnCall1Ret {
 	user: number;
 	t1: number;
+	$id: number;
 }
 interface ResultCall1 {
 	ret: ReturnCall1Ret[];
@@ -156,23 +166,90 @@ interface ResultH {
 	$page: ReturnH$page[];
 }
 
+export interface X1 {
+	id: number;
+	a1: number;
+	a2: number;
+	a3: number;
+	n5: number;
+}
 
-export interface UqBzTest {
-	$name: string;
+export interface Vid1 {
+	id: number;
+	b1: number;
+	b2: number;
+	b3: number;
+	m6: number;
+}
+
+export interface OrderDetail {
+	id: number;
+	master: number;
+	row: number;
+	product: number;
+	price: number;
+	quantity: number;
+	amount: number;
+}
+
+export interface OrderMaster {
+	id: number;
+	no: string;
+	customer: number;
+}
+
+export interface Tag {
+	id: number;
+	type: number;
+	name: number;
+}
+
+export interface IBook1 {
+	id: number;
+	f1: number;
+	f2: number;
+	b: string;
+}
+
+export interface Assign1 {
+	id: number;
+	id2: number;
+	val: number;
+}
+
+export interface CustomerTag {
+	id: number;
+	id2: number;
+}
+
+export interface ParamIDActs {
+	x1?: X1[];
+	vid1?: Vid1[];
+	orderDetail?: OrderDetail[];
+	orderMaster?: OrderMaster[];
+	tag?: Tag[];
+	iBook1?: IBook1[];
+	assign1?: Assign1[];
+	customerTag?: CustomerTag[];
+}
+
+
+export interface Uq extends UqBase<ParamIDActs> {
+	$user: UqTuid<Tuid$user>;
+	Product: UqTuid<TuidProduct>;
 	$sheet: UqTuid<Tuid$sheet>;
 	T1: UqTuid<TuidT1>;
-	Product: UqTuid<TuidProduct>;
-	$user: UqTuid<Tuid$user>;
 	TestTuid: UqTuid<TuidTestTuid>;
 	Subject: UqTuid<TuidSubject>;
-	TestQueryBus: UqAction<ParamTestQueryBus, ResultTestQueryBus>;
-	Act: UqAction<ParamAct, ResultAct>;
-	A: UqAction<ParamA, ResultA>;
 	Notify: UqAction<ParamNotify, ResultNotify>;
+	A: UqAction<ParamA, ResultA>;
+	Act: UqAction<ParamAct, ResultAct>;
+	TestQueryBus: UqAction<ParamTestQueryBus, ResultTestQueryBus>;
 	BusSubject: UqAction<ParamBusSubject, ResultBusSubject>;
+	Act1: UqAction<ParamAct1, ResultAct1>;
 	B: UqBook<ParamB, ResultB>;
-	Test: UqQuery<ParamTest, ResultTest>;
 	$poked: UqQuery<Param$poked, Result$poked>;
+	Test: UqQuery<ParamTest, ResultTest>;
 	Call1: UqQuery<ParamCall1, ResultCall1>;
 	C: UqMap;
 	Price: UqMap;

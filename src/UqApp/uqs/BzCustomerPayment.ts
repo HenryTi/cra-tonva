@@ -1,12 +1,12 @@
-//=== UqApp builder created on Tue Jan 12 2021 19:32:59 GMT-0500 (GMT-05:00) ===//
-import { UqTuid, UqSheet, UqBook, UqQuery, UqMap, UqHistory, UqPending } from "tonva-react";
+//=== UqApp builder created on Tue Jan 26 2021 17:21:56 GMT-0500 (GMT-05:00) ===//
+import { UqBase, UqTuid, UqSheet, UqBook, UqQuery, UqMap, UqHistory, UqPending } from "tonva-react";
 
 
 //===============================
 //======= UQ BizDev/customer-payment ========
 //===============================
 
-export enum EnumCustomerAction {
+export enum BzCustomerpayment_EnumCustomerAction {
 	order = 1,
 	confirm = 2,
 	payDirect = 10,
@@ -19,19 +19,19 @@ export enum EnumCustomerAction {
 	return = 41,
 	cancel = 100,
 	red = 101
-};
+}
 
-export enum EnumPendingDone {
+export enum BzCustomerpayment_EnumPendingDone {
 	pending = 0,
 	done = 1,
 	cancel = -1,
 	red = -2
-};
+}
 
-export enum EnumCustomerPayType {
+export enum BzCustomerpayment_EnumCustomerPayType {
 	direct = 1,
 	receivable = 2
-};
+}
 
 export declare namespace BzCustomerPayment {
 export interface Tuid$user {
@@ -62,14 +62,14 @@ export interface SheetOrder {
 	detail: {
 		product: number;
 		pack: number;
-		quantity: any;
-		amount: any;
+		quantity: number;
+		amount: number;
 	}[];
 }
 
 export interface SheetDeposit {
 	customer: number;
-	deposit: any;
+	deposit: number;
 	receiptNo: string;
 	bankReceiptNo: string;}
 
@@ -77,7 +77,7 @@ export interface SheetInvoice {
 	customer: number;
 	detail: {
 		pendingId: number;
-		amount: any;
+		amount: number;
 	}[];
 }
 
@@ -85,7 +85,7 @@ export interface SheetDeliver {
 	customer: number;
 	detail: {
 		pendingId: number;
-		quantity: any;
+		quantity: number;
 	}[];
 }
 
@@ -118,8 +118,8 @@ interface ReturnCustomerPendingDeliverRet {
 	id: number;
 	sheet: number;
 	row: number;
-	quantity: any;
-	delivered: any;
+	quantity: number;
+	delivered: number;
 }
 interface ResultCustomerPendingDeliver {
 	ret: ReturnCustomerPendingDeliverRet[];
@@ -132,8 +132,8 @@ interface ReturnCustomerPendingInvoiceRet {
 	id: number;
 	sheet: number;
 	row: number;
-	amount: any;
-	amountInvoice: any;
+	amount: number;
+	amountInvoice: number;
 }
 interface ResultCustomerPendingInvoice {
 	ret: ReturnCustomerPendingInvoiceRet[];
@@ -146,8 +146,8 @@ interface ReturnCustomerPendingReceivableRet {
 	id: number;
 	sheet: number;
 	row: number;
-	amount: any;
-	amountPaid: any;
+	amount: number;
+	amountPaid: number;
 }
 interface ResultCustomerPendingReceivable {
 	ret: ReturnCustomerPendingReceivableRet[];
@@ -158,10 +158,10 @@ export interface ParamGetCustomerAccount {
 }
 interface ReturnGetCustomerAccountRet {
 	customer: number;
-	deposit: any;
-	receivable: any;
-	invoiceShould: any;
-	invoicePre: any;
+	deposit: number;
+	receivable: number;
+	invoiceShould: number;
+	invoicePre: number;
 	$id: number;
 }
 interface ResultGetCustomerAccount {
@@ -178,7 +178,7 @@ interface ReturnGetCustomerHistory$page {
 	action: number;
 	sheet: number;
 	row: number;
-	value: any;
+	value: number;
 	user: number;
 }
 interface ResultGetCustomerHistory {
@@ -190,10 +190,10 @@ export interface ParamCustomerAccount {
 interface ReturnCustomerAccount$page {
 	customer: number;
 	payType: any;
-	deposit: any;
-	receivable: any;
-	invoiceShould: any;
-	invoicePre: any;
+	deposit: number;
+	receivable: number;
+	invoiceShould: number;
+	invoicePre: number;
 }
 interface ResultCustomerAccount {
 	$page: ReturnCustomerAccount$page[];
@@ -205,7 +205,7 @@ export interface ParamCustomerHistory {
 	sheet: number;
 	row: number;
 	user: number;
-	value: any;
+	value: number;
 }
 interface ReturnCustomerHistory$page {
 	date: any;
@@ -214,15 +214,17 @@ interface ReturnCustomerHistory$page {
 	sheet: number;
 	row: number;
 	user: number;
-	value: any;
+	value: number;
 }
 interface ResultCustomerHistory {
 	$page: ReturnCustomerHistory$page[];
 }
 
+export interface ParamIDActs {
+}
 
-export interface UqBzCustomerPayment {
-	$name: string;
+
+export interface Uq extends UqBase<ParamIDActs> {
 	$user: UqTuid<Tuid$user>;
 	$sheet: UqTuid<Tuid$sheet>;
 	Order: UqSheet<SheetOrder, any>;
