@@ -1,4 +1,4 @@
-//=== UqApp builder created on Tue Jan 26 2021 17:21:56 GMT-0500 (GMT-05:00) ===//
+//=== UqApp builder created on Thu Jan 28 2021 22:22:35 GMT-0500 (GMT-05:00) ===//
 import { UqBase, UqTuid, UqAction, UqBook, UqQuery } from "tonva-react";
 
 
@@ -6,7 +6,6 @@ import { UqBase, UqTuid, UqAction, UqBook, UqQuery } from "tonva-react";
 //======= UQ BizDev/hello-tonva ========
 //===============================
 
-export declare namespace BzHelloTonva {
 export interface Tuid$sheet {
 	no: string;
 	user: number;
@@ -98,5 +97,4 @@ export interface Uq extends UqBase<ParamIDActs> {
 	BookProduct: UqBook<ParamBookProduct, ResultBookProduct>;
 	GetProductStock: UqQuery<ParamGetProductStock, ResultGetProductStock>;
 	$poked: UqQuery<Param$poked, Result$poked>;
-}
 }

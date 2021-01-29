@@ -74,6 +74,52 @@ interface ParamPage {
 	size:number;
 }
 
+export interface ParamIDDetail<M,D> {
+	master: {
+		name: string;
+		value: M;
+	};
+	detail: {
+		name: string;
+		values: D[];
+	};
+}
+
+export interface RetIDDetail {
+	master: number;
+	detail: number[];
+}
+
+export interface ParamIDDetail2<M,D,D2> extends ParamIDDetail<M, D> {
+	detail2: {
+		name: string;
+		values: D2[];
+	};
+}
+
+export interface RetIDDetail2 extends RetIDDetail {
+	detail2: number[];
+}
+
+export interface ParamIDDetail3<M,D,D2,D3> extends ParamIDDetail2<M, D, D2> {
+	detail3: {
+		name: string;
+		values: D3[];
+	};
+}
+
+export interface RetIDDetail3 extends RetIDDetail2 {
+	detail3: number[];
+}
+
+export interface ParamIDDetailGet {
+	id: number;
+	master: string;
+	detail: string;
+	detail2?: string;
+	detail3?: string;
+}
+
 export interface ParamID {
 	IDX: string | string[];
 	id: number | number[];
@@ -110,16 +156,22 @@ export interface ParamIDLog {
 	page: ParamPage;
 }
 
-function IDPath(path:string):string {return 'id/' + path;}
+function IDPath(path:string):string {return path;}
 
 export interface UqBase<P> {
 	$name: string;
-	IDActs(paramIDActs:P): Promise<any>;
-	ID<T>(paramID: ParamID): Promise<T[]>;
-	KeyID<T>(paramID: ParamKeyID): Promise<T[]>;
-	ID2<T>(paramID2: ParamID2): Promise<T[]>;
-	KeyID2<T>(paramID2: ParamKeyID2): Promise<T[]>;
-	IDLog<T> (paramIDQuery: ParamIDLog): Promise<T[]>;
+	IDActs(param:P): Promise<any>;
+	IDDetail<M,D>(param: ParamIDDetail<M,D>): Promise<RetIDDetail>;
+	IDDetail<M,D,D2>(param: ParamIDDetail2<M,D,D2>): Promise<RetIDDetail2>;
+	IDDetail<M,D,D2,D3>(param: ParamIDDetail3<M,D,D2,D3>): Promise<RetIDDetail3>;
+	IDDetailGet<M,D>(param: ParamIDDetailGet): Promise<[M[], D[]]>;
+	IDDetailGet<M,D,D2>(param: ParamIDDetailGet): Promise<[M[], D[], D2[]]>;
+	IDDetailGet<M,D,D2,D3>(param: ParamIDDetailGet): Promise<[M[], D[], D2[], D3[]]>;
+	ID<T>(param: ParamID): Promise<T[]>;
+	KeyID<T>(param: ParamKeyID): Promise<T[]>;
+	ID2<T>(param: ParamID2): Promise<T[]>;
+	KeyID2<T>(param: ParamKeyID2): Promise<T[]>;
+	IDLog<T> (param: ParamIDLog): Promise<T[]>;
 }
 
 export class UqMan {
@@ -571,6 +623,8 @@ export class UqMan {
 				switch (key) {
 					default: debugger; break;
 					case 'IDActs': return this.IDActs;
+					case 'IDDetail': return this.IDDetail;
+					case 'IDDetailGet': return this.IDDetailGet;
 					case 'ID': return this.ID;
 					case 'KeyID': return this.KeyID;
 					case 'ID2': return this.ID2;
@@ -591,8 +645,36 @@ export class UqMan {
 		nav.showReloadPage(msg);
     }
 
-	private IDActs = async (paramIDActs:any): Promise<any> => {
-		let ret = await this.uqApi.post(IDPath('id-acts'), paramIDActs);
+	private IDActs = async (param:any): Promise<any> => {
+		// 这边的obj属性序列，也许会不一样
+		let arr:string[] = [];
+		for (let i in param) arr.push(i);
+		param['$'] = arr;
+		let ret = await this.uqApi.post(IDPath('id-acts'), param);
+		let retArr = (ret[0].ret as string).split('\n');
+		let retActs:{[key:string]:number[]} = {};
+		for (let i=0; i<arr.length; i++) {
+			retActs[arr[i]] = ids(retArr[i].split('\t'));
+		}
+		return retActs;
+	}
+
+	private IDDetail = async (param: ParamIDDetail<any, any>): Promise<any> => {
+		let ret = await this.uqApi.post(IDPath('id-detail'), param);		
+		let val:string = ret[0].ret;
+		let parts = val.split('\n');
+		let items = parts.map(v => v.split('\t'));
+		ret = {
+			master: ids(items[0])[0],
+			detail: ids(items[1]),
+			detail2: ids(items[2]),
+			detail3: ids(items[3]),
+		};
+		return ret;
+	}
+
+	private IDDetailGet = async (param: ParamIDDetailGet): Promise<any> => {
+		let ret = await this.uqApi.post(IDPath('id-detail-get'), param);
 		return ret;
 	}
 
@@ -630,4 +712,13 @@ export class UqMan {
 		let ret = await this.uqApi.post(IDPath('id-log'), paramIDLog);
 		return ret;
 	}
+}
+
+function ids(item:string[]):number[] {
+	if (!item) return;
+	let len = item.length;
+	if (len <= 1) return;
+	let ret:number[] = [];
+	for (let i=0; i<len-1; i++) ret.push(Number(item[i]));
+	return ret;
 }

@@ -1,7 +1,7 @@
-//=== UqApp builder created on Tue Jan 26 2021 17:21:56 GMT-0500 (GMT-05:00) ===//
-import { BzHelloTonva } from './BzHelloTonva';
-import { BzCustomerPayment } from './BzCustomerPayment';
-import { BzTest } from './BzTest';
+//=== UqApp builder created on Thu Jan 28 2021 22:22:35 GMT-0500 (GMT-05:00) ===//
+import * as BzHelloTonva from './BzHelloTonva';
+import * as BzCustomerPayment from './BzCustomerPayment';
+import * as BzTest from './BzTest';
 
 export interface UQs {
 	BzHelloTonva: BzHelloTonva.Uq;
@@ -9,6 +9,6 @@ export interface UQs {
 	BzTest: BzTest.Uq;
 }
 
-export * from './BzHelloTonva';
-export * from './BzCustomerPayment';
-export * from './BzTest';
+export * as BzHelloTonva from './BzHelloTonva';
+export * as BzCustomerPayment from './BzCustomerPayment';
+export * as BzTest from './BzTest';

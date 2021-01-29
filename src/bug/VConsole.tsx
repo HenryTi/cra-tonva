@@ -141,10 +141,19 @@ export class VConsole extends VPage<CBug> {
 		return ret;
 	}
 
+	private indentVal(indent:number, val:any):string {
+		return '<div>' + this.indent(indent) + val + '</div>'
+	}
 	private arrToHtml(indent:number, arr:any[]) {
 		let ret = '<div>' + this.indent(indent) + '[</div>';
 		for (let item of arr) {
-			ret += this.objToLine(indent+1, item);
+			let t:string|number;
+			switch (typeof item) {
+				default: t = this.indentVal(indent+1, item); break;
+				case 'object': t = this.objToLine(indent+1, item); break;
+				case 'string': t = this.indentVal(indent+1, `'${item}'`); break;
+			}
+			ret += t;
 		}
 		ret += '<div>' + this.indent(indent) + ']</div>';
 		return ret;

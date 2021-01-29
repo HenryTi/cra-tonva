@@ -1,4 +1,4 @@
-//=== UqApp builder created on Tue Jan 26 2021 17:21:56 GMT-0500 (GMT-05:00) ===//
+//=== UqApp builder created on Thu Jan 28 2021 22:22:35 GMT-0500 (GMT-05:00) ===//
 import { UqBase, UqTuid, UqSheet, UqBook, UqQuery, UqMap, UqHistory, UqPending } from "tonva-react";
 
 
@@ -6,7 +6,7 @@ import { UqBase, UqTuid, UqSheet, UqBook, UqQuery, UqMap, UqHistory, UqPending }
 //======= UQ BizDev/customer-payment ========
 //===============================
 
-export enum BzCustomerpayment_EnumCustomerAction {
+export enum EnumCustomerAction {
 	order = 1,
 	confirm = 2,
 	payDirect = 10,
@@ -21,19 +21,18 @@ export enum BzCustomerpayment_EnumCustomerAction {
 	red = 101
 }
 
-export enum BzCustomerpayment_EnumPendingDone {
+export enum EnumPendingDone {
 	pending = 0,
 	done = 1,
 	cancel = -1,
 	red = -2
 }
 
-export enum BzCustomerpayment_EnumCustomerPayType {
+export enum EnumCustomerPayType {
 	direct = 1,
 	receivable = 2
 }
 
-export declare namespace BzCustomerPayment {
 export interface Tuid$user {
 	name: string;
 	nick: string;
@@ -246,5 +245,4 @@ export interface Uq extends UqBase<ParamIDActs> {
 	PendingOrderDeliver: UqPending<any, any>;
 	PendingOrderInvoice: UqPending<any, any>;
 	PendingOrderReturn: UqPending<any, any>;
-}
 }

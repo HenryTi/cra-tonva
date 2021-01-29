@@ -1,4 +1,4 @@
-//=== UqApp builder created on Tue Jan 26 2021 17:21:56 GMT-0500 (GMT-05:00) ===//
+//=== UqApp builder created on Thu Jan 28 2021 22:22:35 GMT-0500 (GMT-05:00) ===//
 import { UqBase, UqTuid, UqAction, UqBook, UqQuery, UqMap, UqHistory } from "tonva-react";
 
 
@@ -6,7 +6,6 @@ import { UqBase, UqTuid, UqAction, UqBook, UqQuery, UqMap, UqHistory } from "ton
 //======= UQ BizDev/test ========
 //===============================
 
-export declare namespace BzTest {
 export interface Tuid$user {
 	name: string;
 	nick: string;
@@ -74,20 +73,17 @@ interface ReturnTestQueryBusMain {
 	p1: string;
 	p2: number;
 	p3: number;
-	$id: number;
 }
 interface ReturnTestQueryBusRetArr {
 	a1: string;
 	a2: number;
 	a3: number;
 	a4: number;
-	$id: number;
 }
 interface ReturnTestQueryBusRetArr2 {
 	b3: string;
 	cb2: number;
 	aa3: number;
-	$id: number;
 }
 interface ResultTestQueryBus {
 	main: ReturnTestQueryBusMain[];
@@ -112,7 +108,6 @@ export interface Param$poked {
 }
 interface Return$pokedRet {
 	poke: number;
-	$id: number;
 }
 interface Result$poked {
 	ret: Return$pokedRet[];
@@ -124,7 +119,6 @@ export interface ParamTest {
 interface ReturnTestRet {
 	aE: number;
 	cD: number;
-	$id: number;
 }
 interface ResultTest {
 	ret: ReturnTestRet[];
@@ -135,7 +129,6 @@ export interface ParamCall1 {
 interface ReturnCall1Ret {
 	user: number;
 	t1: number;
-	$id: number;
 }
 interface ResultCall1 {
 	ret: ReturnCall1Ret[];
@@ -167,7 +160,7 @@ interface ResultH {
 }
 
 export interface X1 {
-	id: number;
+	id?: number;
 	a1: number;
 	a2: number;
 	a3: number;
@@ -175,7 +168,7 @@ export interface X1 {
 }
 
 export interface Vid1 {
-	id: number;
+	id?: number;
 	b1: number;
 	b2: number;
 	b3: number;
@@ -183,9 +176,9 @@ export interface Vid1 {
 }
 
 export interface OrderDetail {
-	id: number;
-	master: number;
-	row: number;
+	id?: number;
+	master?: number;
+	row?: number;
 	product: number;
 	price: number;
 	quantity: number;
@@ -193,15 +186,15 @@ export interface OrderDetail {
 }
 
 export interface OrderMaster {
-	id: number;
-	no: string;
+	id?: number;
+	no?: string;
 	customer: number;
 }
 
 export interface Tag {
-	id: number;
-	type: number;
-	name: number;
+	id?: number;
+	type: string;
+	name: string;
 }
 
 export interface IBook1 {
@@ -254,5 +247,4 @@ export interface Uq extends UqBase<ParamIDActs> {
 	C: UqMap;
 	Price: UqMap;
 	H: UqHistory<ParamH, ResultH>;
-}
 }

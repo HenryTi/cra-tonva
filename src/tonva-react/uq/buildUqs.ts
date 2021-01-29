@@ -297,9 +297,9 @@ async function buildUqsFolder(uqsFolder:string, options: UqsConfig) {
 		let tsUq = buildTsUq(uq);
 		overrideTsFile(uqsFolder, o1+n1, tsUq);
 		// as ${o1}${n1}
-		tsUqsIndexHeader += `\nimport { ${uqAlias} } from './${uqAlias}';`;
+		tsUqsIndexHeader += `\nimport * as ${uqAlias} from './${uqAlias}';`;
 		tsUqsIndexContent += `\n\t${uqAlias}: ${uqAlias}.Uq;`; //${o1}${n1};`;
-		tsUqsIndexReExport += `\nexport * from './${uqAlias}';`;
+		tsUqsIndexReExport += `\nexport * as ${uqAlias} from './${uqAlias}';`;
 
 		/*
 		if (enumArr.length > 0) {
@@ -397,11 +397,10 @@ function buildUQ(uq:UqMan) {
 	ts += '\n//===============================';
 	ts += '\n';
 	
-	let {devName, uqName} = getNameFromUq(uq);
-
+	//let {devName, uqName} = getNameFromUq(uq);
 	uq.enumArr.forEach(v => ts += uqEntityInterface<UqEnum>(v, buildEnumInterface));
 
-	ts += `\nexport declare namespace ${devName}${uqName} {`;
+	//ts += `\nexport declare namespace ${devName}${uqName} {`;
 	uq.tuidArr.forEach(v => ts += uqEntityInterface<Tuid>(v, buildTuidInterface));
     uq.actionArr.forEach(v => ts += uqEntityInterface<Action>(v, buildActionInterface));
     uq.sheetArr.forEach(v => ts += uqEntityInterface<Sheet>(v, buildSheetInterface));
@@ -435,16 +434,16 @@ function buildUQ(uq:UqMan) {
 	appendArr<History>(uq.historyArr, 'History', v => uqBlock<History>(v, buildHistory));
 	appendArr<Pending>(uq.pendingArr, 'Pending', v => uqBlock<Pending>(v, buildPending));
 	appendArr<Tag>(uq.tagArr, 'Tag', v => uqBlock<Tag>(v, buildTag));
-	ts += '\n}\n}\n';
+	ts += '\n}\n';
 	tsImport += ' } from "tonva-react";';
 	return tsImport + ts;
 }
 
-function buildFields(fields: Field[], indent:number = 1) {
+function buildFields(fields: Field[], isInID:boolean = false, indent:number = 1) {
 	if (!fields) return '';
 	let ts = '';
 	for (let f of fields) {
-		ts += buildField(f, indent);
+		ts += buildField(f, isInID, indent);
 	}
 	return ts;
 }
@@ -453,17 +452,20 @@ const fieldTypeMap:{[type:string]:string} = {
 	"char": "string",
 	"text": "string",
 	"id": "number",
+	"textid": "string",
 	"int": "number",
 	"bigint": "number",
 	"smallint": "number",
 	"tinyint": "number",
 	"dec": "number",
 };
-function buildField(field: Field, indent:number = 1) {
-	let {type} = field;
+const sysFields = ['id', 'master', 'row', 'no'];
+function buildField(field: Field, isInID:boolean, indent:number = 1) {
+	let {name, type} = field;
 	let s = fieldTypeMap[type];
 	if (!s) s = 'any';
-	return `\n${'\t'.repeat(indent)}${field.name}: ${s};`;
+	let q:string = (isInID === true && sysFields.indexOf(name) >= 0)? '?' : '';
+	return `\n${'\t'.repeat(indent)}${name}${q}: ${s};`;
 }
 
 function buildArrs(arrFields: ArrFields[]):string {
@@ -471,7 +473,7 @@ function buildArrs(arrFields: ArrFields[]):string {
 	let ts = '\n';
 	for (let af of arrFields) {
 		ts += `\t${camelCase(af.name)}: {`;
-		ts += buildFields(af.fields, 2);
+		ts += buildFields(af.fields, false, 2);
 		ts += '\n\t}[];\n';
 	}
 	return ts;
@@ -536,7 +538,7 @@ function buildEnumInterface(enm: UqEnum) {
 	let {schema} = enm;
 	if (!schema) return;
 	let {values} = schema;
-	let ts = `export enum ${enm.uq.getUqKey()}_${capitalCase(enm.sName)} {`;
+	let ts = `export enum ${capitalCase(enm.sName)} {`;
 	let first:boolean = true;
 	for (let i in values) {
 		if (first === false) {
@@ -592,7 +594,7 @@ function buildSheetInterface(sheet: Sheet) {
 		for (let item of returns) {
 			let {name:arrName, fields} = item;
 			ts += '\n\t' + arrName + ': {';
-			ts += buildFields(fields, 2);
+			ts += buildFields(fields, false, 2);
 			ts += '\n\t}[];';
 		}
 		ts += '\n}';
@@ -679,7 +681,7 @@ function buildTagInterface(tag: Tag):string {
 function buildIDInterface(idEntity: ID):string {
 	let {sName, fields} = idEntity;
 	let ts = `export interface ${capitalCase(sName)} {`;
-	ts += buildFields(fields);
+	ts += buildFields(fields, true);
 	ts += '\n}';
 	return ts;
 }
