@@ -19,11 +19,20 @@ export const testItem1:DebugItem = {
 		let e = await uqs.BzTest.IDActs({
 			tag: [
 				{type: 'a', name: 'b'},
-				{type: 'a', name: 'b'}
+				{type: 'a', name: 'c'},
+				{type: 'd', name: 'c'},
 			],
 			x1: [
 				{a1: 1, a2: 3, a3:5, n5: 7},
-				{a1: 1, a2: 6, a3:51, n5: 71},
+				{a1: 1, a2: 7, a3:51, n5: 71},
+			],
+			assign1: [
+				{id: 3, id2: 5, val: 3},
+				{id: 3, id2: 6, val: 30},
+			],
+			iBook1: [
+				{id: 7, f1: 3.5, f2: 7.2, b: 'bbbb', c: 1},
+				{id: 8, f1: 3.5, f2: 7.2, b: 'bbbbc', c: 2},
 			],
 		});
 		log(e);

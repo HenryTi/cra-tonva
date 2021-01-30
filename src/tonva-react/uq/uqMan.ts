@@ -1,5 +1,4 @@
-import _, { identity } from 'lodash';
-import { UqApi, UqData, UnitxApi/*, appInFrame*/ } from '../net';
+import { UqApi, UqData, UnitxApi } from '../net';
 import { Tuid, TuidDiv, TuidImport, TuidInner, TuidBox, TuidsCache } from './tuid';
 import { Action } from './action';
 import { Sheet } from './sheet';
@@ -127,23 +126,24 @@ export interface ParamID {
 }
 
 export interface ParamKeyID {
-	IDX: string | string[];
-	key: number[];
+	ID: string;
+	key: {[key:string]:string|number};
+	IDX?: string[];
 	page?: ParamPage;
 }
 
 export interface ParamID2 {
 	ID2: string;
 	id: number | number[];
-	IDX: string | string[];
+	IDX?: string[];
 	page?: ParamPage;
 }
 
 export interface ParamKeyID2 {
 	ID: string;
-	key: number[];
+	key: {[key:string]:string|number};
 	ID2: string;
-	IDX: string | string[];
+	IDX?: string[];
 	page?: ParamPage;
 }
 
@@ -151,7 +151,7 @@ export interface ParamIDLog {
 	IDX: string;
 	field: string;
 	id: number;
-	log: 'each' | 'day' | 'month' | 'year';
+	log: 'each' | 'day' | 'week' | 'month' | 'year';
 	timeZone?: number;
 	page: ParamPage;
 }
@@ -678,7 +678,7 @@ export class UqMan {
 		return ret;
 	}
 
-	private checkParam(ID:string, IDX:string|string[], ID2:string, id:number|number[], key:number[], page: ParamPage) {
+	private checkParam(ID:string, IDX:string|string[], ID2:string, id:number|number[], key:{[key:string]:string|number}, page: ParamPage) {
 
 	}
 

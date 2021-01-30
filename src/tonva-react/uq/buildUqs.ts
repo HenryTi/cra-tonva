@@ -687,9 +687,25 @@ function buildIDInterface(idEntity: ID):string {
 }
 
 function buildIDXInterface(idx: IDX):string {
-	let {sName, fields} = idx;
+	let {sName, fields, schema} = idx;
 	let ts = `export interface ${capitalCase(sName)} {`;
 	ts += buildFields(fields);
+	let {exFields} = schema;
+	let hasTrack:boolean = false;
+	let hasMemo:boolean = false;
+	if (exFields) {
+		for (let exField of exFields) {
+			let {track, memo} = exField;
+			if (track === true) hasTrack = true;
+			if (memo === true) hasMemo = true;
+		}
+	}
+	if (hasTrack === true) {
+		ts += `\n\t$track?: number;`;
+	}
+	if (hasMemo === true) {
+		ts += `\n\t$memo?: string;`;
+	}
 	ts += '\n}';
 	return ts;
 }
