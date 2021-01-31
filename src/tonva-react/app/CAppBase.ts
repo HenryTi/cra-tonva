@@ -56,9 +56,9 @@ export interface Elements {
 	[id:string]: (element: HTMLElement)=>void,
 }
 
-export abstract class CAppBase extends Controller {
+export abstract class CAppBase<U> extends Controller {
 	private appConfig: AppConfig;
-    protected _uqs: any;
+    protected _uqs: U;
 
     //protected readonly name: string;
 	//protected readonly noUnit: boolean;
@@ -78,7 +78,7 @@ export abstract class CAppBase extends Controller {
 		}
     }
 
-    get uqs(): any {return this._uqs;}
+    get uqs(): U {return this._uqs;}
 
 	internalT(str:string):any {
 		return t(str);

@@ -1,5 +1,5 @@
-//=== UqApp builder created on Fri Jan 29 2021 18:14:27 GMT-0500 (GMT-05:00) ===//
-import { UqBase, UqTuid, UqAction, UqBook, UqQuery, UqMap, UqHistory } from "tonva-react";
+//=== UqApp builder created on Sun Jan 31 2021 09:39:43 GMT-0500 (GMT-05:00) ===//
+import { UqBase, UqTuid, UqAction, UqBook, UqQuery, UqMap, UqHistory, UqID, UqIDX, UqID2 } from "tonva-react";
 
 
 //===============================
@@ -73,17 +73,20 @@ interface ReturnTestQueryBusMain {
 	p1: string;
 	p2: number;
 	p3: number;
+	$id: number;
 }
 interface ReturnTestQueryBusRetArr {
 	a1: string;
 	a2: number;
 	a3: number;
 	a4: number;
+	$id: number;
 }
 interface ReturnTestQueryBusRetArr2 {
 	b3: string;
 	cb2: number;
 	aa3: number;
+	$id: number;
 }
 interface ResultTestQueryBus {
 	main: ReturnTestQueryBusMain[];
@@ -108,6 +111,7 @@ export interface Param$poked {
 }
 interface Return$pokedRet {
 	poke: number;
+	$id: number;
 }
 interface Result$poked {
 	ret: Return$pokedRet[];
@@ -119,6 +123,7 @@ export interface ParamTest {
 interface ReturnTestRet {
 	aE: number;
 	cD: number;
+	$id: number;
 }
 interface ResultTest {
 	ret: ReturnTestRet[];
@@ -129,6 +134,7 @@ export interface ParamCall1 {
 interface ReturnCall1Ret {
 	user: number;
 	t1: number;
+	$id: number;
 }
 interface ResultCall1 {
 	ret: ReturnCall1Ret[];
@@ -250,4 +256,12 @@ export interface Uq extends UqBase<ParamIDActs> {
 	C: UqMap;
 	Price: UqMap;
 	H: UqHistory<ParamH, ResultH>;
+	X1: UqID<any>;
+	Vid1: UqID<any>;
+	OrderDetail: UqID<any>;
+	OrderMaster: UqID<any>;
+	Tag: UqID<any>;
+	IBook1: UqIDX<any>;
+	Assign1: UqID2<any>;
+	CustomerTag: UqID2<any>;
 }

@@ -4,6 +4,8 @@ import { CBug } from "bug";
 import { CUqApp } from "./CBase";
 import { res } from "./res";
 import { VMain } from "./VMain";
+import { CTester } from "com/tester";
+import { UQs } from "./uqs";
 
 const gaps = [10, 3,3,3,3,3,5,5,5,5,5,5,5,5,10,10,10,10,15,15,15,30,30,60];
 
@@ -11,12 +13,14 @@ export class CApp extends CUqApp {
 	cHome: CHome;
 	cBug: CBug;
 	cMe: CMe;
+	cUI: CTester<CApp, UQs>;
 
 	protected async internalStart(isUserLogin: boolean) {
 		this.setRes(res);
 		this.cHome = this.newC(CHome);
 		this.cBug = this.newC(CBug);
 		this.cMe = this.newC(CMe);
+		this.cUI = this.newC(CTester) as CTester<CApp, UQs>;
 		this.cHome.load();
 		this.openVPage(VMain, undefined, this.dispose);
 		// 加上下面一句，可以实现主动页面刷新

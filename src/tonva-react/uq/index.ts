@@ -12,3 +12,4 @@ export * from './uqsMan';
 export * from './tag/tag';
 export * from './enum';
 export * from './buildUqs';
+export * from './ID';

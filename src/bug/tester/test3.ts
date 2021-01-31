@@ -33,6 +33,13 @@ export const testItem3 = {
 		});
 		log(d);
 
+		let e = await uqs.BzTest.IDActs({
+			iBook1: [
+				{id: -7, f1: 3.5, f2: 7.2, b: 'bbbb', c: 1},
+			]
+		});
+		log(e);
+
 		let ret = await uqs.BzHelloTonva.TestArr.submitReturns({rows: [
 			{a: 1, b: 2}, 
 			{a: 3, b: 4}, 

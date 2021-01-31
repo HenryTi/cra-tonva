@@ -6,7 +6,7 @@ import { Action, Book, Query, Sheet, Tuid, UqEnum,
 import { nav } from '../components';
 import { UqsConfig } from '../app';
 import { ID, ID2, IDX } from './ID';
-import { camelCase, capitalCase, env } from 'tonva-react/tool';
+import { camelCase, capitalCase, env } from 'tonva-react';
 
 const red = '\x1b[41m%s\x1b[0m';
 let lastBuildTime:number = 0;
@@ -186,7 +186,7 @@ function buildTsCApp():string {
 import { CUqApp } from "./CBase";
 import { VMain } from "./VMain";
 
-export class CApp extends CUqApp {
+export class CApp extends CUqApp<> {
 	protected async internalStart(isUserLogin: boolean) {
 		this.openVPage(VMain, undefined, this.dispose);
 	}
@@ -199,20 +199,13 @@ import { CSub, CBase, CAppBase, IConstructor } from 'tonva-react';
 import { UQs } from './uqs';
 import { CApp } from './CApp';
 
-export abstract class CUqBase extends CBase {
-	get cApp(): CApp { return this._cApp; }
-	protected get uqs(): UQs { return this._uqs as UQs };
+export abstract class CUqBase extends CBase<CApp, UQs> {
 }
 
-export abstract class CUqSub<T extends CUqBase> extends CSub<T> {
-	get cApp(): CApp { return this._cApp; }
-	protected get uqs(): UQs { return this._uqs as UQs };
-	get owner(): T { return this._owner as T }
+export abstract class CUqSub<A extends CAppBase<U>, U, T extends CBase<A,U>> extends CSub<A, U, T> {
 }
 
-export abstract class CUqApp extends CAppBase {
-	get uqs(): UQs { return this._uqs };
-
+export abstract class CUqApp extends CAppBase<UQs> {
 	protected newC<T extends CUqBase>(type: IConstructor<T>): T {
 		let c = new type(this);
 		c.init();
@@ -434,6 +427,9 @@ function buildUQ(uq:UqMan) {
 	appendArr<History>(uq.historyArr, 'History', v => uqBlock<History>(v, buildHistory));
 	appendArr<Pending>(uq.pendingArr, 'Pending', v => uqBlock<Pending>(v, buildPending));
 	appendArr<Tag>(uq.tagArr, 'Tag', v => uqBlock<Tag>(v, buildTag));
+	appendArr<ID>(uq.idArr, 'ID', v => uqBlock<ID>(v, buildID));
+	appendArr<IDX>(uq.idxArr, 'IDX', v => uqBlock<IDX>(v, buildIDX));
+	appendArr<ID2>(uq.id2Arr, 'ID2', v => uqBlock<ID2>(v, buildID2));
 	ts += '\n}\n';
 	tsImport += ' } from "tonva-react";';
 	return tsImport + ts;
@@ -671,6 +667,24 @@ function buildPendingInterface(pending: Pending):string {
 function buildTag(tag: Tag):string {
 	let {sName} = tag;
 	let ts = `\t${entityName(sName)}: UqTag;`;
+	return ts;
+}
+
+function buildID(id: ID):string {
+	let {sName} = id;
+	let ts = `\t${entityName(sName)}: UqID<any>;`;
+	return ts;
+}
+
+function buildIDX(idx: IDX):string {
+	let {sName} = idx;
+	let ts = `\t${entityName(sName)}: UqIDX<any>;`;
+	return ts;
+}
+
+function buildID2(id2: ID2):string {
+	let {sName} = id2;
+	let ts = `\t${entityName(sName)}: UqID2<any>;`;
 	return ts;
 }
 

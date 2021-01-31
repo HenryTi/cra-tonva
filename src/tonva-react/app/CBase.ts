@@ -1,10 +1,10 @@
 import _ from 'lodash';
 import { Controller, WebNav } from "../vm";
-import { IConstructor } from "./CAppBase";
+import { CAppBase, IConstructor } from "./CAppBase";
 
-export abstract class CBase extends Controller {
-    protected readonly _uqs: any;
-    protected readonly _cApp: any;
+export abstract class CBase<A extends CAppBase<U>, U> extends Controller {
+    protected readonly _uqs: U;
+    protected readonly _cApp: A;
 
     constructor(cApp: any) {
         super(cApp.res);
@@ -12,7 +12,7 @@ export abstract class CBase extends Controller {
         this._uqs = cApp && cApp.uqs;
 	}
 
-    protected get uqs(): any {return this._uqs}
+    get uqs(): any {return this._uqs}
 	get cApp(): any {return this._cApp}
 	async getUqRoles(uqName:string):Promise<string[]> {
 		return this._cApp?.getUqRoles(uqName);
@@ -24,13 +24,13 @@ export abstract class CBase extends Controller {
 		return this._cApp.internalT(str);
 	}
 
-    protected newC<T extends CBase>(type: IConstructor<T>, param?:any):T {
+    protected newC<T extends CBase<A,U>>(type: IConstructor<T>, param?:any):T {
 		let c = new type(this.cApp);
 		c.init(param);
 		return c;
     }
 
-    protected newSub<O extends CBase, T extends CSub<O>>(type: IConstructor<T>, param?:any):T {
+    protected newSub<O extends CBase<A,U>, T extends CSub<A,U,O>>(type: IConstructor<T>, param?:any):T {
 		let s = new type(this);
 		s.init(param);
 		return s;
@@ -45,7 +45,7 @@ export abstract class CBase extends Controller {
 	}
 }
 
-export abstract class CSub<T extends CBase> extends CBase {
+export abstract class CSub<A extends CAppBase<U>, U, T extends CBase<A, U>> extends CBase<A,U> {
     protected _owner: T;
 
     constructor(owner: T) {
@@ -59,7 +59,7 @@ export abstract class CSub<T extends CBase> extends CBase {
 		return this._owner.internalT(str);
 	}
 
-    protected get owner(): CBase {return this._owner}
+    protected get owner(): T {return this._owner}
 	
 	getWebNav(): WebNav<any> {
 		let wn = this._cApp?.getWebNav();
