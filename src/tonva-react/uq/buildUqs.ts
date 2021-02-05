@@ -10,63 +10,14 @@ import { camelCase, capitalCase, env } from 'tonva-react';
 
 const red = '\x1b[41m%s\x1b[0m';
 let lastBuildTime:number = 0;
-//let gUqOwnerMap:{[key:string]:string};
 const uqTsSrcPath = 'src/UqApp';
-
-/*
-export interface UqOptions extends Partial<AppConfig> {
-	app?: {
-		name: string;
-		version: string;
-		ownerMap?: {[key:string]: string};
-	}
-	uqs?: {
-		[owner:string]: {[name:string]:string}; // name: version
-	};
-}
-*/
 
 // 返回每个uq构建时的错误
 async function uqsStart(uqsConfig: UqsConfig):Promise<string[]> {
-	//let {app, uqs} = uqsConfig;
-	//process.env.REACT_APP_UNIT = String(appUnitId);
 	nav.forceDevelopment = true;
 	await nav.init();
 	let retErrors = await UQsMan.build(uqsConfig);
-//	gUqOwnerMap = UQsMan.uqOwnerMap;
 	return retErrors;
-	/*
-	if (app) {
-		let {name, version, ownerMap} = app;
-		gUqOwnerMap = ownerMap || {};
-		for (let i in gUqOwnerMap) {
-			gUqOwnerMap[i.toLowerCase()] = gUqOwnerMap[i];
-		}
-		return await UQsMan.load(name, version, tvs);
-	}
-	else if (uqs) {
-		let uqNames:{owner:string; name:string; version:string}[] = [];
-		gUqOwnerMap = {};
-		for (let owner in uqs) {
-			let ownerObj = uqs[owner];
-			for (let name in ownerObj) {
-				let v = ownerObj[name];
-				switch (name) {
-					case '$':
-						gUqOwnerMap[owner.toLowerCase()] = v;
-						break;
-					default:
-						uqNames.push({owner, name, version:v});
-						break;
-				}
-			}
-		}
-		if (uqNames.length > 0) {
-			return await UQsMan.loadUqs(uqNames, tvs);
-		}
-	}
-	*/
-	throw new Error('uqOptions must either app or uqs');
 }
 export async function buildUqs(options: UqsConfig) {
 	// 只从test 数据库构建uq ts
@@ -119,60 +70,16 @@ function overrideTsFile(path:string, fileName:string, content:string, suffix:str
 	lastBuildTime = Date.now();
 	console.log(red, `${tsFile} is built`);
 }
+function createTsFile(path:string, fileName:string, content:string, suffix:string = 'ts') {
+	let tsFile = `${path}/${fileName}.${suffix}`;
+	if (fs.existsSync(tsFile) === true) return;
+	fs.writeFileSync(tsFile, content);
+	lastBuildTime = Date.now();
+	console.log(red, `${tsFile} is built`);
+}
 function buildTsHeader() {
 	return `//=== UqApp builder created on ${new Date()} ===//`;
 }
-/*
-function buildTsAppName(options: UqsConfig):void {
-	let {app} = options;
-	if (app) {
-		let tsAppName = `${buildTsHeader()}
-export const appName = '${app.name}';
-`;
-		saveTsFile('appName', tsAppName);
-	}
-}
-function buildTsAppConfig(options: UqsConfig):void {
-	let {app, uqs, noUnit, tvs, oem, htmlTitle} = options;
-	function toString(s:string) {
-		if (s === undefined) return;
-		if (s === null) return null;
-		return `'${s}'`;
-	}
-	function toAppString():string {
-		if (!app) return undefined;
-		let {name, version} = app;
-		return `{ name: ${name}, version: ${version} }`;
-	}
-	function toUqsString(): string {
-		if (!uqs) return undefined;
-		let ret = '{\n';
-		for (let owner in uqs) {
-			ret += `\t\t"${owner}": {\n`;
-			let ownerObj = uqs[owner];
-			for (let name in ownerObj) {
-				ret += `\t\t\t"${name}": "${ownerObj[name]}",\n`;
-			}
-			ret += `\t\t},\n`
-		}
-		return ret + '\t}';
-	}
-	let ts = `${buildTsHeader()}
-import { AppConfig } from "tonva-react";
-
-export const appConfig: AppConfig = {
-	app: ${toAppString()},
-	uqs: ${toUqsString()},
-	noUnit: ${noUnit},
-    tvs: ${JSON.stringify(tvs)},
-	oem: ${toString(oem)},
-	htmlTitle: ${toString(htmlTitle)},
-};
-`;
-	saveTsFile('appConfig', ts);
-}
-export { appConfig } from './appConfig';
-*/
 
 function buildTsIndex():string {
 	return `${buildTsHeader()}
@@ -185,10 +92,46 @@ function buildTsCApp():string {
 	return `${buildTsHeader()}
 import { CUqApp } from "./CBase";
 import { VMain } from "./VMain";
+import { UQs, buildComs } from "./uqs";
+
+const gaps = [10, 3,3,3,3,3,5,5,5,5,5,5,5,5,10,10,10,10,15,15,15,30,30,60];
 
 export class CApp extends CUqApp<> {
 	protected async internalStart(isUserLogin: boolean) {
 		this.openVPage(VMain, undefined, this.dispose);
+	}
+
+	protected afterBuiltUQs(uqs: UQs) {
+		buildComs(uqs);
+	}
+
+	private timer:any;
+	protected onDispose() {
+		clearInterval(this.timer);
+		this.timer = undefined;
+	}
+
+	private tick = 0;
+	private gapIndex = 0;
+	private callTick = async () => {
+		try {
+			if (!this.user) return;
+			++this.tick;
+			if (this.tick<gaps[this.gapIndex]) return;
+			//console.error('tick ', new Date());
+			this.tick = 0;
+			if (this.gapIndex < gaps.length - 1) ++this.gapIndex;
+			let ret = await this.uqs.BzHelloTonva.$poked.query(undefined, false);
+			let v = ret.ret[0];
+			if (v === undefined) return;
+			if (!v.poke) return;
+			this.gapIndex = 1;
+
+			// 数据服务器提醒客户端刷新，下面代码重新调入的数据
+			//this.cHome.refresh();
+		}
+		catch {
+		}
 	}
 }
 `;
@@ -243,17 +186,7 @@ async function buildUqsFolder(uqsFolder:string, options: UqsConfig) {
 	let uqMans = uqsMan.getUqMans();
 	
 	let promiseArr:Promise<void>[] = [];
-	/*
-	let uqs:UqMan[] = [];
-	for (let i in coll) {
-		let lowerI = i.toLowerCase();
-		if (lowerI !== i) continue;
-		uqs.push(coll[i]);
-	}
-	*/
-	
 	if (uqErrors) {
-		//let error = options.uqAppName + ' not defined!';
 		throw new Error(uqErrors.join('\n'));
 	}
 
@@ -269,6 +202,7 @@ async function buildUqsFolder(uqsFolder:string, options: UqsConfig) {
 		try {
 			let files = fs.readdirSync(uqsFolder);
 			for (const file of files) {
+				if (file.endsWith('.Coms.ts') === true) continue;
 				fs.unlinkSync(path.join(uqsFolder, file));
 			}	
 		}
@@ -278,55 +212,56 @@ async function buildUqsFolder(uqsFolder:string, options: UqsConfig) {
 	}
 	let tsUqsIndexHeader = buildTsHeader();
 	let tsUqsIndexContent = `\n\nexport interface UQs {`;
-	//let tsUqsExports = '\n\n';
+	let tsUqsIndexBuildComs = '\n\nexport function buildComs(uqs:UQs) {';
 	let tsUqsIndexReExport = '\n';
 	for (let uq of uqMans) {
-		//let {enumArr} = uq;
-		//let {uqOwner, uqName, enumArr} = uq;
-		//let o1 = getUqOwnerName(uqOwner);
-		//let n1 = getUqName(uqName);
 		let {devName:o1, uqName:n1} = getNameFromUq(uq);
 		let uqAlias = o1 + n1;
-		let tsUq = buildTsUq(uq);
-		overrideTsFile(uqsFolder, o1+n1, tsUq);
-		// as ${o1}${n1}
-		tsUqsIndexHeader += `\nimport * as ${uqAlias} from './${uqAlias}';`;
-		tsUqsIndexContent += `\n\t${uqAlias}: ${uqAlias}.Uq;`; //${o1}${n1};`;
-		tsUqsIndexReExport += `\nexport * as ${uqAlias} from './${uqAlias}';`;
+		let tsUq = buildTsUq(uq, uqAlias);
+		overrideTsFile(uqsFolder, uqAlias, tsUq);
 
-		/*
-		if (enumArr.length > 0) {
-			tsUqsExports += `\nexport {`; 
-			for (let enm of uq.enumArr) {
-				let enmName = `${capitalCaseString(enm.sName)}`;
-				tsUqsExports += `\n\t${enmName} as ${o1}${n1}${enmName},`;
-			}
-			tsUqsExports += `\n} from './${o1}${n1}';`;
-		}
-		*/
+		let tsUqComs = buildTsUqComs(uq, uqAlias);
+		createTsFile(uqsFolder, uqAlias + '.Coms', tsUqComs);
+
+		tsUqsIndexHeader += `\nimport * as ${uqAlias} from './${uqAlias}';`;
+		tsUqsIndexHeader += `\nimport { Coms as ${uqAlias}Coms } from './${uqAlias}.Coms';`;
+		tsUqsIndexContent += `\n\t${uqAlias}: ${uqAlias}.Uq;`; 
+		tsUqsIndexReExport += `\nexport * as ${uqAlias} from './${uqAlias}';`;
+		tsUqsIndexBuildComs += `\n\tuqs.${uqAlias}.setComs(new ${uqAlias}Coms(uqs.${uqAlias}));`;
 	}
 
 	overrideTsFile(uqsFolder, 'index', 
-		tsUqsIndexHeader + tsUqsIndexContent + '\n}' + tsUqsIndexReExport + '\n');
+		tsUqsIndexHeader + tsUqsIndexContent + '\n}' + tsUqsIndexReExport + '\n' + tsUqsIndexBuildComs + '\n}\n');
 }
 
-function buildTsUq(uq: UqMan) {
+function buildTsUq(uq: UqMan, uqAlias:string) {
 	let ret = buildTsHeader();
-	ret += buildUQ(uq);
+	ret += buildUQ(uq, uqAlias);
+	return ret;
+}
+
+function buildTsUqComs(uq: UqMan, uqAlias: string) {
+	let ret = buildTsHeader();
+	ret += `
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { ComTag } from "tonva-com";
+import { Uq } from "./${uqAlias}";
+
+export class Coms {
+	// eslint-disable-next-line @typescript-eslint/no-useless-constructor
+	constructor(uq: Uq) {
+		//this.customer = new ComTag(uq, uq.Tag, uq.CustomerTag);
+	}
+	
+	//readonly customer: ComTag;
+}`;
 	return ret;
 }
 
 function entityName(s:string):string {
 	return capitalCase(s);
 }
-/*
-function getUqOwnerName(uqOwner:string) {
-	let uo = gUqOwnerMap[uqOwner.toLowerCase()];
-	if (uo === undefined) return '';
-	if (uo.length === 0) return '';
-	return capitalCaseString(uo);
-}
-*/
+
 function getNameFromUq(uqMan:UqMan):{devName:string; uqName:string} {
 	let {config} = uqMan;
 	let devPart:string, uqPart:string;
@@ -365,35 +300,21 @@ function uqEntityInterface<T extends Entity>(entity: T, buildInterface: (entity:
 
 async function loadUqEntities(uq:UqMan):Promise<void> {
 	await uq.loadAllSchemas();
-	/*
-	let arr: Promise<any>[] = [];
-    uq.actionArr.forEach(v => arr.push(v.loadSchema()));
-    uq.enumArr.forEach(v => arr.push(v.loadSchema()));
-    uq.sheetArr.forEach(v => arr.push(v.loadSchema()));
-    uq.queryArr.forEach(v => arr.push(v.loadSchema()));
-    uq.bookArr.forEach(v => arr.push(v.loadSchema()));
-    uq.mapArr.forEach(v => arr.push(v.loadSchema()));
-    uq.historyArr.forEach(v => arr.push(v.loadSchema()));
-    uq.pendingArr.forEach(v => arr.push(v.loadSchema()));
-	uq.tagArr.forEach(v => arr.push(v.loadSchema()));
-	await Promise.all(arr);
-	*/
 }
 
-function buildUQ(uq:UqMan) {
-	//let {uqOwner, uqName} = uq;
-	let tsImport = '\nimport { UqBase';
-	//UqTuid, UqQuery, UqAction, UqSheet/*, Map, Tag*/
+function buildUQ(uq:UqMan, uqAlias:string) {
+	let tsImport = `
+import { Coms } from "./${uqAlias}.Coms";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { IDXValue, UqBase`;
 	let ts:string = `\n\n`;
 	ts += '\n//===============================';
 	ts += `\n//======= UQ ${uq.name} ========`;
 	ts += '\n//===============================';
 	ts += '\n';
 	
-	//let {devName, uqName} = getNameFromUq(uq);
 	uq.enumArr.forEach(v => ts += uqEntityInterface<UqEnum>(v, buildEnumInterface));
 
-	//ts += `\nexport declare namespace ${devName}${uqName} {`;
 	uq.tuidArr.forEach(v => ts += uqEntityInterface<Tuid>(v, buildTuidInterface));
     uq.actionArr.forEach(v => ts += uqEntityInterface<Action>(v, buildActionInterface));
     uq.sheetArr.forEach(v => ts += uqEntityInterface<Sheet>(v, buildSheetInterface));
@@ -409,7 +330,11 @@ function buildUQ(uq:UqMan) {
 
 	ts += buildIDActInterface(uq);
 
-	ts += `\n\nexport interface Uq extends UqBase<ParamIDActs> {`;
+	ts += `
+\nexport interface Uq extends UqBase {
+	IDActs(param:ParamIDActs): Promise<any>;
+	coms: Coms;
+`;
 	function appendArr<T extends Entity>(arr:T[], type:string, tsBuild: (v:T) => string) {
 		if (arr.length === 0) return;
 		let tsLen = ts.length;
@@ -693,18 +618,45 @@ function buildTagInterface(tag: Tag):string {
 }
 
 function buildIDInterface(idEntity: ID):string {
-	let {sName, fields} = idEntity;
+	let {sName, fields, schema} = idEntity;
+	let {keys:schemaKeys} = schema;
+	let keys:Field[] = [], others:Field[] = [];
+	for (let f of fields) {
+		let {name} = f;
+		if (name === 'id') continue;
+		if ((schemaKeys as any[]).find(v => v.name === name)) keys.push(f);
+		else others.push(f);
+	}
 	let ts = `export interface ${capitalCase(sName)} {`;
-	ts += buildFields(fields, true);
+	ts += `\n\tid?: number;`;
+	ts += buildFields(keys, true);
+	ts += buildFields(others, true);
 	ts += '\n}';
 	return ts;
 }
 
 function buildIDXInterface(idx: IDX):string {
 	let {sName, fields, schema} = idx;
-	let ts = `export interface ${capitalCase(sName)} {`;
-	ts += buildFields(fields);
 	let {exFields} = schema;
+	let ts = `export interface ${capitalCase(sName)} {`;
+	//ts += buildFields(fields);
+	let indent = 1;
+	for (let field of fields) {
+		let {name, type} = field;
+		let s = fieldTypeMap[type];
+		if (!s) s = 'any';
+		//let q:string = (isInID === true && sysFields.indexOf(name) >= 0)? '?' : '';
+		let exField = (exFields as any[]).find(v => v.field === name);
+		ts += `\n${'\t'.repeat(indent)}${name}`;
+		if (exField) {
+			ts += `?: ${s}|IDXValue;`;
+		}
+		else {
+			if (name !== 'id') ts += '?';
+			ts += `: ${s};`;
+		}
+	}
+
 	let hasTrack:boolean = false;
 	let hasMemo:boolean = false;
 	if (exFields) {

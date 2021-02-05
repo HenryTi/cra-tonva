@@ -1,7 +1,7 @@
 import { AppConfig, CAppBase } from './CAppBase';
 import { nav } from '../components';
 
-export async function startPage(CApp: new (config: AppConfig) => CAppBase, appConfig: AppConfig) {
+export async function startPage(CApp: new (config: AppConfig) => CAppBase<any>, appConfig: AppConfig) {
 	let {htmlTitle} = appConfig;
 	if (htmlTitle) {
 		document.title = htmlTitle;

@@ -1,0 +1,15 @@
+ID Staff ver 0.3 (
+	id,
+	KEY no CHAR(10),
+	firstName CHAR(30),
+	lastName CHAR(30),
+);
+
+IDX Hours ver 0.1 (
+	id,						-- Staff
+	onsite INT LOG,			-- work hours on site，minute unit
+	offsite INT LOG,		-- work hours off site，minute unit
+	break INT LOG,			-- break hours minute unit
+	sick INT LOG,			-- sick leave hours
+	over INT LOG,			-- over time hours 
+);

@@ -1,5 +1,5 @@
 import { DebugItem } from "bug/CBug";
-import { UQsMan } from "tonva-react";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { BzTest, BzHelloTonva, BzCustomerPayment, UQs } from "UqApp";
 import { Log } from "../Logger";
 
@@ -9,7 +9,7 @@ export const testItem1:DebugItem = {
 	test: async ( log: Log, uqs: UQs):Promise<void> => {
 		
 		let a = await uqs.BzTest.ID({
-			IDX: 'x1',
+			IDX: uqs.BzTest.X1,
 			id: 7077888,
 		});
 		for (let item of a) {
@@ -18,13 +18,13 @@ export const testItem1:DebugItem = {
 
 		let e = await uqs.BzTest.IDActs({
 			tag: [
-				{type: 'a', name: 'b'},
-				{type: 'a', name: 'c'},
-				{type: 'd', name: 'c'},
+				{id: undefined, type: 'a', name: 'b'},
+				{id: undefined, type: 'a', name: 'c'},
+				{id: undefined, type: 'd', name: 'c'},
 			],
 			x1: [
-				{a1: 1, a2: 3, a3:5, n5: 7},
-				{a1: 1, a2: 7, a3:51, n5: 71},
+				{id: undefined, a1: 1, a2: 3, a3:5, n5: 7},
+				{id: undefined, a1: 1, a2: 7, a3:51, n5: 71},
 			],
 			assign1: [
 				{id: 3, id2: 5, val: 3},
@@ -40,11 +40,11 @@ export const testItem1:DebugItem = {
 		let b = await uqs.BzTest.IDDetail<BzTest.OrderMaster, BzTest.OrderDetail>
 		({
 			master: {
-				name: 'OrderMaster',
+				ID: uqs.BzTest.OrderMaster,
 				value: {customer: 1 },
 			},
 			detail: {
-				name: 'OrderDetail',
+				ID: uqs.BzTest.OrderDetail,
 				values: [
 					{product:11, price:2.0, quantity:3.0, amount:6.0},
 					{product:12, price:2.0, quantity:5.0, amount:10.0},
@@ -56,8 +56,8 @@ export const testItem1:DebugItem = {
 
 		let c = await uqs.BzTest.IDDetailGet<BzTest.OrderMaster, BzTest.OrderDetail>({
 			id: 8716325,
-			master: 'OrderMaster',
-			detail: 'OrderDetail',
+			master: uqs.BzTest.OrderMaster,
+			detail: uqs.BzTest.OrderDetail,
 		});
 
 		for (let ci of c) {
@@ -66,6 +66,7 @@ export const testItem1:DebugItem = {
 
 		//let u: BzHelloTonva.Return$pokedRet;
 		//u.poke = 1;
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		let f = BzCustomerPayment.EnumCustomerAction.confirm;
 
 		let ret = await uqs.BzHelloTonva.GetProductStock.query({product: 1});

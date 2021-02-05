@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { makeObservable, observable } from 'mobx';
+import { observable } from 'mobx';
 import { Page, ItemSchema, UiSchema, StringSchema, UiTextItem, Edit, ImageSchema, nav, UiImageItem } from '../components';
 import { userApi } from '../net';
 
@@ -14,13 +14,10 @@ export class EditMeInfo extends React.Component {
             icon: {widget:'image', label:'头像'} as UiImageItem,
         }
     }
-    data:any = null;
+    @observable private data:any;
 
     constructor(props:any) {
-		super(props);
-		makeObservable(this, {
-			data: observable,
-		})
+        super(props);
         let {nick, icon} = nav.user;
         this.data = {
             nick: nick,

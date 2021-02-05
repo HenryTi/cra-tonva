@@ -1,7 +1,7 @@
 import { FA, LMR, VPage } from "tonva-react";
 import { CTester, UIItem } from "./CTester";
 
-export class VTester extends VPage<CTester<any,any>> {
+export class VTester extends VPage<CTester> {
 	header() {
 		return <div className="px-3">
 			UI

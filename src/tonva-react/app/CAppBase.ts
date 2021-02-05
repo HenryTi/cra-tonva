@@ -117,7 +117,8 @@ export abstract class CAppBase<U> extends Controller {
 		}
 		*/
 	//}
-	
+	protected afterBuiltUQs(uqs: any) {}
+
     protected async beforeStart():Promise<boolean> {
         try {
 			this.onNavRoutes();
@@ -128,6 +129,7 @@ export abstract class CAppBase<U> extends Controller {
                 return false;
             }
 			this._uqs = UQsMan._uqs;
+			this.afterBuiltUQs(this._uqs);
             //let retErrors = await this.load();
             //let app = await loadAppUqs(this.appOwner, this.appName);
             // if (isDevelopment === true) {

@@ -6,6 +6,7 @@ const bz: DevConfig = {
 	alias: 'bz',
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const jk: DevConfig = {
 	name: '百灵威系统工程部',
 	alias: 'jk',
@@ -40,7 +41,13 @@ export const appConfig: AppConfig = {
 			name: 'test',
 			alias: 'Test',
 			version: '0.1.0',
-		}
+		},
+		{
+			dev: bz,
+			name: 'TimesChange',
+			alias: 'TimesChange',
+			version: '0.1.0',
+		},
 	],
 	noUnit: true,
     tvs: {},

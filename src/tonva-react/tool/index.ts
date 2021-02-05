@@ -10,3 +10,4 @@ export {getObjPropIgnoreCase} from './getObjPropIgnoreCase';
 export * from './date';
 export * from './62';
 export * from './caseString';
+export * from './rules';

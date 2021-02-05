@@ -6,7 +6,7 @@ export const testItem3 = {
 	discription: 'third test', 
 	test: async (log: Log, uqs: UQs):Promise<void> => {
 		let a = await uqs.BzTest.IDLog({
-			IDX: 'ibook1',
+			IDX: uqs.BzTest.IBook1,
 			field: 'f2',
 			id: 7,
 			log: 'each',
@@ -15,21 +15,21 @@ export const testItem3 = {
 		log(a);
 
 		let b = await uqs.BzTest.KeyID({
-			ID: 'x1',
+			ID: uqs.BzTest.X1,
 			key: {a1: 1, a2: undefined},
 		});
 		log(b);
 
 		let c = await uqs.BzTest.ID2({
-			ID2: 'assign1',
+			ID2: uqs.BzTest.Assign1,
 			id: 3,
 		});
 		log(c);
 
 		let d = await uqs.BzTest.KeyID2({
-			ID: 'x1',
+			ID: uqs.BzTest.X1,
 			key: {a1: 1, a2: undefined},
-			ID2: 'assign1',
+			ID2: uqs.BzTest.Assign1,
 		});
 		log(d);
 

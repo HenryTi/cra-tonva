@@ -70,16 +70,17 @@ export interface TuidModify {
 
 interface ParamPage {
 	start:number;
+	end?: number;
 	size:number;
 }
 
 export interface ParamIDDetail<M,D> {
 	master: {
-		name: string;
+		ID: ID;
 		value: M;
 	};
 	detail: {
-		name: string;
+		ID: ID;
 		values: D[];
 	};
 }
@@ -91,7 +92,7 @@ export interface RetIDDetail {
 
 export interface ParamIDDetail2<M,D,D2> extends ParamIDDetail<M, D> {
 	detail2: {
-		name: string;
+		ID: ID;
 		values: D2[];
 	};
 }
@@ -102,7 +103,7 @@ export interface RetIDDetail2 extends RetIDDetail {
 
 export interface ParamIDDetail3<M,D,D2,D3> extends ParamIDDetail2<M, D, D2> {
 	detail3: {
-		name: string;
+		ID: ID;
 		values: D3[];
 	};
 }
@@ -113,42 +114,42 @@ export interface RetIDDetail3 extends RetIDDetail2 {
 
 export interface ParamIDDetailGet {
 	id: number;
-	master: string;
-	detail: string;
-	detail2?: string;
-	detail3?: string;
+	master: ID;
+	detail: ID;
+	detail2?: ID;
+	detail3?: ID;
 }
 
 export interface ParamID {
-	IDX: string | string[];
+	IDX: (ID|IDX) | (ID|IDX)[];
 	id: number | number[];
 	page?: ParamPage;
 }
 
 export interface ParamKeyID {
-	ID: string;
+	ID: ID;
 	key: {[key:string]:string|number};
-	IDX?: string[];
+	IDX?: (ID|IDX)[];
 	page?: ParamPage;
 }
 
 export interface ParamID2 {
-	ID2: string;
+	ID2: ID2;
 	id: number | number[];
-	IDX?: string[];
+	IDX?: (ID|IDX)[];
 	page?: ParamPage;
 }
 
 export interface ParamKeyID2 {
-	ID: string;
+	ID: ID;
 	key: {[key:string]:string|number};
-	ID2: string;
-	IDX?: string[];
+	ID2: ID2;
+	IDX?: (ID|IDX)[];
 	page?: ParamPage;
 }
 
 export interface ParamIDLog {
-	IDX: string;
+	IDX: (ID|IDX);
 	field: string;
 	id: number;
 	log: 'each' | 'day' | 'week' | 'month' | 'year';
@@ -156,11 +157,25 @@ export interface ParamIDLog {
 	page: ParamPage;
 }
 
+export interface ParamIDSum {
+	IDX: IDX;
+	field: string;
+	id: number|number[];
+	far?: number;				// 以前
+	near?: number;				// 最近
+}
+
+export interface IDXValue {
+	value: number;
+	time?: number|Date;
+}
+
 function IDPath(path:string):string {return path;}
 
-export interface UqBase<P> {
+export interface UqBase {
 	$name: string;
-	IDActs(param:P): Promise<any>;
+	setComs(coms:any):void;
+	IDActs(param:any): Promise<any>;
 	IDDetail<M,D>(param: ParamIDDetail<M,D>): Promise<RetIDDetail>;
 	IDDetail<M,D,D2>(param: ParamIDDetail2<M,D,D2>): Promise<RetIDDetail2>;
 	IDDetail<M,D,D2,D3>(param: ParamIDDetail3<M,D,D2,D3>): Promise<RetIDDetail3>;
@@ -172,6 +187,7 @@ export interface UqBase<P> {
 	ID2<T>(param: ParamID2): Promise<T[]>;
 	KeyID2<T>(param: ParamKeyID2): Promise<T[]>;
 	IDLog<T> (param: ParamIDLog): Promise<T[]>;
+	IDSum<T> (param: ParamIDSum): Promise<T[]>;
 }
 
 export class UqMan {
@@ -610,7 +626,7 @@ export class UqMan {
 		}
 		return uqKey;
 	}
-	
+
 	proxy():any {
 		let ret = new Proxy(this.entities, {
 			get: (target, key, receiver) => {
@@ -622,6 +638,8 @@ export class UqMan {
 				if (ret !== undefined) return ret;
 				switch (key) {
 					default: debugger; break;
+					case 'coms': return this.coms;
+					case 'setComs': return this.setComs;
 					case 'IDActs': return this.IDActs;
 					case 'IDDetail': return this.IDDetail;
 					case 'IDDetailGet': return this.IDDetailGet;
@@ -630,6 +648,7 @@ export class UqMan {
 					case 'ID2': return this.ID2;
 					case 'KeyID2': return this.KeyID2;
 					case 'IDLog': return this.IDLog;
+					case 'IDSum': return this.IDSum;
 				}
 				let err = `entity ${this.name}.${String(key)} not defined`;
 				console.error(err);
@@ -645,12 +664,41 @@ export class UqMan {
 		nav.showReloadPage(msg);
     }
 
+	private coms:any;
+	private setComs = (coms: any) => {this.coms = coms;}
+
 	private IDActs = async (param:any): Promise<any> => {
 		// 这边的obj属性序列，也许会不一样
 		let arr:string[] = [];
-		for (let i in param) arr.push(i);
-		param['$'] = arr;
-		let ret = await this.uqApi.post(IDPath('id-acts'), param);
+		let apiParam:any = {};
+		for (let i in param) {
+			arr.push(i);
+			apiParam[i] = (param[i] as any[]).map(v => {
+				let obj:any = {};
+				for (let j in v) {
+					let val = v[j];
+					if (typeof val === 'object') {
+						let nv:any = {};
+						for (let n in val) {
+							let tv = val[n];
+							if (n === 'time') {
+								if (Object.prototype.toString.call(tv) === '[object Date]') {
+									tv = (tv as Date).getTime();
+								}
+							}
+							nv[n] = tv;
+						}
+						obj[j] = nv;
+					}
+					else {
+						obj[j] = val;
+					}
+				}
+				return obj;
+			});
+		}
+		apiParam['$'] = arr;
+		let ret = await this.uqApi.post(IDPath('id-acts'), apiParam);
 		let retArr = (ret[0].ret as string).split('\n');
 		let retActs:{[key:string]:number[]} = {};
 		for (let i=0; i<arr.length; i++) {
@@ -660,7 +708,30 @@ export class UqMan {
 	}
 
 	private IDDetail = async (param: ParamIDDetail<any, any>): Promise<any> => {
-		let ret = await this.uqApi.post(IDPath('id-detail'), param);		
+		let {master, detail, detail2, detail3} = param as unknown as ParamIDDetail3<any, any, any, any>;
+		let postParam:any = {
+			master: {
+				name: entityName(master.ID),
+				value: master.value,
+			},
+			detail: {
+				name: entityName(detail.ID),
+				values: detail.values,
+			},
+		}
+		if (detail2) {
+			postParam.detail2 = {
+				name: entityName(detail2.ID),
+				values: detail2.values,
+			}
+		}
+		if (detail3) {
+			postParam.detail3 = {
+				name: entityName(detail3.ID),
+				values: detail3.values,
+			}
+		}
+		let ret = await this.uqApi.post(IDPath('id-detail'), postParam);
 		let val:string = ret[0].ret;
 		let parts = val.split('\n');
 		let items = parts.map(v => v.split('\t'));
@@ -674,42 +745,79 @@ export class UqMan {
 	}
 
 	private IDDetailGet = async (param: ParamIDDetailGet): Promise<any> => {
-		let ret = await this.uqApi.post(IDPath('id-detail-get'), param);
+		let {id, master, detail, detail2, detail3} = param;
+		let ret = await this.uqApi.post(IDPath('id-detail-get'), {
+			id,
+			master: entityName(master),
+			detail: entityName(detail),
+			detail2: entityName(detail2),
+			detail3: entityName(detail3),
+		});
 		return ret;
 	}
 
-	private checkParam(ID:string, IDX:string|string[], ID2:string, id:number|number[], key:{[key:string]:string|number}, page: ParamPage) {
-
+	//private checkParam(ID:ID, IDX:(ID|IDX)|(ID|IDX)[], ID2:ID2, id:number|number[], key:{[key:string]:string|number}, page: ParamPage) {
+	//}
+	private IDXToString(p:ID|IDX|((ID|IDX)[])):string|string[] {
+		if (Array.isArray(p) === true) return (p as (ID|IDX)[]).map(v => entityName(v));
+		return entityName(p as ID|IDX);
 	}
-
-	private ID = async (paramID: ParamID): Promise<any[]> => {
-		let {IDX, id, page} = paramID;
-		this.checkParam(null, IDX, null, id, null, page);
-		let ret = await this.uqApi.post(IDPath('id'), paramID);
+	private ID = async (param: ParamID): Promise<any[]> => {
+		let {IDX} = param;
+		//this.checkParam(null, IDX, null, id, null, page);
+		let ret = await this.uqApi.post(IDPath('id'), {
+			...param,
+			IDX: this.IDXToString(IDX),
+		});
 		return ret;
 	}
-	private KeyID = async (paramKeyID: ParamKeyID): Promise<any[]> => {
-		let {IDX, key, page} = paramKeyID;
-		this.checkParam(null, IDX, null, null, key, page);
-		let ret = await this.uqApi.post(IDPath('key-id'), paramKeyID);
+	private KeyID = async (param: ParamKeyID): Promise<any[]> => {
+		let {ID, IDX} = param;
+		//this.checkParam(null, IDX, null, null, key, page);
+		let ret = await this.uqApi.post(IDPath('key-id'), {
+			...param,
+			ID: entityName(ID),
+			IDX: IDX?.map(v => entityName(v)),
+		});
 		return ret;
 	}
-	private ID2 = async (paramID2: ParamID2): Promise<any[]> => {
-		let {ID2, IDX, id, page} = paramID2;
-		this.checkParam(null, IDX, ID2, id, null, page);
-		let ret = await this.uqApi.post(IDPath('id2'), paramID2);
+	private ID2 = async (param: ParamID2): Promise<any[]> => {
+		let {ID2, IDX} = param;
+		//this.checkParam(null, IDX, ID2, id, null, page);
+		let ret = await this.uqApi.post(IDPath('id2'), {
+			...param,
+			ID2: entityName(ID2),
+			IDX: IDX?.map(v => entityName(v)),
+		});
 		return ret;
 	}
-	private KeyID2 = async (paramKeyID2: ParamKeyID2): Promise<any[]> => {
-		let {ID, ID2, IDX, key, page} = paramKeyID2;
-		this.checkParam(ID, IDX, ID2, null, key, page);
-		let ret = await this.uqApi.post(IDPath('key-id2'), paramKeyID2);
+	private KeyID2 = async (param: ParamKeyID2): Promise<any[]> => {
+		let {ID, ID2, IDX} = param;
+		//this.checkParam(ID, IDX, ID2, null, key, page);
+		let ret = await this.uqApi.post(IDPath('key-id2'), {
+			...param,
+			ID: entityName(ID),
+			ID2: entityName(ID2),
+			IDX: IDX?.map(v => entityName(v)),
+		});
 		return ret;
 	}
-	private IDLog = async (paramIDLog: ParamIDLog): Promise<any[]> => {
-		let {IDX, id, page} = paramIDLog;		
-		this.checkParam(null, IDX, null, id, null, page);
-		let ret = await this.uqApi.post(IDPath('id-log'), paramIDLog);
+	private IDLog = async (param: ParamIDLog): Promise<any[]> => {
+		let {IDX} = param;
+		//this.checkParam(null, IDX, null, id, null, page);
+		let ret = await this.uqApi.post(IDPath('id-log'), {
+			...param,
+			IDX: entityName(IDX),
+		});
+		return ret;
+	}
+	private IDSum = async (param: ParamIDSum): Promise<any[]> => {
+		let {IDX} = param;
+		//this.checkParam(null, IDX, null, id, null, page);
+		let ret = await this.uqApi.post(IDPath('id-sum'), {
+			...param,
+			IDX: entityName(IDX),
+		});
 		return ret;
 	}
 }
@@ -721,4 +829,10 @@ function ids(item:string[]):number[] {
 	let ret:number[] = [];
 	for (let i=0; i<len-1; i++) ret.push(Number(item[i]));
 	return ret;
+}
+
+function entityName(entity:Entity | string): string {
+	if (!entity) return;
+	if (typeof entity === 'string') return entity;
+	return entity.name;
 }

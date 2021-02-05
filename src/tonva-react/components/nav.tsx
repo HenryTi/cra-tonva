@@ -1,15 +1,14 @@
 import * as React from 'react';
-import {makeObservable, observable} from 'mobx';
+import {observable} from 'mobx';
 import _ from 'lodash';
 import {User, Guest/*, UserInNav*/} from '../tool/user';
 import {Page} from './page/page';
 import {netToken} from '../net/netToken';
 import FetchErrorView, { SystemNotifyPage } from './fetchErrorView';
 import {FetchError} from '../net/fetchError';
-import {/*appUrl, setAppInFrame, getExHash, getExHashPos*/} from '../net/appBridge';
+//import {appUrl, setAppInFrame, getExHash, getExHashPos} from '../net/appBridge';
 import {LocalData, env} from '../tool';
-import {guestApi, logoutApis, setCenterUrl, setCenterToken, /*appInFrame, */host, resUrlFromHost, messageHub} from '../net';
-//import { WsBase, wsBridge } from '../net/wsChannel';
+import {guestApi, logoutApis, setCenterUrl, setCenterToken, host, resUrlFromHost, messageHub} from '../net';
 import { resOptions } from '../res/res';
 import { Loading } from './loading';
 import { Navigo, RouteFunc, Hooks, NamedRoute } from './navigo';
@@ -22,6 +21,8 @@ import { FA } from './simple';
 import { userApi } from '../net';
 import { ReloadPage, ConfirmReloadPage } from './reloadPage';
 import { PageWebNav } from './page';
+import { Login } from './login';
+import { createLogin } from '../auth';
 
 const regEx = new RegExp('Android|webOS|iPhone|iPad|' +
     'BlackBerry|Windows Phone|'  +
@@ -37,10 +38,9 @@ export const mobileHeaderStyle = isMobile? {
 //const logo = require('../img/logo.svg');
 let logMark: number;
 const logs:string[] = [];
-
 export type NavPage = (params:any) => Promise<void>;
 
-export interface Props //extends React.Props<Nav>
+export interface Props
 {
     onLogined: (isUserLogin?:boolean)=>Promise<void>;
     notLogined?: ()=>Promise<void>;
@@ -387,21 +387,18 @@ export interface NavSettings {
 export class Nav {
     private navView:NavView;
     //private ws: WsBase;
-    private wsHost: string;
+	private wsHost: string;
     private local: LocalData = new LocalData();
 	private navigo: Navigo;
 	//isRouting: boolean = false;
 	navSettings: NavSettings;
-    user: User/*InNav*/ = null;
+    @observable user: User/*InNav*/ = undefined;
     testing: boolean;
     language: string;
     culture: string;
     resUrl: string;
 
     constructor() {
-		makeObservable(this, {
-			user: observable
-		});
         let {lang, district} = resOptions;
         this.language = lang;
         this.culture = district;
@@ -501,7 +498,7 @@ export class Nav {
         return this.navSettings && this.navSettings.oem;
     }
 
-    //hashParam: string;
+    hashParam: string;
     private centerHost: string;
     private arrs = ['/test', '/test/'];
     private unitJsonPath():string {
@@ -570,7 +567,7 @@ export class Nav {
 			throw Error('guest can not be undefined');
 		}
 		nav.setGuest(guest);
-		/*
+/*
 		let exHash = getExHash();
 		let appInFrame = setAppInFrame(exHash);
 		if (exHash !== undefined && window !== window.parent) {
@@ -590,7 +587,7 @@ export class Nav {
 
 		let predefinedUnit = await this.loadPredefinedUnit();
 		appInFrame.predefinedUnit = predefinedUnit;
-		*/
+*/
 	}
 
     async start() {
@@ -607,7 +604,7 @@ export class Nav {
             }
             //window.setInterval(()=>console.error('tick every 5 seconds'), 5000);
 			nav.clear();
-			nav.onSysNavRoutes();
+			//nav.onSysNavRoutes();
 			this.startWait();
             
             let user: User = this.local.user.get();
@@ -668,17 +665,6 @@ export class Nav {
 		nav.showForget();
 	}
 
-	private sysRoutes: { [route: string]: NavPage } = {
-		'/login': this.navLogin,
-		'/logout': this.navLogout,
-		'/register': this.navRegister,
-		'/forget': this.navForget,
-	}
-
-	onSysNavRoutes() {
-		this.onNavRoutes(this.sysRoutes);
-	}
-
 	navigateToLogin() {
 		nav.navigate('/login');
 	}
@@ -704,7 +690,27 @@ export class Nav {
 	onNavRoute(navPage: NavPage) {
 		this.on(this.routeFromNavPage(navPage));
 	}
+	private doneSysRoutes:boolean = false;
+	private sysRoutes: { [route: string]: NavPage } = {
+		'/login': this.navLogin,
+		'/logout': this.navLogout,
+		'/register': this.navRegister,
+		'/forget': this.navForget,
+	}
+	/*
+	onSysNavRoutes() {
+		this.onNavRoutes(this.sysRoutes);
+	}
+	*/
 	onNavRoutes(navPageRoutes: {[url:string]: NavPage}) {
+		if (this.doneSysRoutes === false) {
+			this.doneSysRoutes = true;
+			this.internalOnNavRoutes(this.sysRoutes);
+		}
+		this.internalOnNavRoutes(navPageRoutes);
+	}
+
+	private internalOnNavRoutes(navPageRoutes: {[url:string]: NavPage}) {
 		if (!navPageRoutes) return;
 		this.navPageRoutes = _.merge(this.navPageRoutes, navPageRoutes);
 		let navOns: { [route: string]: (params: any, queryStr: any) => void } = {};
@@ -739,7 +745,9 @@ export class Nav {
 			alert('Is not in webnav state, cannot navigate to url "' + url + '"');
 			return;
 		}
-		if (this.testing === true) url += '#test';
+		if (this.testing === true) {
+			url += '#test';
+		}
 		return this.navigo.navigate(url, absolute);
 	}
 
@@ -769,8 +777,8 @@ export class Nav {
 
     saveLocalUser() {
         this.local.user.set(this.user);
-	}
-	
+    }
+
 	setUqRoles(uq:string, roles:string[]) {
 		let {roles:userRoles} = this.user;
 		if (!userRoles) {
@@ -797,7 +805,10 @@ export class Nav {
         if (callback !== undefined) //this.loginCallbacks.has)
             callback(user);
             //this.loginCallbacks.call(user);
-        else {
+        else if (this.isWebNav === true) {
+			this.navigate('/index');
+		}
+		else {
             await this.showAppView(isUserLogin);
         }
 	}
@@ -857,68 +868,35 @@ export class Nav {
             <div className="p-3" dangerouslySetInnerHTML={content} />
         </Page>);
     }
-/*
-    private async getPrivacy(privacy:string):Promise<string> {
-        const headers = new  Headers({
-            "Content-Type":'text/plain'
-       })
-        let pos = privacy.indexOf('://');
-        if (pos > 0) {
-            let http = privacy.substring(0, pos).toLowerCase();
-            if (http === 'http' || http === 'https') {
-                try {
-                    let res = await fetch(privacy, {
-                        method:'GET',
-                        headers: headers,
-                    });
-                    let text = await res.text();
-                    return text;
-                }
-                catch (err) {
-                    return err.message;
-                }
-            }
-        }
-        return privacy;
-    }
-*/
-    async showLogin(callback?: (user:User)=>Promise<void>, withBack?:boolean) {
-        let lv = await import('../entry/login');
-        let loginView = React.createElement(
-			lv.default, 
-			{withBack, callback}
-		);
-        if (withBack !== true) {
-            this.navView.clear();
-            this.pop();
-        }
-        this.navView.push(loginView);
+
+	private createLogin = createLogin;
+	setCreateLogin(createLogin: ()=>Promise<Login>) {
+		this.createLogin = createLogin;
+	}
+
+	private login: Login;
+	private async getLogin():Promise<Login> {
+		if (this.login) return this.login;
+		return this.login = await this.createLogin();
+	}
+	async showLogin(callback?: (user:User)=>Promise<void>, withBack?:boolean) {
+		let login = await this.getLogin();
+		login.showLogin(callback, withBack);
     }
 
     async showLogout(callback?: ()=>Promise<void>) {
-        let footer = <div className="text-center justify-content-center">
-            <button className="btn btn-outline-danger" onClick={this.resetAll}>升级软件</button>
-        </div>;
-        nav.push(<Page header="安全退出" back="close" footer={footer}>
-            <div className="my-5 mx-1 border border-info bg-white rounded p-3 text-center">
-                <div>退出当前账号不会删除任何历史数据，下次登录依然可以使用本账号</div>
-                <div className="mt-3 text-center">
-                        <button className="btn btn-danger" onClick={()=>this.logout(callback)}>安全退出</button>
-                </div>
-            </div>
-        </Page>);
+		let login = await this.getLogin();
+		login.showLogout(callback);
 	}
 	
 	async showRegister() {
-		let lv = await import('../entry/register');
-		let c = new lv.RegisterController(undefined);
-		await c.start();
+		let login = await this.getLogin();
+		login.showRegister();
 	}
 
 	async showForget() {
-		let lv = await import('../entry/register');
-		let c = new lv.ForgetController(undefined);
-		await c.start();
+		let login = await this.getLogin();
+		login.showForget();
 	}
 
     async logout(callback?:()=>Promise<void>) { //notShowLogin?:boolean) {
@@ -937,8 +915,8 @@ export class Nav {
     }
 
     async changePassword() {
-        let cp = await import('../entry/changePassword');
-        nav.push(<cp.ChangePasswordPage />);
+		let login = await this.getLogin();
+		login.showChangePassword();
     }
 
     get level(): number {
@@ -1005,7 +983,7 @@ export class Nav {
                     appUrl(url, unitId, sheet, [apiId, sheetType, sheetId]);
             console.log('navToApp: %s', JSON.stringify(uh));
             nav.push(<article className='app-container'>
-                <span id={uh.hash} onClick={()=>this.back()} >
+                <span id={uh.hash} onClick={()=>this.back()}/>
                     <i className="fa fa-arrow-left" />
                 </span>
                 {
@@ -1022,8 +1000,9 @@ export class Nav {
     navToSite(url: string) {
         // show in new window
         window.open(url);
-    }
+	}
 	*/
+
     get logs() {return logs};
     log(msg:string) {
         logs.push(msg);

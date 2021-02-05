@@ -37,7 +37,7 @@ export class VAppMain extends VPage<CMainBase> {
     };
 }
 */
-export class VUnsupportedUnit extends VPage<CAppBase> {
+export class VUnsupportedUnit extends VPage<CAppBase<any>> {
 	private params: {predefinedUnit:number, uqsLoadErrors:string[]};
     async open(params: {predefinedUnit:number, uqsLoadErrors:string[]}) {
 		this.params = params;
@@ -98,7 +98,7 @@ export class VUnsupportedUnit extends VPage<CAppBase> {
 	*/
 }
 
-export class VUnitSelect extends VPage<CAppBase> {
+export class VUnitSelect extends VPage<CAppBase<any>> {
     async open() {
         this.openPage(this.page);
     }
@@ -123,7 +123,7 @@ export class VUnitSelect extends VPage<CAppBase> {
 	}
 }
 
-export class VErrorsPage extends VPage<CAppBase> {
+export class VErrorsPage extends VPage<CAppBase<any>> {
     async open(errors:string[]) {
         this.openPage(this.page, {errors:errors});
     }
@@ -142,7 +142,7 @@ export class VErrorsPage extends VPage<CAppBase> {
     }
 }
 
-export class VStartError extends VPage<CAppBase> {
+export class VStartError extends VPage<CAppBase<any>> {
     async open(error:any) {
         this.openPage(this.page, {error:error});
     }

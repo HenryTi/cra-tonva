@@ -1,6 +1,6 @@
 import { AppConfig, CAppBase } from './CAppBase';
 
-export async function start(CApp: new (config: AppConfig) => CAppBase, appConfig: AppConfig, isUserLogin?:boolean) {
+export async function start(CApp: new (config: AppConfig) => CAppBase<any>, appConfig: AppConfig, isUserLogin?:boolean) {
 	if (appConfig) {
 		let {htmlTitle} = appConfig;
 		if (htmlTitle) {

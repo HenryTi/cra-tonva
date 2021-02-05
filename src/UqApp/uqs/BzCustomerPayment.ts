@@ -1,5 +1,7 @@
-//=== UqApp builder created on Sun Jan 31 2021 09:39:43 GMT-0500 (GMT-05:00) ===//
-import { UqBase, UqTuid, UqSheet, UqBook, UqQuery, UqMap, UqHistory, UqPending } from "tonva-react";
+//=== UqApp builder created on Thu Feb 04 2021 17:42:19 GMT-0500 (GMT-05:00) ===//
+import { Coms } from "./BzCustomerPayment.Coms";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { IDXValue, UqBase, UqTuid, UqSheet, UqBook, UqQuery, UqMap, UqHistory, UqPending } from "tonva-react";
 
 
 //===============================
@@ -223,7 +225,10 @@ export interface ParamIDActs {
 }
 
 
-export interface Uq extends UqBase<ParamIDActs> {
+export interface Uq extends UqBase {
+	IDActs(param:ParamIDActs): Promise<any>;
+	coms: Coms;
+
 	$user: UqTuid<Tuid$user>;
 	$sheet: UqTuid<Tuid$sheet>;
 	Order: UqSheet<SheetOrder, any>;

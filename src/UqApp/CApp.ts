@@ -4,8 +4,8 @@ import { CBug } from "bug";
 import { CUqApp } from "./CBase";
 import { res } from "./res";
 import { VMain } from "./VMain";
-import { CTester } from "com/tester";
-import { UQs } from "./uqs";
+import { CTester } from "test-com";
+import { UQs, buildComs } from "./uqs";
 
 const gaps = [10, 3,3,3,3,3,5,5,5,5,5,5,5,5,10,10,10,10,15,15,15,30,30,60];
 
@@ -13,20 +13,24 @@ export class CApp extends CUqApp {
 	cHome: CHome;
 	cBug: CBug;
 	cMe: CMe;
-	cUI: CTester<CApp, UQs>;
+	cUI: CTester;
 
 	protected async internalStart(isUserLogin: boolean) {
 		this.setRes(res);
 		this.cHome = this.newC(CHome);
 		this.cBug = this.newC(CBug);
 		this.cMe = this.newC(CMe);
-		this.cUI = this.newC(CTester) as CTester<CApp, UQs>;
+		this.cUI = this.newC(CTester) as CTester;
 		this.cHome.load();
 		this.openVPage(VMain, undefined, this.dispose);
 		// 加上下面一句，可以实现主动页面刷新
 		// this.timer = setInterval(this.callTick, 1000);
 		// uq 里面加入这一句，会让相应的$Poked查询返回poke=1：
 		// TUID [$User] ID (member) SET poke=1;
+	}
+
+	protected afterBuiltUQs(uqs: UQs) {
+		buildComs(uqs);
 	}
 
 	private timer:any;

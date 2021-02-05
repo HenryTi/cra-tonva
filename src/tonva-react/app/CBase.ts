@@ -9,11 +9,11 @@ export abstract class CBase<A extends CAppBase<U>, U> extends Controller {
     constructor(cApp: any) {
         super(cApp.res);
         this._cApp = cApp;
-        this._uqs = cApp && cApp.uqs;
+        this._uqs = cApp?.uqs;
 	}
 
-    get uqs(): any {return this._uqs}
-	get cApp(): any {return this._cApp}
+    get uqs(): U {return this._uqs}
+	get cApp(): A {return this._cApp}
 	async getUqRoles(uqName:string):Promise<string[]> {
 		return this._cApp?.getUqRoles(uqName);
 	}
