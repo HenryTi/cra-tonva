@@ -1,26 +1,26 @@
 import { observer } from "mobx-react";
 import { FA, LMR, VPage } from "tonva-react";
-import { CMe } from "./CMe";
-import { VAccountant } from "./VAccountant";
-import { VManager } from "./VManager";
+//import { CMe } from "./CMe";
+import { CRoles } from "./CRoles";
+//import { VAccountant } from "./VAccountant";
+//import { VManager } from "./VManager";
 
 interface RoleItem {
 	caption: string;
 	onClick: () => Promise<void>;
 }
 
-export class VRoles extends VPage<CMe> {
+export class VRoles extends VPage<CRoles> {
 	private onRoleAdmin = async () => {
 		this.controller.showRoleAdmin();
 	}
-
 	private onAccountant = async () => {
-		this.openVPage(VAccountant);
+		//this.openVPage(VAccountant);
 	}
 
 	private onManager = async () => {
-		this.openVPage(VManager);	}
-
+		//this.openVPage(VManager);
+	}
 	private roleItems:{[role:string]: RoleItem} = {
 		$: {
 			caption: '设置用户角色',
@@ -36,7 +36,9 @@ export class VRoles extends VPage<CMe> {
 		},
 	};
 
-	header() {return this.t('backend')}
+	header() {
+		return this.t('backend')
+	}
 	content() {
 		let VContent = observer(() => {
 			let {roles} = this.controller;

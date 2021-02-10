@@ -46,7 +46,7 @@ export const testTimesChange = {
 
 		let sum = await tc.IDSum({
 			IDX: tc.Hours,
-			field: 'onsite',
+			field: ['onsite'],
 			id: [id],
 			far: undefined,
 			near: new Date().getTime(),

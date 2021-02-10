@@ -1,7 +1,6 @@
-//=== UqApp builder created on Thu Feb 04 2021 17:42:19 GMT-0500 (GMT-05:00) ===//
-import { Coms } from "./BzTimesChange.Coms";
+//=== UqApp builder created on Tue Feb 09 2021 22:24:44 GMT-0500 (GMT-05:00) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { IDXValue, UqBase, UqTuid, UqQuery, UqID, UqIDX } from "tonva-react";
+import { IDXValue, Uq, UqTuid, UqQuery, UqID, UqIDX, UqIX } from "tonva-react";
 
 
 //===============================
@@ -34,7 +33,6 @@ export interface Param$poked {
 }
 interface Return$pokedRet {
 	poke: number;
-	$id: number;
 }
 interface Result$poked {
 	ret: Return$pokedRet[];
@@ -54,21 +52,28 @@ export interface Hours {
 	break?: number|IDXValue;
 	sick?: number|IDXValue;
 	over?: number|IDXValue;
+	noTimeLog?: number;
+}
+
+export interface UserStaff {
+	id: number;
+	ix: number;
 }
 
 export interface ParamIDActs {
 	staff?: Staff[];
 	hours?: Hours[];
+	userStaff?: UserStaff[];
 }
 
 
-export interface Uq extends UqBase {
+export interface UqExt extends Uq {
 	IDActs(param:ParamIDActs): Promise<any>;
-	coms: Coms;
 
 	$user: UqTuid<Tuid$user>;
 	$sheet: UqTuid<Tuid$sheet>;
 	$poked: UqQuery<Param$poked, Result$poked>;
 	Staff: UqID<any>;
 	Hours: UqIDX<any>;
+	UserStaff: UqIX<any>;
 }

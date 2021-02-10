@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { setRes } from '../../components';
+import { setRes } from '../../res';
 
 export interface EasyDateProps {
     date: Date | number;

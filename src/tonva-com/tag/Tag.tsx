@@ -1,9 +1,9 @@
 import { ReactElement, useEffect, useState } from "react";
-import { ComTag } from "./Com";
+import { MidTag } from "./Mid";
 
 type TypeNames = [string, string[]];
 
-export function Tag(props: {qTag:ComTag, id:number, onClick?:()=>void; render?: (typeNamesArr:TypeNames[]) => ReactElement}) {
+export function Tag(props: {qTag:MidTag, id:number, onClick?:()=>void; render?: (typeNamesArr:TypeNames[]) => ReactElement}) {
 	let {qTag: tagUQs, id, onClick, render} = props;
 	const [typeNamesArr, setTypeNamesArr] = useState<TypeNames[]>(undefined);
 	useEffect(() => {

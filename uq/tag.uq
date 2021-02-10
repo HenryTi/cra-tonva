@@ -1,0 +1,10 @@
+ID Tag ver 0.3 (
+	id,
+	key type TEXTId,		-- textID
+	key name TextId,		-- textID
+);
+
+IX CustomerTag (
+	id,					-- object
+	id2 index log,		-- tag
+);

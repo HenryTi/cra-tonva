@@ -1,2 +1,2 @@
 export * from './CTag';
-export * from './Com';
+export * from './Mid';

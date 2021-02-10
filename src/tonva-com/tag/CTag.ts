@@ -1,12 +1,11 @@
 import { Controller } from "tonva-react";
-import { ComTag } from "./Com";
-//import { CApp, UQs } from "UqApp";
+import { MidTag } from "./Mid";
 import { VTag } from "./VTag";
 import { VTagEdit } from "./VTagEdit";
 
 export class CTag extends Controller {
-	com: ComTag;
-	constructor(com:ComTag, res?:any) {
+	com: MidTag;
+	constructor(com:MidTag, res?:any) {
 		super(res);
 		this.com = com;
 	}

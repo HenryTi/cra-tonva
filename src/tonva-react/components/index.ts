@@ -4,7 +4,6 @@ export * from './page';
 export * from './schema';
 export * from './form';
 export * from './edit';
-export * from '../res/res';
 export * from './loading';
 export * from './image';
 export * from './resUploader';

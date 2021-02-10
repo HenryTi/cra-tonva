@@ -20,16 +20,16 @@ export const testItem3 = {
 		});
 		log(b);
 
-		let c = await uqs.BzTest.ID2({
-			ID2: uqs.BzTest.Assign1,
+		let c = await uqs.BzTest.IX({
+			IX: uqs.BzTest.Assign1,
 			id: 3,
 		});
 		log(c);
 
-		let d = await uqs.BzTest.KeyID2({
+		let d = await uqs.BzTest.KeyIX({
 			ID: uqs.BzTest.X1,
 			key: {a1: 1, a2: undefined},
-			ID2: uqs.BzTest.Assign1,
+			IX: uqs.BzTest.Assign1,
 		});
 		log(d);
 

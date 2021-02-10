@@ -1,7 +1,6 @@
-//=== UqApp builder created on Thu Feb 04 2021 17:42:19 GMT-0500 (GMT-05:00) ===//
-import { Coms } from "./BzTest.Coms";
+//=== UqApp builder created on Tue Feb 09 2021 22:24:44 GMT-0500 (GMT-05:00) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { IDXValue, UqBase, UqTuid, UqAction, UqBook, UqQuery, UqMap, UqHistory, UqID, UqIDX, UqID2 } from "tonva-react";
+import { IDXValue, Uq, UqTuid, UqAction, UqBook, UqQuery, UqMap, UqHistory, UqID, UqIDX, UqIX } from "tonva-react";
 
 
 //===============================
@@ -217,13 +216,13 @@ export interface IBook1 {
 
 export interface Assign1 {
 	id: number;
-	id2: number;
+	ix: number;
 	val: number;
 }
 
 export interface CustomerTag {
 	id: number;
-	id2: number;
+	ix: number;
 }
 
 export interface ParamIDActs {
@@ -238,9 +237,8 @@ export interface ParamIDActs {
 }
 
 
-export interface Uq extends UqBase {
+export interface UqExt extends Uq {
 	IDActs(param:ParamIDActs): Promise<any>;
-	coms: Coms;
 
 	$user: UqTuid<Tuid$user>;
 	Product: UqTuid<TuidProduct>;
@@ -267,6 +265,6 @@ export interface Uq extends UqBase {
 	OrderMaster: UqID<any>;
 	Tag: UqID<any>;
 	IBook1: UqIDX<any>;
-	Assign1: UqID2<any>;
-	CustomerTag: UqID2<any>;
+	Assign1: UqIX<any>;
+	CustomerTag: UqIX<any>;
 }

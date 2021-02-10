@@ -1,5 +1,6 @@
-import { makeObservable, observable } from "mobx";
-import { centerApi, Controller, UqApi, UqMan } from "tonva-react";
+import { makeObservable, observable, runInAction } from "mobx";
+import { centerApi, Controller, UqApi, Uq } from "tonva-react";
+import { CIXEdit } from "../../IX";
 import { VRoleAdmin } from "./VRoleAdmin";
 
 export interface UserRole {
@@ -9,24 +10,27 @@ export interface UserRole {
 }
 
 export class CRoleAdmin extends Controller {
+	private readonly uq:Uq;
 	private readonly uqApi: UqApi;
 	readonly allRoles: string[];
 	readonly roleCaptions: string[];
-	//admins: UserRole[] = null;
 	meRoles: UserRole = null;
 	userRoles: UserRole[] = null;
+	id2OfUsers: string[];
 	private myRolesChanged:(roles:string[])=>void;
 
-	constructor(res:any, uq:UqMan, myRolesChanged?:(roles:string[])=>void, roleCaptionMap?:{[role:string]:string}) {
+	constructor(res:any, uq:Uq, myRolesChanged?:(roles:string[])=>void, roleCaptionMap?:{[role:string]:string}) {
 		super(res);
 		makeObservable(this, {
 			meRoles: observable,
 			userRoles: observable,
 		});
-		this.uqApi = uq.uqApi;
-		this.allRoles = uq.allRoles;
+		this.uq = uq;
+		let {$:uqMan} = uq;
+		this.uqApi = uqMan.uqApi;
+		this.allRoles = uqMan.allRoles;
 		if (!this.allRoles || this.allRoles.length === 0) {
-			throw new Error(`uq ${uq.name} allRoles not defined. No RoleAdmin needed.`);
+			throw new Error(`uq ${uqMan.name} allRoles not defined. No RoleAdmin needed.`);
 		}
 		this.myRolesChanged = myRolesChanged;
 		if (roleCaptionMap) {
@@ -39,22 +43,26 @@ export class CRoleAdmin extends Controller {
 
 	protected async internalStart() {
 		let allUserRoles = await this.uqApi.getAllRoleUsers();
-		let arr:string[] = this.allRoles.map(v => `|${v}|`);
-		function rolesBool(t:string): boolean[] {
-			if (!t) return arr.map(v => false);
-			return arr.map(v => t.indexOf(v) >= 0);
-		}
-		this.userRoles = [];
-		let meId = this.user.id;
-		for (let ur of allUserRoles) {
-			let {user, roles} = ur;
-			let item:UserRole = ur as any;
-			item.roles = rolesBool(roles);
-			if (user === meId)
-				this.meRoles = item;
-			else
-				this.userRoles.push(item);
-		}
+		runInAction(() => {
+			let r0 = allUserRoles.shift();
+			this.id2OfUsers = r0.roles.split('|');
+			let arr:string[] = this.allRoles.map(v => `|${v}|`);
+			function rolesBool(t:string): boolean[] {
+				if (!t) return arr.map(v => false);
+				return arr.map(v => t.indexOf(v) >= 0);
+			}
+			this.userRoles = [];
+			let meId = this.user.id;
+			for (let ur of allUserRoles) {
+				let {user, roles} = ur;
+				let item:UserRole = ur as any;
+				item.roles = rolesBool(roles);
+				if (user === meId)
+					this.meRoles = item;
+				else
+					this.userRoles.push(item);
+			}
+		});
 		this.openVPage(VRoleAdmin);
 	}
 	async setUserRole(checked:boolean, iRole:number, userRole:UserRole) {
@@ -145,5 +153,19 @@ export class CRoleAdmin extends Controller {
 		let roles = this.buildRolesText(userRole)
 		await this.uqApi.setUserRoles(user, roles);
 		this.fireMyRolesChanged(userRole);
+	}
+
+	id2UserBind = async (user:number, id2Name:string) => {
+		let IX = this.uq.$.getIX(id2Name);
+		await IX.loadSchema();
+		let {id2Name:idName} = IX.schema;
+		let ID = this.uq.$.getID(idName);
+		let cIXEdit = new CIXEdit({
+			uq: this.uq,
+			IX,
+			ID,
+			id: user,
+		});
+		await cIXEdit.start();
 	}
 }

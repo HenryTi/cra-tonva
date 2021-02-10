@@ -27,7 +27,7 @@ export class VRoleAdmin extends VPage<CRoleAdmin> {
 	private renderItem = (userRole: UserRole, isMe: boolean) => {
 		if (!userRole) return null;
 		let {user, roles, isDeleted} = userRole;
-		let {roleCaptions} = this.controller;
+		let {roleCaptions, id2OfUsers} = this.controller;
 		let onUndo = () => this.controller.restoreUser(userRole);
 		let onDelete = () => this.controller.deleteUser(userRole);
 		let onRightClick: () => void;
@@ -64,6 +64,14 @@ export class VRoleAdmin extends VPage<CRoleAdmin> {
 						{vCap}
 					</label>;
 				})}
+				{
+					id2OfUsers.map(v => {
+						return <button key={v} onClick={() => this.controller.id2UserBind(user, v)}
+							className="btn btn-sm btn-outline-info mx-3 my-2">
+							<small>关联</small> {v}
+						</button>
+					})
+				}
 			</div>
 		</LMR>;
 	}

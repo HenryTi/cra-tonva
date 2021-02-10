@@ -5,7 +5,7 @@ import { Action, Book, Query, Sheet, Tuid, UqEnum,
 	Entity, ArrFields, Field } from './index';
 import { nav } from '../components';
 import { UqsConfig } from '../app';
-import { ID, ID2, IDX } from './ID';
+import { ID, IX, IDX } from './ID';
 import { camelCase, capitalCase, env } from 'tonva-react';
 
 const red = '\x1b[41m%s\x1b[0m';
@@ -70,6 +70,7 @@ function overrideTsFile(path:string, fileName:string, content:string, suffix:str
 	lastBuildTime = Date.now();
 	console.log(red, `${tsFile} is built`);
 }
+/*
 function createTsFile(path:string, fileName:string, content:string, suffix:string = 'ts') {
 	let tsFile = `${path}/${fileName}.${suffix}`;
 	if (fs.existsSync(tsFile) === true) return;
@@ -77,6 +78,7 @@ function createTsFile(path:string, fileName:string, content:string, suffix:strin
 	lastBuildTime = Date.now();
 	console.log(red, `${tsFile} is built`);
 }
+*/
 function buildTsHeader() {
 	return `//=== UqApp builder created on ${new Date()} ===//`;
 }
@@ -92,17 +94,13 @@ function buildTsCApp():string {
 	return `${buildTsHeader()}
 import { CUqApp } from "./CBase";
 import { VMain } from "./VMain";
-import { UQs, buildComs } from "./uqs";
+import { UQs } from "./uqs";
 
 const gaps = [10, 3,3,3,3,3,5,5,5,5,5,5,5,5,10,10,10,10,15,15,15,30,30,60];
 
 export class CApp extends CUqApp<> {
 	protected async internalStart(isUserLogin: boolean) {
 		this.openVPage(VMain, undefined, this.dispose);
-	}
-
-	protected afterBuiltUQs(uqs: UQs) {
-		buildComs(uqs);
 	}
 
 	private timer:any;
@@ -202,7 +200,6 @@ async function buildUqsFolder(uqsFolder:string, options: UqsConfig) {
 		try {
 			let files = fs.readdirSync(uqsFolder);
 			for (const file of files) {
-				if (file.endsWith('.Coms.ts') === true) continue;
 				fs.unlinkSync(path.join(uqsFolder, file));
 			}	
 		}
@@ -212,7 +209,6 @@ async function buildUqsFolder(uqsFolder:string, options: UqsConfig) {
 	}
 	let tsUqsIndexHeader = buildTsHeader();
 	let tsUqsIndexContent = `\n\nexport interface UQs {`;
-	let tsUqsIndexBuildComs = '\n\nexport function buildComs(uqs:UQs) {';
 	let tsUqsIndexReExport = '\n';
 	for (let uq of uqMans) {
 		let {devName:o1, uqName:n1} = getNameFromUq(uq);
@@ -220,41 +216,18 @@ async function buildUqsFolder(uqsFolder:string, options: UqsConfig) {
 		let tsUq = buildTsUq(uq, uqAlias);
 		overrideTsFile(uqsFolder, uqAlias, tsUq);
 
-		let tsUqComs = buildTsUqComs(uq, uqAlias);
-		createTsFile(uqsFolder, uqAlias + '.Coms', tsUqComs);
-
 		tsUqsIndexHeader += `\nimport * as ${uqAlias} from './${uqAlias}';`;
-		tsUqsIndexHeader += `\nimport { Coms as ${uqAlias}Coms } from './${uqAlias}.Coms';`;
-		tsUqsIndexContent += `\n\t${uqAlias}: ${uqAlias}.Uq;`; 
+		tsUqsIndexContent += `\n\t${uqAlias}: ${uqAlias}.UqExt;`; 
 		tsUqsIndexReExport += `\nexport * as ${uqAlias} from './${uqAlias}';`;
-		tsUqsIndexBuildComs += `\n\tuqs.${uqAlias}.setComs(new ${uqAlias}Coms(uqs.${uqAlias}));`;
 	}
 
 	overrideTsFile(uqsFolder, 'index', 
-		tsUqsIndexHeader + tsUqsIndexContent + '\n}' + tsUqsIndexReExport + '\n' + tsUqsIndexBuildComs + '\n}\n');
+		tsUqsIndexHeader + tsUqsIndexContent + '\n}' + tsUqsIndexReExport + '\n');
 }
 
 function buildTsUq(uq: UqMan, uqAlias:string) {
 	let ret = buildTsHeader();
 	ret += buildUQ(uq, uqAlias);
-	return ret;
-}
-
-function buildTsUqComs(uq: UqMan, uqAlias: string) {
-	let ret = buildTsHeader();
-	ret += `
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { ComTag } from "tonva-com";
-import { Uq } from "./${uqAlias}";
-
-export class Coms {
-	// eslint-disable-next-line @typescript-eslint/no-useless-constructor
-	constructor(uq: Uq) {
-		//this.customer = new ComTag(uq, uq.Tag, uq.CustomerTag);
-	}
-	
-	//readonly customer: ComTag;
-}`;
 	return ret;
 }
 
@@ -304,9 +277,8 @@ async function loadUqEntities(uq:UqMan):Promise<void> {
 
 function buildUQ(uq:UqMan, uqAlias:string) {
 	let tsImport = `
-import { Coms } from "./${uqAlias}.Coms";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { IDXValue, UqBase`;
+import { IDXValue, Uq`;
 	let ts:string = `\n\n`;
 	ts += '\n//===============================';
 	ts += `\n//======= UQ ${uq.name} ========`;
@@ -326,14 +298,13 @@ import { IDXValue, UqBase`;
 	uq.tagArr.forEach(v => ts += uqEntityInterface<Tag>(v, buildTagInterface));
 	uq.idArr.forEach(v => ts += uqEntityInterface<ID>(v, buildIDInterface));
 	uq.idxArr.forEach(v => ts += uqEntityInterface<IDX>(v, buildIDXInterface));
-	uq.id2Arr.forEach(v => ts += uqEntityInterface<ID2>(v, buildID2Interface));
+	uq.id2Arr.forEach(v => ts += uqEntityInterface<IX>(v, buildIXInterface));
 
 	ts += buildIDActInterface(uq);
 
 	ts += `
-\nexport interface Uq extends UqBase {
+\nexport interface UqExt extends Uq {
 	IDActs(param:ParamIDActs): Promise<any>;
-	coms: Coms;
 `;
 	function appendArr<T extends Entity>(arr:T[], type:string, tsBuild: (v:T) => string) {
 		if (arr.length === 0) return;
@@ -354,7 +325,7 @@ import { IDXValue, UqBase`;
 	appendArr<Tag>(uq.tagArr, 'Tag', v => uqBlock<Tag>(v, buildTag));
 	appendArr<ID>(uq.idArr, 'ID', v => uqBlock<ID>(v, buildID));
 	appendArr<IDX>(uq.idxArr, 'IDX', v => uqBlock<IDX>(v, buildIDX));
-	appendArr<ID2>(uq.id2Arr, 'ID2', v => uqBlock<ID2>(v, buildID2));
+	appendArr<IX>(uq.id2Arr, 'IX', v => uqBlock<IX>(v, buildIX));
 	ts += '\n}\n';
 	tsImport += ' } from "tonva-react";';
 	return tsImport + ts;
@@ -607,9 +578,9 @@ function buildIDX(idx: IDX):string {
 	return ts;
 }
 
-function buildID2(id2: ID2):string {
-	let {sName} = id2;
-	let ts = `\t${entityName(sName)}: UqID2<any>;`;
+function buildIX(ix: IX):string {
+	let {sName} = ix;
+	let ts = `\t${entityName(sName)}: UqIX<any>;`;
 	return ts;
 }
 
@@ -676,8 +647,8 @@ function buildIDXInterface(idx: IDX):string {
 	return ts;
 }
 
-function buildID2Interface(id2: ID2):string {
-	let {sName, fields} = id2;
+function buildIXInterface(ix: IX):string {
+	let {sName, fields} = ix;
 	let ts = `export interface ${capitalCase(sName)} {`;
 	ts += buildFields(fields);
 	ts += '\n}';

@@ -1,4 +1,5 @@
-import { nav, t, setGlobalRes, RouteFunc, Hooks, Navigo, NamedRoute } from "../components";
+import { nav, RouteFunc, Hooks, Navigo, NamedRoute } from "../components";
+import { t, setGlobalRes } from '../res';
 import { Controller } from '../vm';
 import { UQsMan, TVs } from "../uq";
 //import { appInFrame } from "../net";

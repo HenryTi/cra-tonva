@@ -1,16 +1,18 @@
-import { ID, ID2, UqBase } from "tonva-react";
+import { ID, IX, Tag, Uq } from "tonva-react";
 
 const cacheMax = 100;
-export class ComTag {
-	private uq: UqBase;
-	private tagID: ID;
-	private tagID2: ID2;
+export class MidTag {
+	private uq: Uq;
+	private ID: ID;
+	private IX: IX;
+	private tag: ID;
 	private cache:{[id:number]:any} = {};
 	private arr: number[] = [];
-	constructor(uq: UqBase, tagID: ID, tagID2: ID2) {
+	constructor(uq: Uq, ID: ID, tagIX: IX, tag:ID) {
 		this.uq = uq;
-		this.tagID = tagID;
-		this.tagID2 = tagID2;
+		this.ID = ID;
+		this.IX = tagIX;
+		this.tag = tag;
 	}
 
 	async load(id:number): Promise<any[]> {
@@ -21,10 +23,10 @@ export class ComTag {
 			this.arr.push(id);
 			return ret;
 		}
-		ret = await this.uq.ID2({
-			ID2: this.tagID2,
+		ret = await this.uq.IX({
+			IX: this.IX,
 			id,
-			IDX: [this.tagID],
+			IDX: [this.ID],
 			page: undefined,
 		});
 		this.cache[id] = ret;

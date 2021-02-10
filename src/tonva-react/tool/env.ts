@@ -10,12 +10,13 @@ function isTesting():boolean {
 }
 */
 export const env = (function () {
-	let {unit, testing, params} = initEnv();
-    //let localDb = new LocalMap(testing===true? '$$':'$');
+	let {unit, testing, params, lang, district} = initEnv();
     return {
 		unit,
 		testing,
 		params,
+		lang, 
+		district,
         isDevelopment: process.env.NODE_ENV === 'development',
         localDb: new LocalMap(testing===true? '$$':'$'),
         setTimeout: (tag:string, callback: (...args: any[]) => void, ms: number, ...args: any[]):NodeJS.Timer => {
@@ -33,7 +34,13 @@ export const env = (function () {
     }
 }());
 
-function initEnv(): {unit:number; testing:boolean; params:{[key:string]:string}} {
+function initEnv(): {
+	unit:number; 
+	testing:boolean; 
+	params:{[key:string]:string}; 
+	lang:string; 
+	district:string;}
+{
 	let pl     = /\+/g,  // Regex for replacing addition symbol with a space
         search = /([^&=]+)=?([^&]*)/g,
         decode = function (s:any) { return decodeURIComponent(s.replace(pl, " ")); },
@@ -101,5 +108,18 @@ function initEnv(): {unit:number; testing:boolean; params:{[key:string]:string}}
 		}
 		if (!unit) unit = 0;
 	}
-	return {unit, testing, params};
+    let lang: string, district: string;
+    let language = (navigator.languages && navigator.languages[0])  // Chrome / Firefox
+        || navigator.language; // ||   // All browsers
+    //navigator.userLanguage; // IE <= 10
+    if (!language) {
+        lang = 'zh';
+        district = 'CN';
+    }
+    else {
+        let parts = language.split('-');
+        lang = parts[0];
+        if (parts.length > 1) district = parts[1].toUpperCase();
+    }
+	return {unit, testing, params, lang, district};
 }

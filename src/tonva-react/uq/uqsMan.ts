@@ -112,8 +112,8 @@ export class UQsMan {
 		UQsMan._uqs = this.buildUQs();
 	}
 
-	static uq(uqLower: string): UqMan {
-		return UQsMan.value.collection[uqLower];
+	static uq(uqName: string): UqMan {
+		return UQsMan.value.collection[uqName.toLowerCase()];
 	}
 	
 	static async getUqUserRoles(uqLower:string):Promise<string[]> {

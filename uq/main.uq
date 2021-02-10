@@ -8,7 +8,9 @@ BOOK BookProduct (
 	stock DEC(12, 2),
 );
 
-ACTION WriteProductStock ver 0.5 ROLE(Accountant) (
+ACTION WriteProductStock ver 0.5 
+ROLE(Accountant)
+(
 	product ID Product,	
 	stock DEC(12, 2),
 ) {

@@ -17,11 +17,11 @@ export class IDX extends UqIDX<any> {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export class UqID2<M> extends Entity {
-	get typeName() {return 'id2'}
+export class UqIX<M> extends Entity {
+	get typeName() {return 'ix'}
 }
 
-export class ID2 extends UqID2<any> {
+export class IX extends UqIX<any> {
 }
 
 /* eslint-enable no-unused-vars */

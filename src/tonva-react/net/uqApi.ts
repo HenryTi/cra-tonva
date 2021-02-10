@@ -216,11 +216,6 @@ function getCenterChannel():HttpChannel {
 }
 
 export abstract class CenterApiBase extends ApiBase {
-    /*
-    constructor(path: string, showWaiting?: boolean) {
-        super(path, showWaiting);
-    }*/
-
     protected async getHttpChannel(): Promise<HttpChannel> {
         return (this.showWaiting === true || this.showWaiting === undefined)?
             getCenterChannelUI():

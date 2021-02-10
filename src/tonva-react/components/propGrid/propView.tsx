@@ -26,6 +26,8 @@ export interface StringProp extends LabeledProp {
 export interface NumberProp extends LabeledProp {
     type: 'number';
     name: string;
+	isInt: boolean;		// 整数
+	time: boolean;		// 字段log的time可以客户端输入
 }
 
 export interface FormatProp extends LabeledProp {

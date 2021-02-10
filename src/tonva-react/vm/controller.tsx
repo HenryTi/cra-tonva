@@ -1,6 +1,7 @@
 import * as React from 'react';
 import _ from 'lodash';
-import {nav, Page, resOptions, PageHeaderProps, PageWebNav} from '../components';
+import {nav, Page, PageHeaderProps, PageWebNav} from '../components';
+import {resOptions, t} from '../res';
 import { User, env } from '../tool';
 import { VPage } from './vpage';
 import { View } from './view';
@@ -54,7 +55,7 @@ export abstract class Controller {
 	}
 
 	internalT(str:string):any {
-		return this._t[str];
+		return this._t[str] ?? t(str);
 	}
 
 	get webNav(): WebNav<any> {return undefined;}

@@ -1,7 +1,6 @@
-//=== UqApp builder created on Thu Feb 04 2021 17:42:19 GMT-0500 (GMT-05:00) ===//
-import { Coms } from "./BzHelloTonva.Coms";
+//=== UqApp builder created on Tue Feb 09 2021 22:24:44 GMT-0500 (GMT-05:00) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { IDXValue, UqBase, UqTuid, UqAction, UqBook, UqQuery } from "tonva-react";
+import { IDXValue, Uq, UqTuid, UqAction, UqBook, UqQuery } from "tonva-react";
 
 
 //===============================
@@ -90,9 +89,8 @@ export interface ParamIDActs {
 }
 
 
-export interface Uq extends UqBase {
+export interface UqExt extends Uq {
 	IDActs(param:ParamIDActs): Promise<any>;
-	coms: Coms;
 
 	$sheet: UqTuid<Tuid$sheet>;
 	$user: UqTuid<Tuid$user>;

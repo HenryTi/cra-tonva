@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import {observable, IObservableArray, computed, makeObservable} from 'mobx';
+import {observable, IObservableArray, computed, makeObservable, runInAction} from 'mobx';
 
 export abstract class PageItems<T> {
     loading: boolean = false;
@@ -105,14 +105,16 @@ export abstract class PageItems<T> {
 	}
 
     reset() {
-        this.isFirst = true;
-        this.beforeLoad = true;
-        this.loaded = false;
-        this.param = undefined;
-		this.allLoaded = false;
-		this.pageStart = undefined;
-        this._items.clear();
-        //this.setPageStart(undefined);
+		runInAction(() => {
+			this.isFirst = true;
+			this.beforeLoad = true;
+			this.loaded = false;
+			this.param = undefined;
+			this.allLoaded = false;
+			this.pageStart = undefined;
+			this._items.clear();
+			//this.setPageStart(undefined);
+		});
     }
 
     append(item:T) {
@@ -238,8 +240,10 @@ export abstract class PageItems<T> {
         if (this.allLoaded === true) return false;
 		if (this.loading === true) return true;
 		if (this.changing === true) return true;
-		this.loading = true;
-		this.changing = true;
+		runInAction(() => {
+			this.loading = true;
+			this.changing = true;
+		});
         await this.onLoad();
         if (this.pageStart === undefined) this.setPageStart(undefined);
         let pageSize = this.pageSize + 1;
@@ -250,38 +254,27 @@ export abstract class PageItems<T> {
                 this.param, 
                 this.pageStart,
 				pageSize);
-        this.loaded = true;
 		let len = ret.length;
+		let allLoaded:boolean;
         if ((this.isFirst===true && len>this.firstSize) ||
             (this.isFirst===false && len>this.pageSize))
         {
-            this.allLoaded = false;
+            allLoaded = false;
             --len;
             ret.splice(len, 1);
         }
         else {
-            this.allLoaded = true;
+            allLoaded = true;
 		}
-		/*
-        if (len === 0) {
-			this.setPageStart(undefined);
-            this._items.clear();
-		}
-		else {
-			this.setPageStart(ret[len-1]);
-			if (this.appendPosition === 'tail') {
-				this._items.push(...ret);
-			}
-			else {
-				this._items.unshift(...ret.reverse());
-			}
-		}
-		*/
 		this.setLoaded(ret);
-		this.isFirst = false;
 		this.onLoaded();
-		this.changing = false;
-		this.loading = false;
+		runInAction(() => {
+			this.loaded = true;
+			this.allLoaded = allLoaded;
+			this.isFirst = false;
+			this.changing = false;
+			this.loading = false;
+		});
 		return !this.allLoaded;
 	}
 	

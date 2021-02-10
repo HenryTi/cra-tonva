@@ -14,8 +14,8 @@ import { ReactBoxId } from './tuid/reactBoxId';
 import { Tag } from './tag/tag';
 import { UqEnum } from './enum';
 import { Entity } from './entity';
-import { UqConfig } from 'tonva-react/app';
-import { ID, ID2, IDX } from './ID';
+import { CenterApi, centerApi, UqConfig } from 'tonva-react/app';
+import { ID, IX, IDX } from './ID';
 import { nav } from 'tonva-react/components';
 
 export type FieldType = 'id' | 'tinyint' | 'smallint' | 'int' | 'bigint' | 'dec' | 'char' | 'text'
@@ -133,17 +133,17 @@ export interface ParamKeyID {
 	page?: ParamPage;
 }
 
-export interface ParamID2 {
-	ID2: ID2;
+export interface ParamIX {
+	IX: IX;
 	id: number | number[];
 	IDX?: (ID|IDX)[];
 	page?: ParamPage;
 }
 
-export interface ParamKeyID2 {
+export interface ParamKeyIX {
 	ID: ID;
 	key: {[key:string]:string|number};
-	ID2: ID2;
+	IX: IX;
 	IDX?: (ID|IDX)[];
 	page?: ParamPage;
 }
@@ -154,15 +154,24 @@ export interface ParamIDLog {
 	id: number;
 	log: 'each' | 'day' | 'week' | 'month' | 'year';
 	timeZone?: number;
+	far?: number;
+	near?: number;
 	page: ParamPage;
 }
 
 export interface ParamIDSum {
 	IDX: IDX;
-	field: string;
+	field: string[];
 	id: number|number[];
 	far?: number;				// 以前
 	near?: number;				// 最近
+}
+
+export interface ParamIDxID {
+	ID: ID;
+	IX: IX;
+	ID2: ID;
+	page?: ParamPage;
 }
 
 export interface IDXValue {
@@ -170,11 +179,17 @@ export interface IDXValue {
 	time?: number|Date;
 }
 
+export interface ParamIDinIX {
+	ID: ID;
+	id: number;
+	IX: IX;
+	page?: ParamPage;
+}
+
 function IDPath(path:string):string {return path;}
 
-export interface UqBase {
-	$name: string;
-	setComs(coms:any):void;
+export interface Uq {
+	$: UqMan;
 	IDActs(param:any): Promise<any>;
 	IDDetail<M,D>(param: ParamIDDetail<M,D>): Promise<RetIDDetail>;
 	IDDetail<M,D,D2>(param: ParamIDDetail2<M,D,D2>): Promise<RetIDDetail2>;
@@ -184,10 +199,12 @@ export interface UqBase {
 	IDDetailGet<M,D,D2,D3>(param: ParamIDDetailGet): Promise<[M[], D[], D2[], D3[]]>;
 	ID<T>(param: ParamID): Promise<T[]>;
 	KeyID<T>(param: ParamKeyID): Promise<T[]>;
-	ID2<T>(param: ParamID2): Promise<T[]>;
-	KeyID2<T>(param: ParamKeyID2): Promise<T[]>;
+	IX<T>(param: ParamIX): Promise<T[]>;
+	KeyIX<T>(param: ParamKeyIX): Promise<T[]>;
 	IDLog<T> (param: ParamIDLog): Promise<T[]>;
 	IDSum<T> (param: ParamIDSum): Promise<T[]>;
+	IDxID<T,T2> (param: ParamIDxID): Promise<[T[],T2[]]>; // ID list with IX 对应的子集
+	IDinIX<T>(param:ParamIDinIX): Promise<T&{$in:boolean}[]>;
 }
 
 export class UqMan {
@@ -197,7 +214,7 @@ export class UqMan {
     private readonly queries: {[name:string]: Query} = {};
 	private readonly ids: {[name:string]: ID} = {};
 	private readonly idxs: {[name:string]: IDX} = {};
-	private readonly id2s: {[name:string]: ID2} = {};
+	private readonly id2s: {[name:string]: IX} = {};
 
     private readonly sheets: {[name:string]: Sheet} = {};
     private readonly books: {[name:string]: Book} = {};
@@ -262,15 +279,12 @@ export class UqMan {
         }
         this.tuidsCache = new TuidsCache(this);
     }
-	/*
-    get entities() {
-        return _.merge({}, 
-            this.actions, this.sheets, this.queries, this.books,
-			this.maps, this.histories, this.pendings, this.tuids,
-			this.tags,
-        );
-	}
-	*/
+
+	get center():CenterApi {return centerApi;}
+
+	getID(name:string):ID {return this.ids[name.toLowerCase()];};
+	getIDX(name:string):IDX {return this.idxs[name.toLowerCase()];};
+	getIX(name:string):IX {return this.id2s[name.toLowerCase()];};
 
     private createBoxIdFromTVs:CreateBoxId = (tuid:Tuid, id:number):BoxId =>{
         let {name} = tuid;
@@ -317,7 +331,7 @@ export class UqMan {
     readonly queryArr: Query[] = [];
     readonly idArr: ID[] = [];
     readonly idxArr: IDX[] = [];
-    readonly id2Arr: ID2[] = [];
+    readonly id2Arr: IX[] = [];
     readonly enumArr: UqEnum[] = [];
     readonly sheetArr: Sheet[] = [];
     readonly bookArr: Book[] = [];
@@ -513,28 +527,31 @@ export class UqMan {
         return sheet;
     }
     private newID(name:string, id:number):ID {
-        let idEntity = this.ids[name];
+		let lName = name.toLowerCase();
+        let idEntity = this.ids[lName];
         if (idEntity !== undefined) return idEntity;
-        idEntity = this.ids[name] = new ID(this, name, id);
+        idEntity = this.ids[lName] = new ID(this, name, id);
 		this.setEntity(name, idEntity);
         this.idArr.push(idEntity);
         return idEntity;
     }
     private newIDX(name:string, id:number):IDX {
-        let idx = this.idxs[name];
+		let lName = name.toLowerCase();
+        let idx = this.idxs[lName];
         if (idx !== undefined) return idx;
-        idx = this.idxs[name] = new IDX(this, name, id);
+        idx = this.idxs[lName] = new IDX(this, name, id);
 		this.setEntity(name, idx);
         this.idxArr.push(idx);
         return idx;
     }
-    private newID2(name:string, id:number):ID2 {
-        let id2 = this.id2s[name];
-        if (id2 !== undefined) return id2;
-        id2 = this.ids[name] = new ID2(this, name, id);
-		this.setEntity(name, id2);
-        this.id2Arr.push(id2);
-        return id2;
+    private newIX(name:string, id:number):IX {
+		let lName = name.toLowerCase();
+        let ix = this.id2s[lName];
+        if (ix !== undefined) return ix;
+        ix = this.id2s[lName] = new IX(this, name, id);
+		this.setEntity(name, ix);
+        this.id2Arr.push(ix);
+        return ix;
     }
     private fromType(name:string, type:string) {
         let parts = type.split('|');
@@ -549,7 +566,7 @@ export class UqMan {
 				break;
 			case 'id': this.newID(name, id); break;
 			case 'idx': this.newIDX(name, id); break;
-			case 'id2': this.newID2(name, id); break;
+			case 'ix': this.newIX(name, id); break;
             case 'action': this.newAction(name, id); break;
             case 'query': this.newQuery(name, id); break;
             case 'book': this.newBook(name, id); break;
@@ -631,24 +648,23 @@ export class UqMan {
 		let ret = new Proxy(this.entities, {
 			get: (target, key, receiver) => {
 				let lk = (key as string).toLowerCase();
-				if (lk === '$name') {
-					return this.name;
+				if (lk === '$') {
+					return this;
 				}
 				let ret = target[lk];
 				if (ret !== undefined) return ret;
 				switch (key) {
 					default: debugger; break;
-					case 'coms': return this.coms;
-					case 'setComs': return this.setComs;
 					case 'IDActs': return this.IDActs;
 					case 'IDDetail': return this.IDDetail;
 					case 'IDDetailGet': return this.IDDetailGet;
 					case 'ID': return this.ID;
 					case 'KeyID': return this.KeyID;
-					case 'ID2': return this.ID2;
-					case 'KeyID2': return this.KeyID2;
+					case 'IX': return this.IX;
+					case 'KeyIX': return this.KeyIX;
 					case 'IDLog': return this.IDLog;
 					case 'IDSum': return this.IDSum;
+					case 'IDinIX': return this.IDinIX;
 				}
 				let err = `entity ${this.name}.${String(key)} not defined`;
 				console.error(err);
@@ -664,9 +680,8 @@ export class UqMan {
 		nav.showReloadPage(msg);
     }
 
-	private coms:any;
-	private setComs = (coms: any) => {this.coms = coms;}
-
+	//private coms:any;
+	//private setComs = (coms: any) => {this.coms = coms;}
 	private IDActs = async (param:any): Promise<any> => {
 		// 这边的obj属性序列，也许会不一样
 		let arr:string[] = [];
@@ -756,7 +771,7 @@ export class UqMan {
 		return ret;
 	}
 
-	//private checkParam(ID:ID, IDX:(ID|IDX)|(ID|IDX)[], ID2:ID2, id:number|number[], key:{[key:string]:string|number}, page: ParamPage) {
+	//private checkParam(ID:ID, IDX:(ID|IDX)|(ID|IDX)[], IX:IX, id:number|number[], key:{[key:string]:string|number}, page: ParamPage) {
 	//}
 	private IDXToString(p:ID|IDX|((ID|IDX)[])):string|string[] {
 		if (Array.isArray(p) === true) return (p as (ID|IDX)[]).map(v => entityName(v));
@@ -781,23 +796,23 @@ export class UqMan {
 		});
 		return ret;
 	}
-	private ID2 = async (param: ParamID2): Promise<any[]> => {
-		let {ID2, IDX} = param;
-		//this.checkParam(null, IDX, ID2, id, null, page);
-		let ret = await this.uqApi.post(IDPath('id2'), {
+	private IX = async (param: ParamIX): Promise<any[]> => {
+		let {IX, IDX} = param;
+		//this.checkParam(null, IDX, IX, id, null, page);
+		let ret = await this.uqApi.post(IDPath('ix'), {
 			...param,
-			ID2: entityName(ID2),
+			IX: entityName(IX),
 			IDX: IDX?.map(v => entityName(v)),
 		});
 		return ret;
 	}
-	private KeyID2 = async (param: ParamKeyID2): Promise<any[]> => {
-		let {ID, ID2, IDX} = param;
-		//this.checkParam(ID, IDX, ID2, null, key, page);
-		let ret = await this.uqApi.post(IDPath('key-id2'), {
+	private KeyIX = async (param: ParamKeyIX): Promise<any[]> => {
+		let {ID, IX, IDX} = param;
+		//this.checkParam(ID, IDX, IX, null, key, page);
+		let ret = await this.uqApi.post(IDPath('key-ix'), {
 			...param,
 			ID: entityName(ID),
-			ID2: entityName(ID2),
+			IX: entityName(IX),
 			IDX: IDX?.map(v => entityName(v)),
 		});
 		return ret;
@@ -817,6 +832,16 @@ export class UqMan {
 		let ret = await this.uqApi.post(IDPath('id-sum'), {
 			...param,
 			IDX: entityName(IDX),
+		});
+		return ret;
+	}
+	private IDinIX = async (param:ParamIDinIX): Promise<any|{$in:boolean}[]> => {
+		let {ID, IX} = param;
+		//this.checkParam(null, IDX, null, id, null, page);
+		let ret = await this.uqApi.post(IDPath('id-in-ix'), {
+			...param,
+			ID: entityName(ID),
+			IX: entityName(IX),
 		});
 		return ret;
 	}

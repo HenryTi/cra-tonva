@@ -5,7 +5,6 @@ import { CUqApp } from "./CBase";
 import { res } from "./res";
 import { VMain } from "./VMain";
 import { CTester } from "test-com";
-import { UQs, buildComs } from "./uqs";
 
 const gaps = [10, 3,3,3,3,3,5,5,5,5,5,5,5,5,10,10,10,10,15,15,15,30,30,60];
 
@@ -27,10 +26,6 @@ export class CApp extends CUqApp {
 		// this.timer = setInterval(this.callTick, 1000);
 		// uq 里面加入这一句，会让相应的$Poked查询返回poke=1：
 		// TUID [$User] ID (member) SET poke=1;
-	}
-
-	protected afterBuiltUQs(uqs: UQs) {
-		buildComs(uqs);
 	}
 
 	private timer:any;

@@ -5,3 +5,4 @@ export * from './auth';
 export * from './uq';
 export * from './app';
 export * from './vm';
+export * from './res';
