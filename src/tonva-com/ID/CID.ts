@@ -1,5 +1,4 @@
 import { Controller } from "tonva-react";
-import { ListPageItems } from "../tools";
 import { CIDList } from "./CIDList";
 import { MidID } from "./Mid";
 import { VEdit } from "./VEdit";
@@ -7,25 +6,24 @@ import { VView } from "./VView";
 
 export class CID extends Controller {
 	mid: MidID;
-	private pageItems: ListPageItems<any>;
+	idList: CIDList<any>;
 	constructor(mid:MidID, res?:any) {
 		super(res);
 		this.mid = mid;
-		this.pageItems = new ListPageItems<any>(mid.comPageItems);
 	}
 
 	protected async internalStart() {
 		await this.mid.loadSchema();
 		let {uq, ID} = this.mid;
-		let idList = new CIDList({
+		this.idList = new CIDList({
 			uq,
 			ID,
-			onRightClick: this.onItemEdit,
+			onRightClick: () => this.onItemEdit(),
 			renderItem: undefined,
 			onItemClick: this.onItemClick,
 			renderRight: undefined,
 		});
-		await idList.start();
+		await this.idList.start();
 	}
 
 	renderItem: (item:any, index:number) => JSX.Element;
@@ -34,7 +32,6 @@ export class CID extends Controller {
 		this.item = item;
 		this.onItemView();
 	}
-	get items(): any {return this.pageItems};
 
 	onItemEdit():void {
 		this.openVPage(VEdit);
@@ -51,7 +48,8 @@ export class CID extends Controller {
 
 	async saveID(item:any) {
 		let ret = await this.mid.saveID(item);
-		this.pageItems.update(ret, item);
+		//this.pageItems.update(ret, item);
+		this.idList.update(ret, item);
 		return ret;
 	}
 }

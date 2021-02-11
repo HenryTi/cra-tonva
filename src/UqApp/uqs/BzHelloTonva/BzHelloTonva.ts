@@ -1,6 +1,6 @@
-//=== UqApp builder created on Tue Feb 09 2021 22:24:44 GMT-0500 (GMT-05:00) ===//
+//=== UqApp builder created on Wed Feb 10 2021 20:26:14 GMT-0500 (GMT-05:00) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { IDXValue, Uq, UqTuid, UqAction, UqBook, UqQuery } from "tonva-react";
+import { IDXValue, Uq, UqTuid, UqAction, UqBook, UqQuery, UqID, UqIX } from "tonva-react";
 
 
 //===============================
@@ -50,6 +50,7 @@ export interface ParamTestArr {
 interface ReturnTestArrRet {
 	a: number;
 	b: number;
+	$id: number;
 }
 interface ResultTestArr {
 	ret: ReturnTestArrRet[];
@@ -61,6 +62,7 @@ export interface ParamGetProductStock {
 interface ReturnGetProductStockRet {
 	product: number;
 	stock: number;
+	$id: number;
 }
 interface ResultGetProductStock {
 	ret: ReturnGetProductStockRet[];
@@ -70,6 +72,7 @@ export interface Param$poked {
 }
 interface Return$pokedRet {
 	poke: number;
+	$id: number;
 }
 interface Result$poked {
 	ret: Return$pokedRet[];
@@ -85,7 +88,48 @@ interface ResultBookProduct {
 	$page: ReturnBookProduct$page[];
 }
 
+export interface Customer {
+	id?: number;
+	no?: string;
+	firstName: string;
+	lastName: string;
+}
+
+export interface OrderMaster {
+	id?: number;
+	no?: string;
+	customer: number;
+	$owner?: number;
+	$create?: any;
+}
+
+export interface OrderDetail {
+	id?: number;
+	master?: number;
+	row?: number;
+	product: number;
+	price: number;
+	quantity: number;
+	amount: number;
+}
+
+export interface Tag {
+	id?: number;
+	type: string;
+	name: string;
+}
+
+export interface CustomerTag {
+	id: number;
+	id2: number;
+}
+
 export interface ParamIDActs {
+	customer?: Customer[];
+	orderMaster?: OrderMaster[];
+	orderDetail?: OrderDetail[];
+	tag?: Tag[];
+	customerTag?: CustomerTag[];
 }
 
 
@@ -100,4 +144,9 @@ export interface UqExt extends Uq {
 	BookProduct: UqBook<ParamBookProduct, ResultBookProduct>;
 	GetProductStock: UqQuery<ParamGetProductStock, ResultGetProductStock>;
 	$poked: UqQuery<Param$poked, Result$poked>;
+	Customer: UqID<any>;
+	OrderMaster: UqID<any>;
+	OrderDetail: UqID<any>;
+	Tag: UqID<any>;
+	CustomerTag: UqIX<any>;
 }

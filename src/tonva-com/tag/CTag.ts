@@ -1,20 +1,22 @@
 import { Controller } from "tonva-react";
+import { CIDTagList } from "./CIDTagList";
 import { MidTag } from "./Mid";
-import { VTag } from "./VTag";
-import { VTagEdit } from "./VTagEdit";
 
 export class CTag extends Controller {
-	com: MidTag;
-	constructor(com:MidTag, res?:any) {
+	midTag: MidTag;
+	constructor(midTag: MidTag, res?:any) {
 		super(res);
-		this.com = com;
+		this.midTag = midTag;
 	}
 
 	protected async internalStart() {
-		this.openVPage(VTag);
-	}
-
-	editTag = (id:number) => {
-		this.openVPage(VTagEdit, id);
+		await this.midTag.load();
+		let cIDTagList = new CIDTagList({
+			midTag: this.midTag,
+			onRightClick: undefined,
+			renderItem: undefined,
+			renderRight: undefined,
+		});
+		await cIDTagList.start();
 	}
 }

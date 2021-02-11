@@ -4,9 +4,9 @@ import { Mid } from "../base";
 import { IDBase } from "../base";
 
 export abstract class MidList<T extends IDBase> extends Mid {
-	protected pageItems: PageItems<T>;
+	protected listPageItems: ListPageItems<T>;
 	createPageItems():PageItems<T> {
-		return this.pageItems = new ListPageItems<T>((pageStart:any, pageSize:number) => this.loadPageItems(pageStart, pageSize));
+		return this.listPageItems = new ListPageItems<T>((pageStart:any, pageSize:number) => this.loadPageItems(pageStart, pageSize));
 	}
 
 	async init():Promise<void> {}

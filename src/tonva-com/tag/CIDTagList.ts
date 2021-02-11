@@ -3,16 +3,15 @@ import { ID, IX, Uq } from "tonva-react";
 import { CList, MidList } from "../list";
 import { IXBase, IDBase } from "../base";
 import { listRight, renderItem } from "../tools";
+import { CTagList, TagListProps } from "./CTagList";
+import { CSelect } from "./select";
+import { MidTag } from "./Mid";
 
 export interface IDTagListProps<T extends IDBase> {
-	uq: Uq;
-	ID: ID;
-	IX: IX;
-	tag: ID;
-	id: number;
+	midTag: MidTag;
 	onRightClick: ()=>any;
 	renderItem: (item:T, index:number)=>JSX.Element;
-	onItemClick: (item:T)=>any;
+	//onItemClick: (item:T)=>any;
 	renderRight?: ()=>JSX.Element;
 }
 
@@ -25,11 +24,14 @@ export class CIDTagList<T extends IDBase, T2 extends IXBase> extends CList<T> {
 	}
 
 	protected createMidList(): MidList<T2> {
-		let {uq, ID, IX, tag} = this.props;
+		let {midTag} = this.props;
+		let {uq, ID, IX, tag} = midTag;
 		return this.midIXList = new MidIDTagList<T2>(uq, ID, IX, tag);
 	}
 	protected onItemClick(item:any):void {
-		this.props.onItemClick?.(item);
+		let {midTag} = this.props;
+		let cSelect = new CSelect(item, midTag, this.res);
+		cSelect.start();
 	}
 
 	protected renderRight():JSX.Element {
@@ -39,7 +41,9 @@ export class CIDTagList<T extends IDBase, T2 extends IXBase> extends CList<T> {
 	}
 
 	protected renderItem(item:any, index:number):JSX.Element {
-		return (this.props.renderItem ??  renderItem)(item, index);
+		let {midTag, renderItem} = this.props;
+		let {ID} = midTag;
+		return (renderItem ??  ID.render)(item, index);
 	}
 
 	update(item:any) {
@@ -62,32 +66,39 @@ class MidIDTagList<T extends IXBase> extends MidList<T> {
 		await this.IX.loadSchema();
 	}
 
-	key:((item:T) => number|string) = item => item.ix;
-
 	protected async loadPageItems(pageStart:any, pageSize:number):Promise<T[]> {
 		let result = await this.uq.IDxID<T, any>({
 			ID: this.ID,
 			IX: this.IX,
 			ID2: this.ID2,
-			page: {start:pageStart, size:pageSize+1},
+			page: {start:pageStart, size:pageSize},
 		});
 		let [ret, ret2] = result;
+		let coll:{[id:number]:T} = {}
+		for (let item of ret) {
+			coll[item.id] = item;
+			(item as any)['$tags'] = [];
+		}
+		for (let tagItem of ret2) {
+			let item = coll[tagItem.id];
+			((item as any)['$tags'] as any[]).push(tagItem);
+		}
 		return ret;
 	}
 
 	update(item:T) {
 		runInAction(() => {
-			let {_items} = this.pageItems;
+			let {_items} = this.listPageItems;
 			if (!_items) return;
-			let {id, ix} = item;
+			let {id, id2} = item;
 			if (id < 0) {
-				let index = _items.findIndex(v => v.id === -id && v.ix === ix);
+				let index = _items.findIndex(v => v.id === -id && v.id2 === id2);
 				if (index >= 0) _items.splice(index, 1);
 			}
 			else {
-				let ret = _items.find(v => v.id === id && v.ix === ix);
+				let ret = _items.find(v => v.id === id && v.id2 === id2);
 				if (!ret) {
-					_items.unshift({id, ix} as T);
+					_items.unshift({id, id2} as T);
 				}
 			}
 		});

@@ -4,6 +4,7 @@ export interface ListPageProps {
 	pageItems: PageItems<any>;
 	itemClick: (item:any) => any;
 	renderItem?: (item:any, index:number) => JSX.Element;
+	renderItemContainer?: (content:any) => JSX.Element;
 	key: (item:any) => number|string;
 	header: JSX.Element | string;
 	right?: JSX.Element;
@@ -26,18 +27,16 @@ export class ListPage extends Page {
 		return this.renderPage();
 	}
 
-	private renderItem = (item:any, index:number) => {
-		return <div className="px-3 py-2">
-			{JSON.stringify(item)}
-		</div>;
-	}
-
 	private renderPage():JSX.Element {
-		let {pageItems, itemClick, renderItem, key, header, footer, right
+		let {pageItems, itemClick, renderItem, renderItemContainer
+			, key, header, footer, right
 			, top, bottom, back, className, headerClassName} = this.listPageProps;
 		if (!header) header = false as any;
+		let renderRow = (item:any, index:number) => {
+			return renderItemContainer(renderItem(item, index));
+		}
 		let item = {
-			render: renderItem || this.renderItem, 
+			render: renderRow,
 			onClick: itemClick,
 			key,
 		}

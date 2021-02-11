@@ -1,4 +1,4 @@
-//=== UqApp builder created on Tue Feb 09 2021 22:24:44 GMT-0500 (GMT-05:00) ===//
+//=== UqApp builder created on Wed Feb 10 2021 20:26:14 GMT-0500 (GMT-05:00) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqTuid, UqQuery, UqID, UqIDX, UqIX } from "tonva-react";
 
@@ -33,6 +33,7 @@ export interface Param$poked {
 }
 interface Return$pokedRet {
 	poke: number;
+	$id: number;
 }
 interface Result$poked {
 	ret: Return$pokedRet[];
@@ -57,7 +58,7 @@ export interface Hours {
 
 export interface UserStaff {
 	id: number;
-	ix: number;
+	id2: number;
 }
 
 export interface ParamIDActs {

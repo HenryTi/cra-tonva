@@ -34,7 +34,7 @@ class MidIXSelectList<T extends IXBase> extends MidSelectList<T> {
 			ID: this.ID,
 			IX: this.IX,
 			id: this.id,
-			page: {start:pageStart, size:pageSize+1},
+			page: {start:pageStart, size:pageSize},
 		});
 		return ret as any[];
 	}

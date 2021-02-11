@@ -7,7 +7,11 @@ export function listRight(onClick: () => any): JSX.Element {
 }
 
 export function renderItem(item:any, index:number) {
+	return <>{JSON.stringify(item)}</>;
+}
+
+export function renderItemContainer(content:any) {
 	return <div className="px-3 py-2">
-		{JSON.stringify(item)}
+		{content}
 	</div>;
 }

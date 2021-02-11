@@ -5,7 +5,7 @@ export class VEdit extends VPage<CID> {
 	header() {return 'Edit'}
 	content() {
 		let {item, mid: com} = this.controller;
-		return <div className="py-3">
+		return <div className="p-3">
 			<Form fieldLabelSize={2} formData={item}
 				schema={com.itemSchema}
 				uiSchema={com.uiSchema}

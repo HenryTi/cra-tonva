@@ -1,6 +1,6 @@
 import { Controller } from "tonva-react";
 import { IDBase } from "../base";
-import { renderItem } from "../tools";
+import { renderItem, renderItemContainer } from "../tools";
 import { ListPage, ListPageProps } from "./ListPage";
 import { MidList } from "./MidList";
 
@@ -16,6 +16,7 @@ export abstract class CList<T extends IDBase> extends Controller {
 			itemClick: (item:any) => this.onItemClick(item),
 			right: this.renderRight(),
 			renderItem: (item:any, index) => this.renderItem(item, index),
+			renderItemContainer: (content:any) => this.renderItemContainer(content),
 		};
 		pageItems.first(this.firstParam);
 		let page = new ListPage(props);
@@ -29,5 +30,8 @@ export abstract class CList<T extends IDBase> extends Controller {
 	protected abstract onItemClick(item:T):void;
 	protected renderItem(item:T, index:number):JSX.Element {
 		return renderItem(item, index);
+	}
+	protected renderItemContainer(content:any):JSX.Element {
+		return renderItemContainer(content);
 	}
 }

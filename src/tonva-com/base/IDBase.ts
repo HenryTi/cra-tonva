@@ -3,5 +3,5 @@ export interface IDBase {
 }
 
 export interface IXBase extends IDBase {
-	ix: number;
+	id2: number;
 }

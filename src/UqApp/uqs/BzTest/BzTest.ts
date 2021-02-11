@@ -1,4 +1,4 @@
-//=== UqApp builder created on Tue Feb 09 2021 22:24:44 GMT-0500 (GMT-05:00) ===//
+//=== UqApp builder created on Wed Feb 10 2021 20:26:14 GMT-0500 (GMT-05:00) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqTuid, UqAction, UqBook, UqQuery, UqMap, UqHistory, UqID, UqIDX, UqIX } from "tonva-react";
 
@@ -196,6 +196,8 @@ export interface OrderMaster {
 	id?: number;
 	no?: string;
 	customer: number;
+	$owner?: number;
+	$create?: any;
 }
 
 export interface Tag {
@@ -209,20 +211,20 @@ export interface IBook1 {
 	f1?: number|IDXValue;
 	f2?: number|IDXValue;
 	b?: string|IDXValue;
-	c?: number;
+	c?: number|IDXValue;
 	$track?: number;
 	$memo?: string;
 }
 
 export interface Assign1 {
 	id: number;
-	ix: number;
+	id2: number;
 	val: number;
 }
 
 export interface CustomerTag {
 	id: number;
-	ix: number;
+	id2: number;
 }
 
 export interface ParamIDActs {

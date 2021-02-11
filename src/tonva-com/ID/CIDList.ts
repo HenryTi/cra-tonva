@@ -1,6 +1,6 @@
 import { ID, Uq } from "tonva-react";
 import { CList, MidList } from "../list";
-import { listRight  } from '../tools';
+import { listRight, renderItem  } from '../tools';
 import { IDBase } from "../base";
 
 export interface IDListProps<T extends IDBase> {
@@ -14,13 +14,14 @@ export interface IDListProps<T extends IDBase> {
 
 export class CIDList<T extends IDBase> extends CList<T> {
 	private props: IDListProps<T>;
+	private midIDList: MidIDList<T>;
 	constructor(props: IDListProps<T>) {
 		super(undefined);
 		this.props = props;
 	}
 
 	protected createMidList(): MidList<T> {
-		return new MidIDList(this.props.uq, this.props.ID);
+		return this.midIDList = new MidIDList(this.props.uq, this.props.ID);
 	}
 	protected onItemClick(item:any):void {
 		this.props.onItemClick(item);
@@ -31,7 +32,12 @@ export class CIDList<T extends IDBase> extends CList<T> {
 	}
 
 	protected renderItem(item:any, index:number):JSX.Element {
-		return this.props.renderItem(item, index);
+		let {renderItem, ID } = this.props;
+		return (renderItem ?? ID.render)(item, index);
+	}
+
+	update(id:number, item:any) {
+		this.midIDList.update(id, item);
 	}
 }
 
@@ -50,8 +56,12 @@ class MidIDList<T extends IDBase> extends MidList<T> {
 		let ret = await this.uq.ID<T>({
 			IDX: this.ID,
 			id: undefined,
-			page: {start:pageStart, size:pageSize+1},
+			page: {start:pageStart, size:pageSize},
 		});
 		return ret;
+	}
+
+	update(id:number, item:any) {
+		this.listPageItems.update(id, item);
 	}
 }

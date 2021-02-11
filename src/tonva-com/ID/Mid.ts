@@ -21,7 +21,7 @@ export class MidID extends Mid {
 		});
 		return ret;
 	}
-
+	/*
 	comPageItems = async (start:number, size:number):Promise<any[]> => {
 		let ret = await this.uq.ID({
 			IDX: this.ID,
@@ -30,7 +30,7 @@ export class MidID extends Mid {
 		});
 		return ret;
 	}
-
+	*/
 	async saveID(data:any):Promise<number> {
 		let param: any = {};
 		param[this.ID.name] = [data];

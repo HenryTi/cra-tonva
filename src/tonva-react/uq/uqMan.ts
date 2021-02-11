@@ -186,6 +186,14 @@ export interface ParamIDinIX {
 	page?: ParamPage;
 }
 
+export interface ParamIDTree {
+	ID: ID;
+	parent: number;
+	key: string|number;
+	level?: number;				// 无值，默认1一级
+	page?: ParamPage;
+}
+
 function IDPath(path:string):string {return path;}
 
 export interface Uq {
@@ -205,6 +213,7 @@ export interface Uq {
 	IDSum<T> (param: ParamIDSum): Promise<T[]>;
 	IDxID<T,T2> (param: ParamIDxID): Promise<[T[],T2[]]>; // ID list with IX 对应的子集
 	IDinIX<T>(param:ParamIDinIX): Promise<T&{$in:boolean}[]>;
+	IDTree<T>(param:ParamIDTree): Promise<T[]>;
 }
 
 export class UqMan {
@@ -214,7 +223,7 @@ export class UqMan {
     private readonly queries: {[name:string]: Query} = {};
 	private readonly ids: {[name:string]: ID} = {};
 	private readonly idxs: {[name:string]: IDX} = {};
-	private readonly id2s: {[name:string]: IX} = {};
+	private readonly ixs: {[name:string]: IX} = {};
 
     private readonly sheets: {[name:string]: Sheet} = {};
     private readonly books: {[name:string]: Book} = {};
@@ -284,7 +293,7 @@ export class UqMan {
 
 	getID(name:string):ID {return this.ids[name.toLowerCase()];};
 	getIDX(name:string):IDX {return this.idxs[name.toLowerCase()];};
-	getIX(name:string):IX {return this.id2s[name.toLowerCase()];};
+	getIX(name:string):IX {return this.ixs[name.toLowerCase()];};
 
     private createBoxIdFromTVs:CreateBoxId = (tuid:Tuid, id:number):BoxId =>{
         let {name} = tuid;
@@ -331,7 +340,7 @@ export class UqMan {
     readonly queryArr: Query[] = [];
     readonly idArr: ID[] = [];
     readonly idxArr: IDX[] = [];
-    readonly id2Arr: IX[] = [];
+    readonly ixArr: IX[] = [];
     readonly enumArr: UqEnum[] = [];
     readonly sheetArr: Sheet[] = [];
     readonly bookArr: Book[] = [];
@@ -406,7 +415,7 @@ export class UqMan {
 			this.tagArr,
 			this.idArr,
 			this.idxArr,
-			this.id2Arr,
+			this.ixArr,
 		];
 		entities.forEach(arr => {
 			arr.forEach(v => {
@@ -546,11 +555,11 @@ export class UqMan {
     }
     private newIX(name:string, id:number):IX {
 		let lName = name.toLowerCase();
-        let ix = this.id2s[lName];
+        let ix = this.ixs[lName];
         if (ix !== undefined) return ix;
-        ix = this.id2s[lName] = new IX(this, name, id);
+        ix = this.ixs[lName] = new IX(this, name, id);
 		this.setEntity(name, ix);
-        this.id2Arr.push(ix);
+        this.ixArr.push(ix);
         return ix;
     }
     private fromType(name:string, type:string) {
@@ -665,6 +674,8 @@ export class UqMan {
 					case 'IDLog': return this.IDLog;
 					case 'IDSum': return this.IDSum;
 					case 'IDinIX': return this.IDinIX;
+					case 'IDxID': return this.IDxID;
+					case 'IDTree': return this.IDTree;
 				}
 				let err = `entity ${this.name}.${String(key)} not defined`;
 				console.error(err);
@@ -842,6 +853,26 @@ export class UqMan {
 			...param,
 			ID: entityName(ID),
 			IX: entityName(IX),
+		});
+		return ret;
+	}
+	private IDxID = async (param:ParamIDxID): Promise<any[]> => {
+		let {ID, IX, ID2} = param;
+		//this.checkParam(null, IDX, null, id, null, page);
+		let ret = await this.uqApi.post(IDPath('id-x-id'), {
+			...param,
+			ID: entityName(ID),
+			IX: entityName(IX),
+			ID2: entityName(ID2),
+		});
+		return ret;
+	}
+
+	private IDTree = async (param:ParamIDTree): Promise<any[]> => {
+		let {ID} = param;
+		let ret = await this.uqApi.post(IDPath('id-tree'), {
+			...param,
+			ID: entityName(ID),
 		});
 		return ret;
 	}

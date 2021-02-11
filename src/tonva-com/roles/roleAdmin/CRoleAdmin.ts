@@ -16,7 +16,7 @@ export class CRoleAdmin extends Controller {
 	readonly roleCaptions: string[];
 	meRoles: UserRole = null;
 	userRoles: UserRole[] = null;
-	id2OfUsers: string[];
+	ixOfUsers: string[];
 	private myRolesChanged:(roles:string[])=>void;
 
 	constructor(res:any, uq:Uq, myRolesChanged?:(roles:string[])=>void, roleCaptionMap?:{[role:string]:string}) {
@@ -45,7 +45,10 @@ export class CRoleAdmin extends Controller {
 		let allUserRoles = await this.uqApi.getAllRoleUsers();
 		runInAction(() => {
 			let r0 = allUserRoles.shift();
-			this.id2OfUsers = r0.roles.split('|');
+			let {roles} = r0;
+			if (roles) {
+				this.ixOfUsers = roles.split('|');
+			}
 			let arr:string[] = this.allRoles.map(v => `|${v}|`);
 			function rolesBool(t:string): boolean[] {
 				if (!t) return arr.map(v => false);
@@ -155,11 +158,11 @@ export class CRoleAdmin extends Controller {
 		this.fireMyRolesChanged(userRole);
 	}
 
-	id2UserBind = async (user:number, id2Name:string) => {
-		let IX = this.uq.$.getIX(id2Name);
+	ixUserBind = async (user:number, ixName:string) => {
+		let IX = this.uq.$.getIX(ixName);
 		await IX.loadSchema();
-		let {id2Name:idName} = IX.schema;
-		let ID = this.uq.$.getID(idName);
+		let {id2Name} = IX.schema;
+		let ID = this.uq.$.getID(id2Name);
 		let cIXEdit = new CIXEdit({
 			uq: this.uq,
 			IX,

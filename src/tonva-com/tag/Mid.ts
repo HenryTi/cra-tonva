@@ -1,41 +1,96 @@
-import { ID, IX, Tag, Uq } from "tonva-react";
+import { ID, IX, Uq } from "tonva-react";
 
-const cacheMax = 100;
-export class MidTag {
-	private uq: Uq;
-	private ID: ID;
-	private IX: IX;
-	private tag: ID;
-	private cache:{[id:number]:any} = {};
-	private arr: number[] = [];
-	constructor(uq: Uq, ID: ID, tagIX: IX, tag:ID) {
-		this.uq = uq;
-		this.ID = ID;
-		this.IX = tagIX;
-		this.tag = tag;
-	}
-
-	async load(id:number): Promise<any[]> {
-		let ret = this.cache[id];
-		if (ret) {
-			let index = this.arr.findIndex(v => v===id);
-			this.arr.splice(index, 1);
-			this.arr.push(id);
-			return ret;
-		}
-		ret = await this.uq.IX({
-			IX: this.IX,
-			id,
-			IDX: [this.ID],
-			page: undefined,
-		});
-		this.cache[id] = ret;
-		this.arr.push(id);
-		if (this.arr.length > cacheMax) {
-			let removeId = this.arr.shift();
-			delete this.cache[removeId];
-		}
-		return ret;
-	}
+interface TagTree {
+	id: number;
+	parent: number;
+	name: string;
+	sub: {[id:number]: TagTree};
+	count: number;
 }
 
+interface TagItem {
+	id: number;
+	parent: number;
+	name: string;
+}
+
+export interface Tag {
+	id: number;
+	name: string;
+	sub: Tag[];
+}
+
+export class MidTag {
+	uq: Uq;
+	ID: ID;
+	IX: IX;
+	tag: ID;
+	type: string;
+	
+	tags: Tag[];
+
+	constructor(uq: Uq, ID:ID, IX:IX, tag:ID, type: string) {
+		this.uq = uq;
+		this.ID = ID;
+		this.IX = IX;
+		this.tag = tag;
+		this.type = type;
+	}
+
+	async load(): Promise<void> {
+		if (this.tags) return;
+		let ret = await Promise.all([
+			this.ID.loadSchema(),
+			this.IX.loadSchema(),
+			this.tag.loadSchema(),
+			this.uq.IDTree<TagItem>({
+				ID: this.tag,
+				parent: 0,
+				key: this.type,
+				level: 3,
+				page: {start:0, size:1000},
+			})
+		]);
+		this.buildTagTypes(ret[3]);
+	}
+
+	private buildTagTypes(items: TagItem[]): Tag[] {
+		let root:TagTree;
+		let tree:TagTree = {id:0, parent:-1, name:undefined, sub:{}, count:0};
+		for (let item of items) {
+			let {id, parent, name} = item;
+			if (parent === 0) {
+				tree.sub[id] = root = {id, parent, name, sub: {}, count:0};
+				continue;
+			}
+			let p = tree.sub[parent];
+			let tag:TagTree = {id, parent, name, sub: {}, count:0};
+			tree.sub[id] = tag;
+			if (p !== undefined) {
+				p.sub[id] = tag;
+				p.count++;
+			}
+		}
+		for (let i in tree.sub) {
+			let tag = tree.sub[i];
+			let {parent} = tag;
+			if (parent > 0) {
+				let p = tree.sub[parent];
+				if (p) p.sub[Number(i)] = tag;
+			}
+		}
+		let ret:Tag[] = [];
+		for (let i in root.sub) {
+			let tree = root.sub[i];
+			let {id, name} = tree;
+			let type:Tag = {id, name, sub:[]};
+			ret.push(type);
+			for (let j in tree.sub) {
+				let s = tree.sub[j];
+				let {id, name} = s;
+				type.sub.push({id, name, sub:undefined})
+			}
+		}
+		return this.tags = ret;
+	}
+}

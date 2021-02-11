@@ -55,7 +55,7 @@ export class MidSelectList<T extends IDBase> extends MidList<T> {
 		let ret = await this.uq.ID<T>({
 			IDX: this.ID,
 			id: undefined,
-			page: {start:pageStart, size:pageSize+1},
+			page: {start:pageStart, size:pageSize},
 		});
 		return ret;
 	}

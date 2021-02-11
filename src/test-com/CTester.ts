@@ -10,33 +10,49 @@ export interface UIItem {
 }
 
 export class CTester extends CBase<CApp,UQs> {
-	private readonly clickTag = async () => {
-		let uq = this.uqs.BzTest;
-		let com = new MidTag(uq, uq.Customer, uq.CustomerTag, uq.Tag);
-		let cTag = new CTag(com);
-		await cTag.start();
-	}
-
-	private readonly clickStaff = async () => {
-		let uq = this.uqs.BzTimesChange;
-		let com = new MidID(uq, uq.Staff);
-		let cStaff = new CID(com);
-		await cStaff.start();
-	}
-
-	private readonly clickHours = async () => {
-		let uq = this.uqs.BzTimesChange;
-		let com = new MidIDX(uq, uq.Hours, uq.Staff);
-		let cHours = new CIDX(com);
-		await cHours.start();
-	}
-
 	readonly uiItems:UIItem[] = [
-		{name: 'tag',  discription: '客户标签管理', click: this.clickTag },
-		{name: 'staff',  discription: 'TimeChange Staff', click: this.clickStaff},
-		{name: 'hours',  discription: 'TimeChange Hours', click: this.clickHours},
+		{
+			name: 'customer',
+			discription: '客户信息',
+			click: async () => {
+				let uq = this.uqs.BzHelloTonva;
+				let mid = new MidID(uq, uq.Customer);
+				let cID = new CID(mid);
+				await cID.start();
+			}
+		},
+		{
+			name: 'tag',
+			discription: '客户标签',
+			click: async () => {
+				let uq = this.uqs.BzHelloTonva;
+				let mid = new MidTag(uq, uq.Customer, uq.CustomerTag, uq.Tag, 'customer');
+				let cTag = new CTag(mid);
+				await cTag.start();
+			}
+		},
+		{
+			name: 'staff',
+			discription: 'TimeChange Staff',
+			click: async () => {
+				let uq = this.uqs.BzTimesChange;
+				let mid = new MidID(uq, uq.Staff);
+				let cStaff = new CID(mid);
+				await cStaff.start();
+			}
+		},
+		{
+			name: 'hours',
+			discription: 'TimeChange Hours',
+			click: async () => {
+				let uq = this.uqs.BzTimesChange;
+				let mid = new MidIDX(uq, uq.Hours, uq.Staff);
+				let cHours = new CIDX(mid);
+				await cHours.start();
+			}
+		},
 	];
-		
+
 	protected async internalStart() {
 	}
 

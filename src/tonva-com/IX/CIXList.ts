@@ -62,31 +62,31 @@ class MidIXList<T extends IXBase> extends MidList<T> {
 		await this.IX.loadSchema();
 	}
 
-	key:((item:T) => number|string) = item => item.ix;
+	key:((item:T) => number|string) = item => item.id2;
 
 	protected async loadPageItems(pageStart:any, pageSize:number):Promise<T[]> {
 		let ret = await this.uq.IX<T>({
 			IX: this.IX,
 			IDX: this.ID? [this.ID] : undefined,
 			id: this.id,
-			page: {start:pageStart, size:pageSize+1},
+			page: {start:pageStart, size:pageSize},
 		});
 		return ret;
 	}
 
 	update(item:T) {
 		runInAction(() => {
-			let {_items} = this.pageItems;
+			let {_items} = this.listPageItems;
 			if (!_items) return;
-			let {id, ix} = item;
+			let {id, id2} = item;
 			if (id < 0) {
-				let index = _items.findIndex(v => v.id === -id && v.ix === ix);
+				let index = _items.findIndex(v => v.id === -id && v.id2 === id2);
 				if (index >= 0) _items.splice(index, 1);
 			}
 			else {
-				let ret = _items.find(v => v.id === id && v.ix === ix);
+				let ret = _items.find(v => v.id === id && v.id2 === id2);
 				if (!ret) {
-					_items.unshift({id, ix} as T);
+					_items.unshift({id, id2} as T);
 				}
 			}
 		});
