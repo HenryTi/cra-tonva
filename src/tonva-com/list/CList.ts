@@ -4,7 +4,7 @@ import { renderItem, renderItemContainer } from "../tools";
 import { ListPage, ListPageProps } from "./ListPage";
 import { MidList } from "./MidList";
 
-export abstract class CList<T extends IDBase> extends Controller {
+export abstract class CList<T> extends Controller {
 	protected async internalStart() {
 		let midList = this.createMidList();
 		await midList.init();

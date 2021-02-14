@@ -1,15 +1,20 @@
+import { makeObservable, observable } from "mobx";
+import { IDBase } from "tonva-com/base";
 import { Controller } from "tonva-react";
 import { CIDList } from "./CIDList";
 import { MidID } from "./Mid";
 import { VEdit } from "./VEdit";
 import { VView } from "./VView";
 
-export class CID extends Controller {
-	mid: MidID;
+export class CID<T extends IDBase> extends Controller {
+	mid: MidID<T>;
 	idList: CIDList<any>;
-	constructor(mid:MidID, res?:any) {
+	constructor(mid:MidID<T>, res?:any) {
 		super(res);
 		this.mid = mid;
+		makeObservable(this, {
+			item: observable,
+		});
 	}
 
 	protected async internalStart() {
@@ -46,10 +51,16 @@ export class CID extends Controller {
 		this.openVPage(VEdit);
 	}
 
-	async saveID(item:any) {
+	async saveID(itemProps:any) {		
+		let id = this.item?.id;
+		let item = {
+			...itemProps,
+			id,
+		}
 		let ret = await this.mid.saveID(item);
-		//this.pageItems.update(ret, item);
-		this.idList.update(ret, item);
+		if (ret) id = ret;
+		this.idList.update(id, item);
+		Object.assign(this.item, item);
 		return ret;
 	}
 }

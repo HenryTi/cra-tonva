@@ -4,7 +4,7 @@ import { IDBase } from "../base";
 export type IDItemsPageLoader<T> = (pageStart:any, pageSize:number) => Promise<T[]>;
 export type HistoryPageLoader<T> = (id:number, field:string, far:number, near:number, pageStart:any, pageSize:number) => Promise<T[]>;
 
-export class ListPageItems<T extends IDBase> extends PageItems<T> {
+export abstract class ListPageItems<T> extends PageItems<T> {
 	private comPage: IDItemsPageLoader<T>;
 	constructor(comPage: IDItemsPageLoader<T>) {
 		super(true);
@@ -14,17 +14,6 @@ export class ListPageItems<T extends IDBase> extends PageItems<T> {
 	async loadResults(param:any, pageStart:any, pageSize:number): Promise<{[name:string]:any[]}> {
 		let ret = await this.comPage(pageStart, pageSize);
 		return {$page:ret};
-	}
-
-	update(id:number, item:any) {
-		let ret = this._items.find(v => v.id === id);
-		if (ret === undefined) {
-			let data = { ...item, id };
-			this._items.unshift(data);
-		}
-		else {
-			Object.assign(ret, item);
-		}
 	}
 }
 

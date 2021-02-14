@@ -1,7 +1,8 @@
+import { observer } from "mobx-react";
 import { FA, PropGrid, VPage } from "tonva-react";
 import { CID } from "./CID";
 
-export class VView extends VPage<CID> {
+export class VView extends VPage<CID<any>> {
 	header() {return 'View'}
 	right() {
 		return <button
@@ -11,11 +12,14 @@ export class VView extends VPage<CID> {
 		</button>;
 	}
 	content() {
-		let {item, mid: com} = this.controller;
-		let {props} = com;
-		return <div className="py-3">
-			<PropGrid rows={props}
-				values={item} />
-		</div>
+		let V = observer(() => {
+			let {item, mid} = this.controller;
+			let {props} = mid;
+			return <div className="py-3">
+				<PropGrid rows={props}
+					values={item} />
+			</div>;	
+		});
+		return <V />;
 	}
 }

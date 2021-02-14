@@ -1,7 +1,5 @@
 import fs from 'fs';
-import path from 'path';
-import { camelCase, capitalCase, env } from 'tonva-react';
-import { nav } from '../../components';
+import { env } from 'tonva-react';
 import { UqsConfig } from '../../app';
 import { lastBuildTime, uqTsSrcPath, red, saveTsFile, saveSrcTsFileIfNotExists } from './tools';
 import { buildUqsFolder } from './uqsFolder';

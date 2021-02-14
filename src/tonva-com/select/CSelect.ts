@@ -1,7 +1,7 @@
-import { ID, Uq } from "tonva-react";
+import { ID, PageItems, Uq } from "tonva-react";
 import { IDBase } from "../base";
 import { CList, MidList } from "../list";
-import { renderItem } from "../tools";
+import { ListPageItems, renderItem } from "../tools";
 import { renderSelectItem } from "./parts";
 
 export interface SelectProps<T extends IDBase> {
@@ -50,7 +50,12 @@ export class MidSelectList<T extends IDBase> extends MidList<T> {
 	async init() {
 		await this.ID.loadSchema();
 	}
-
+	key:((item:T) => number|string) = item => item.id;
+	createPageItems():PageItems<T> {
+		return this.listPageItems = new IDListPageItems<T>(
+			(pageStart:any, pageSize:number) => this.loadPageItems(pageStart, pageSize)
+		);
+	}
 	protected async loadPageItems(pageStart:any, pageSize:number):Promise<T[]> {
 		let ret = await this.uq.ID<T>({
 			IDX: this.ID,
@@ -59,4 +64,9 @@ export class MidSelectList<T extends IDBase> extends MidList<T> {
 		});
 		return ret;
 	}
+}
+
+class IDListPageItems<T extends IDBase> extends ListPageItems<T> {
+	itemId(item:T):number {return item.id}
+	newItem(id:number, item:T):T {return {...item, id}}
 }

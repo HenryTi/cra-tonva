@@ -1,5 +1,6 @@
 import { Customer } from "./BzHelloTonva";
 
 export function renderCustomer(item: Customer):JSX.Element {
-	return <>客户：{JSON.stringify(item)}</>;
+	let {firstName, lastName, no} = item;
+	return <span><b>{firstName} {lastName}</b> <small>{no}</small></span>;
 }

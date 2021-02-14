@@ -1,9 +1,10 @@
 import { ID, IX, IDX, Uq } from "tonva-react";
-import { CList, MidList } from "../list";
+import { CList, MidIDListBase, MidList } from "../list";
 //import { listRight  } from './parts';
 import { IXBase, IDBase } from "../base";
 import { listRight, renderItem } from "../tools/parts";
 import { runInAction } from "mobx";
+import { ListPageItems } from "tonva-com/tools";
 
 export interface IXListProps<T extends IDBase> {
 	uq: Uq;
@@ -47,7 +48,7 @@ export class CIXList<T extends IDBase, T2 extends IXBase> extends CList<T> {
 	}
 }
 
-class MidIXList<T extends IXBase> extends MidList<T> {
+class MidIXList<T extends IXBase> extends MidIDListBase<T> {
 	readonly IX:IX;
 	readonly ID:ID;
 	readonly id: number;

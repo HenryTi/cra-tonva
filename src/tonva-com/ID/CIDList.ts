@@ -1,20 +1,20 @@
 import { ID, Uq } from "tonva-react";
-import { CList, MidList } from "../list";
+import { CList, MidIDListBase, MidList } from "../list";
 import { listRight, renderItem  } from '../tools';
 import { IDBase } from "../base";
 
 export interface IDListProps<T extends IDBase> {
 	uq: Uq;
 	ID: ID;
-	onRightClick: ()=>any;
+	onRightClick?: ()=>any;
 	renderItem: (item:T, index:number)=>JSX.Element;
 	onItemClick: (item:T)=>any;
 	renderRight?: ()=>JSX.Element;
 }
 
 export class CIDList<T extends IDBase> extends CList<T> {
-	private props: IDListProps<T>;
-	private midIDList: MidIDList<T>;
+	protected props: IDListProps<T>;
+	protected midIDList: MidIDList<T>;
 	constructor(props: IDListProps<T>) {
 		super(undefined);
 		this.props = props;
@@ -41,7 +41,7 @@ export class CIDList<T extends IDBase> extends CList<T> {
 	}
 }
 
-class MidIDList<T extends IDBase> extends MidList<T> {
+export class MidIDList<T extends IDBase> extends MidIDListBase<T> {
 	readonly ID:ID;
 	constructor(uq:Uq, ID:ID) {
 		super(uq);

@@ -208,6 +208,7 @@ export interface Uq {
 	ID<T>(param: ParamID): Promise<T[]>;
 	KeyID<T>(param: ParamKeyID): Promise<T[]>;
 	IX<T>(param: ParamIX): Promise<T[]>;
+	IXr<T> (param: ParamIX): Promise<T[]>; // IX id2 反查ID list
 	KeyIX<T>(param: ParamKeyIX): Promise<T[]>;
 	IDLog<T> (param: ParamIDLog): Promise<T[]>;
 	IDSum<T> (param: ParamIDSum): Promise<T[]>;
@@ -670,6 +671,7 @@ export class UqMan {
 					case 'ID': return this.ID;
 					case 'KeyID': return this.KeyID;
 					case 'IX': return this.IX;
+					case 'IXr': return this.IXr;
 					case 'KeyIX': return this.KeyIX;
 					case 'IDLog': return this.IDLog;
 					case 'IDSum': return this.IDSum;
@@ -811,6 +813,16 @@ export class UqMan {
 		let {IX, IDX} = param;
 		//this.checkParam(null, IDX, IX, id, null, page);
 		let ret = await this.uqApi.post(IDPath('ix'), {
+			...param,
+			IX: entityName(IX),
+			IDX: IDX?.map(v => entityName(v)),
+		});
+		return ret;
+	}
+	private IXr = async (param: ParamIX): Promise<any[]> => {
+		let {IX, IDX} = param;
+		//this.checkParam(null, IDX, IX, id, null, page);
+		let ret = await this.uqApi.post(IDPath('ixr'), {
 			...param,
 			IX: entityName(IX),
 			IDX: IDX?.map(v => entityName(v)),

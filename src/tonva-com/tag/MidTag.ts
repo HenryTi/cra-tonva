@@ -17,6 +17,7 @@ interface TagItem {
 export interface Tag {
 	id: number;
 	name: string;
+	parent: number;
 	sub: Tag[];
 }
 
@@ -27,7 +28,8 @@ export class MidTag {
 	tag: ID;
 	type: string;
 	
-	tags: Tag[];
+	typeArr: Tag[];
+	typeColl: {[id:number]: Tag};
 
 	constructor(uq: Uq, ID:ID, IX:IX, tag:ID, type: string) {
 		this.uq = uq;
@@ -38,7 +40,7 @@ export class MidTag {
 	}
 
 	async load(): Promise<void> {
-		if (this.tags) return;
+		if (this.typeArr) return;
 		let ret = await Promise.all([
 			this.ID.loadSchema(),
 			this.IX.loadSchema(),
@@ -54,7 +56,7 @@ export class MidTag {
 		this.buildTagTypes(ret[3]);
 	}
 
-	private buildTagTypes(items: TagItem[]): Tag[] {
+	private buildTagTypes(items: TagItem[]) {
 		let root:TagTree;
 		let tree:TagTree = {id:0, parent:-1, name:undefined, sub:{}, count:0};
 		for (let item of items) {
@@ -79,18 +81,19 @@ export class MidTag {
 				if (p) p.sub[Number(i)] = tag;
 			}
 		}
-		let ret:Tag[] = [];
+		this.typeArr = [];
+		this.typeColl = {};
 		for (let i in root.sub) {
 			let tree = root.sub[i];
 			let {id, name} = tree;
-			let type:Tag = {id, name, sub:[]};
-			ret.push(type);
+			let type:Tag = {id, name, sub:[], parent: undefined};
+			this.typeArr.push(type);
+			this.typeColl[id] = type;
 			for (let j in tree.sub) {
 				let s = tree.sub[j];
 				let {id, name} = s;
-				type.sub.push({id, name, sub:undefined})
+				type.sub.push({id, name, sub:undefined, parent:type.id})
 			}
 		}
-		return this.tags = ret;
 	}
 }

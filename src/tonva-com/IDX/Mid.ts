@@ -27,6 +27,7 @@ export class MidIDX extends Mid {
 		return ret;
 	}
 
+	/*
 	comPageItems = async (start:number, size:number):Promise<any[]> => {
 		let ret = await this.uq.ID({
 			IDX: [this.ID, this.IDX],
@@ -35,7 +36,7 @@ export class MidIDX extends Mid {
 		});
 		return ret;
 	}
-
+	*/
 	historyPageItems = async (id:number, field:string, far:number, near:number, pageStart:any, pageSize:number):Promise<any[]> => {
 		let ret = await this.uq.IDLog({
 			IDX: this.IDX,

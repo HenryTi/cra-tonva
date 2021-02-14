@@ -1,5 +1,6 @@
-import { ID, IX, Uq } from "tonva-react";
-import { IXBase } from "../base";
+import { ListPageItems } from "tonva-com/tools";
+import { ID, IX, PageItems, Uq } from "tonva-react";
+import { IDBase, IXBase } from "../base";
 import { MidList } from "../list";
 import { CSelect, SelectProps, MidSelectList } from "./CSelect";
 
@@ -29,6 +30,12 @@ class MidIXSelectList<T extends IXBase> extends MidSelectList<T> {
 		await this.IX.loadSchema();
 	}
 
+	key:((item:T) => number|string) = item => item.id;
+	createPageItems():PageItems<T> {
+		return this.listPageItems = new IDListPageItems<T>(
+			(pageStart:any, pageSize:number) => this.loadPageItems(pageStart, pageSize)
+		);
+	}
 	protected async loadPageItems(pageStart:any, pageSize:number):Promise<T[]> {
 		let ret = await this.uq.IDinIX<T>({
 			ID: this.ID,
@@ -38,4 +45,9 @@ class MidIXSelectList<T extends IXBase> extends MidSelectList<T> {
 		});
 		return ret as any[];
 	}
+}
+
+class IDListPageItems<T extends IDBase> extends ListPageItems<T> {
+	itemId(item:T):number {return item.id}
+	newItem(id:number, item:T):T {return {...item, id}}
 }

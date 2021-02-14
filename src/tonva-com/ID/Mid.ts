@@ -1,8 +1,8 @@
 import { ID, Schema, UiSchema, Uq, StringSchema, NumSchema, ButtonSchema, Prop } from "tonva-react";
 import { buildGridProps } from "../tools";
-import { Mid } from "../base";
+import { IDBase, Mid } from "../base";
 
-export class MidID extends Mid {
+export class MidID<T extends IDBase> extends Mid {
 	readonly ID: ID;
 	constructor(uq: Uq, ID: ID) {
 		super(uq);
@@ -13,29 +13,20 @@ export class MidID extends Mid {
 		await this.ID.loadSchema();
 	}
 
-	async load(id:number): Promise<any[]> {
-		let ret = await this.uq.ID({
+	async load(id:number): Promise<T[]> {
+		let ret = await this.uq.ID<T>({
 			IDX: this.ID,
 			id,
 			page: undefined,
 		});
 		return ret;
 	}
-	/*
-	comPageItems = async (start:number, size:number):Promise<any[]> => {
-		let ret = await this.uq.ID({
-			IDX: this.ID,
-			id: undefined,
-			page: {start, size:size+1},
-		});
-		return ret;
-	}
-	*/
 	async saveID(data:any):Promise<number> {
 		let param: any = {};
 		param[this.ID.name] = [data];
 		let ret = await this.uq.IDActs(param);
 		let id = ret[this.ID.name];
+		if (!id) return;
 		return id[0];
 	}
 

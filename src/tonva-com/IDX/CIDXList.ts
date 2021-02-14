@@ -1,6 +1,6 @@
 import { ID, IDX, Uq } from "tonva-react";
-import { CList, MidList } from "../list";
-import { listRight, renderItem  } from '../tools';
+import { CList, MidIDListBase, MidList } from "../list";
+import { ListPageItems, listRight, renderItem  } from '../tools';
 import { IDBase } from "../base";
 
 export interface IDXListProps<T extends IDBase> {
@@ -36,7 +36,7 @@ export class CIDXList<T extends IDBase> extends CList<T> {
 	}
 }
 
-class MidIDXList<T extends IDBase> extends MidList<T> {
+class MidIDXList<T extends IDBase> extends MidIDListBase<T> {
 	readonly ID:ID;
 	constructor(uq:Uq, ID:ID) {
 		super(uq);

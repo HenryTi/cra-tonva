@@ -1,13 +1,16 @@
 import { Controller } from "tonva-react";
-import { MidTag } from "../Mid";
+import { MidTag, Tag } from "../MidTag";
+import { CIDTagList } from '../CIDTagList';
 import { VSelect } from "./VSelect";
 
 export class CSelect extends Controller {
-	item: any;
+	private cIDTagList: CIDTagList<any>;
+	itemTags: any;
 	midTag: MidTag;
-	constructor(item:any, midTag: MidTag, res:any) {
+	constructor(cIDTagList: CIDTagList<any>, itemTags:any, midTag: MidTag, res:any) {
 		super(res);
-		this.item = item;
+		this.cIDTagList = cIDTagList;
+		this.itemTags = itemTags;
 		this.midTag = midTag;
 	}
 
@@ -23,7 +26,7 @@ export class CSelect extends Controller {
 		return null;
 	}
 
-	onTagSelectChanged = (id:number, selected:boolean) => {
-		alert(id + '=' + (selected? 'yes' : 'no'));
+	onTagSelectChanged = async (tag:Tag, selected:boolean) => {
+		await this.cIDTagList.onTagSelectChanged(this.itemTags, tag, selected);
 	}
 }
