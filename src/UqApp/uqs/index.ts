@@ -1,4 +1,4 @@
-//=== UqApp builder created on Wed Feb 10 2021 20:26:14 GMT-0500 (GMT-05:00) ===//
+//=== UqApp builder created on Sun Feb 14 2021 23:09:43 GMT-0500 (GMT-05:00) ===//
 import * as BzHelloTonva from './BzHelloTonva';
 import * as BzCustomerPayment from './BzCustomerPayment';
 import * as BzTest from './BzTest';
@@ -16,9 +16,9 @@ export * as BzCustomerPayment from './BzCustomerPayment';
 export * as BzTest from './BzTest';
 export * as BzTimesChange from './BzTimesChange';
 
-export function setRenders(uqs:UQs) {
-	BzHelloTonva.setRenders(uqs.BzHelloTonva);
-	BzCustomerPayment.setRenders(uqs.BzCustomerPayment);
-	BzTest.setRenders(uqs.BzTest);
-	BzTimesChange.setRenders(uqs.BzTimesChange);
+export function setUI(uqs:UQs) {
+	BzHelloTonva.setUI(uqs.BzHelloTonva);
+	BzCustomerPayment.setUI(uqs.BzCustomerPayment);
+	BzTest.setUI(uqs.BzTest);
+	BzTimesChange.setUI(uqs.BzTimesChange);
 }

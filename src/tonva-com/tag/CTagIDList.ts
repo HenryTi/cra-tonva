@@ -72,15 +72,13 @@ class CShowTagIDList<T extends IDBase> extends CIDList<T> {
 		return (renderRight ?? listRight)(onRightClick);
 	}
 
-	/*
 	protected renderItem(item:T, index:number):JSX.Element {
-		//let {midTag, renderItem} = this.props;
-		//let {ID} = midTag;
+		let {midTag, renderItem} = this.props;
+		let {ID} = midTag;
 		//let {item, typeArr} = itemTags;
-		//return <div>{(renderItem ??  ID.render)(item, index)}</div>;
-		return renderItemTags(this.props, itemTags, index);
+		return (renderItem ??  ID.render)(item, index);
+		//return renderItemTags(this.props, itemTags, index);
 	}
-	*/
 }
 
 class MidTagIDList<T extends IDBase> extends MidIDList<T> {

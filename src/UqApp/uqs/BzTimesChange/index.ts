@@ -1,11 +1,11 @@
 import { UqExt as Uq } from './BzTimesChange';
-import { renderStaff } from './Staff.render';
-import { renderHours } from './Hours.render';
-import { renderUserStaff } from './UserStaff.render';
+import * as Staff from './Staff.ui';
+import * as Hours from './Hours.ui';
+import * as UserStaff from './UserStaff.ui';
 
-export function setRenders(uq: Uq) {
-	uq.Staff.setRender(renderStaff);
-	uq.Hours.setRender(renderHours);
-	uq.UserStaff.setRender(renderUserStaff);
+export function setUI(uq: Uq) {
+	Object.assign(uq.Staff, Staff);
+	Object.assign(uq.Hours, Hours);
+	Object.assign(uq.UserStaff, UserStaff);
 }
 export * from './BzTimesChange';

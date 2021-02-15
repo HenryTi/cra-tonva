@@ -3,13 +3,17 @@ import { buildTsHeader } from "./tools";
 export function buildTsCApp():string {
 	return `${buildTsHeader()}
 import { CUqApp } from "./CBase";
+import { res } from "./res";
 import { VMain } from "./VMain";
-import { UQs } from "./uqs";
+import { setUI } from "./uqs";
 
 const gaps = [10, 3,3,3,3,3,5,5,5,5,5,5,5,5,10,10,10,10,15,15,15,30,30,60];
 
-export class CApp extends CUqApp<> {
+export class CApp extends CUqApp {
 	protected async internalStart(isUserLogin: boolean) {
+		this.setRes(res);
+		setUI(this.uqs);
+		
 		this.openVPage(VMain, undefined, this.dispose);
 	}
 

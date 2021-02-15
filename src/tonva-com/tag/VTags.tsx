@@ -1,4 +1,5 @@
-import { VPage } from "tonva-react";
+import { allowStateChangesStart } from "mobx/dist/internal";
+import { LMR, VPage } from "tonva-react";
 import { CTagIDList } from "./CTagIDList";
 import { Tag } from "./MidTag";
 
@@ -9,16 +10,29 @@ export class VTags extends VPage<CTagIDList<any>> {
 	content() {
 		let {midTag} = this.controller;
 		let {typeArr} = midTag;
-		return <div className="px-3">
+		let left = <button className="btn btn-primary" 
+			onClick={() => this.controller.showID(this.tags)}>
+			查看
+		</button>;
+		let right = <>
+			<button className="btn btn-sm btn-outline-primary mr-3" onClick={()=>this.allTags(true)}>全选</button>
+			<button className="btn btn-sm btn-outline-info" onClick={()=>this.allTags(false)}>全清</button>
+		</>;
+		return <div className="px-3" id="$all$tags$">
 			{typeArr.map(v => this.renderType(v))}
-
 			<div className="border-top py-3">
-				<button className="btn btn-primary" 
-					onClick={() => this.controller.showID(this.tags)}>
-					查看
-				</button>
+				<LMR left={left} right={right} />
 			</div>
 		</div>;
+	}
+
+	private allTags = (selected:boolean) => {
+		let el = document.getElementById('$all$tags$');
+		let checkInputs = el.getElementsByTagName('input');
+		for (let i=0; i<checkInputs.length; i++) {
+			let checkInput = checkInputs[i];
+			checkInput.checked = selected;
+		}
 	}
 
 	private renderType(type: Tag) {

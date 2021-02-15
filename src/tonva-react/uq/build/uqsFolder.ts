@@ -44,7 +44,7 @@ export async function buildUqsFolder(uqsFolder:string, options: UqsConfig) {
 	let tsUqsIndexHeader = buildTsHeader();
 	let tsUqsIndexContent = `\n\nexport interface UQs {`;
 	let tsUqsIndexReExport = '\n';
-	let tsUqsRenders = `\n\nexport function setRenders(uqs:UQs) {`;
+	let tsUqsUI = `\n\nexport function setUI(uqs:UQs) {`;
 	for (let uq of uqMans) {
 		let {devName:o1, uqName:n1} = getNameFromUq(uq);
 		let uqAlias = o1 + n1;
@@ -54,11 +54,11 @@ export async function buildUqsFolder(uqsFolder:string, options: UqsConfig) {
 		tsUqsIndexHeader += `\nimport * as ${uqAlias} from './${uqAlias}';`;
 		tsUqsIndexContent += `\n\t${uqAlias}: ${uqAlias}.UqExt;`; 
 		tsUqsIndexReExport += `\nexport * as ${uqAlias} from './${uqAlias}';`;
-		tsUqsRenders += `\n\t${uqAlias}.setRenders(uqs.${uqAlias});`;
+		tsUqsUI += `\n\t${uqAlias}.setUI(uqs.${uqAlias});`;
 	}
 
 	overrideTsFile(uqsFolder, 'index', 
-		tsUqsIndexHeader + tsUqsIndexContent + '\n}' + tsUqsIndexReExport + tsUqsRenders + '\n}' + '\n');
+		tsUqsIndexHeader + tsUqsIndexContent + '\n}' + tsUqsIndexReExport + tsUqsUI + '\n}' + '\n');
 }
 
 // 返回每个uq构建时的错误
