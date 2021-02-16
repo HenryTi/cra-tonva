@@ -6,9 +6,9 @@ export const red = '\x1b[41m%s\x1b[0m';
 export let lastBuildTime:number = 0;
 export const uqTsSrcPath = 'src/UqApp';
 
-export function saveSrcTsFileIfNotExists(fileName:string, content:string, suffix:string = 'ts') {
-	//let tsFile = `${uqTsSrcPath}/${fileName}.${suffix}`;
-	saveTsFileIfNotExists(uqTsSrcPath, fileName, content, suffix);
+export function saveSrcTsFileIfNotExists(fileName:string, suffix:string, content:string) {
+	let tsFilePath = `${uqTsSrcPath}/${fileName}.${suffix}`;
+	saveTsFileIfNotExists(tsFilePath, content);
 	//if (fs.existsSync(tsFile) === true) return;
 	//saveTsFile(fileName, content, suffix);
 }
@@ -24,16 +24,18 @@ export function saveTsFile(fileName:string, content:string, suffix:string = 'ts'
 	lastBuildTime = Date.now();
 	console.log(red, `${tsFile} is built`);
 }
-export function overrideTsFile(path:string, fileName:string, content:string, suffix:string = 'ts') {
-	let tsFile = `${path}/${fileName}.${suffix}`;
-	fs.writeFileSync(tsFile, content);
+export function overrideTsFile(path:string, content:string) {
+	//let tsFile = `${path}/${fileName}.${suffix}`;
+	fs.writeFileSync(path, content);
 	lastBuildTime = Date.now();
-	console.log(red, `${tsFile} is built`);
+	console.log(red, `${path} is built`);
 }
-export function saveTsFileIfNotExists(path:string, fileName:string, content:string, suffix:string = 'ts') {
-	let tsFile = `${path}/${fileName}.${suffix}`;
-	if (fs.existsSync(tsFile) === true) return;
-	overrideTsFile(path, fileName, content, suffix);
+//fileName:string, 
+//, suffix:string = 'ts'
+export function saveTsFileIfNotExists(tsFilePath:string, content:string) {
+	//let tsFilePath = `${path}/${fileName}.${suffix}`;
+	if (fs.existsSync(tsFilePath) === true) return;
+	overrideTsFile(tsFilePath, content);
 }
 
 /*

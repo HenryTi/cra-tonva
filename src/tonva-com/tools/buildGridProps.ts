@@ -1,9 +1,16 @@
-import { NumberProp, Prop, StringProp } from "tonva-react";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { NumberProp, Prop, StringProp, UI } from "tonva-react";
 
-export function buildGridProps(schema: any):Prop[] {
+export function buildGridProps(ui: UI):Prop[] {
 	let ret:Prop[] = [];
-	let {keys, fields, exFields} = schema;
-	for (let f of fields) {
+	let {fieldArr} = ui;
+	//let {keys, fields, exFields} = schema;
+	for (let f of fieldArr) {
+		let prop = {
+			...f
+		};
+		ret.push(prop as any);
+		/*
 		let {name, type} = f;
 		let required = (keys as any[])?.findIndex(v => v.name === name) >= 0;
 		let ex = (exFields as any[])?.find(v => v.field === name);
@@ -41,6 +48,7 @@ export function buildGridProps(schema: any):Prop[] {
 				} as NumberProp);
 				break;
 		}
+		*/
 	}
 	return ret;
 }

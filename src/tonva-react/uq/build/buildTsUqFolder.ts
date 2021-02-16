@@ -1,8 +1,10 @@
 import fs from "fs";
 import { capitalCase } from "tonva-react/tool";
+import { FieldItem } from "tonva-react/ui";
 import { ID, IDX, IX } from "../ID";
 import { UqMan } from "../uqMan";
 import { buildUQ } from "./buildUQ";
+import { buildFieldItem } from "./fieldItem";
 import { buildTsHeader, overrideTsFile, saveTsFileIfNotExists } from "./tools";
 
 export function buildTsUqFolder(uq: UqMan, uqsFolder:string, uqAlias:string) {
@@ -12,8 +14,8 @@ export function buildTsUqFolder(uq: UqMan, uqsFolder:string, uqAlias:string) {
 	}
 	let tsUq = buildTsHeader();
 	tsUq += buildUQ(uq, uqAlias);
-	overrideTsFile(uqFolder, uqAlias, tsUq);
-
+	//overrideTsFile(uqFolder, uqAlias, tsUq);
+	overrideTsFile(`${uqFolder}/${uqAlias}.ts`, tsUq);
 	saveTsIndexAndRender(uqFolder, uq, uqAlias);
 }
 
@@ -27,46 +29,56 @@ function saveTsIndexAndRender(uqFolder:string, uq: UqMan, uqAlias:string) {
 
 		let tsUI = `import { Res, UI } from "tonva-react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { FieldItem, FieldItemNumber } from "tonva-react";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { FieldUI, FieldUIString } from "tonva-react";
+import { FieldItem, FieldItemNumber, FieldItemString, FieldItemId } from "tonva-react";
 import { ${cName} } from "./${uqAlias}";
+
+/*--fields--*/
+const fields = {
+};
+/*==fields==*/
+
+export const fieldArr: FieldItem[] = [
+];
+
+export const ui: UI = {
+	label: "${cName}",
+	fieldArr,
+	fields,
+};
+
+export const res: Res<any> = {
+	zh: {
+	},
+	en: {
+	}
+};
 
 export function render(item: ${cName}):JSX.Element {
 	return <>{JSON.stringify(item)}</>;
 };
 `;
 
-		let tsFieldItems:string = buildFieldItems(i);
-		let tsFieldUIs:string = buildFieldUIs(i);
+		//let path = `${uqFolder}/${file}.${suffix}`;
+		let path = `${uqFolder}/${cName}.ui.tsx`;
+		saveTsFileIfNotExists(path, tsUI);
 
-		tsUI += `\n` + tsFieldItems 
-			+ `/*==fieldItems==\n` + tsFieldItems + `==fieldItems==*/\n`;
-		tsUI += `\n` + tsFieldUIs
-			+ `/*==fieldUIs==\n` + tsFieldUIs + `==fieldUIs==*/\n`;
+		let fields = buildFields(i);
+		let tsFieldArr:string = buildFieldArr(i);
 
-		tsUI += `
-export const ui:UI = {
-	label: "${cName}",
-	fieldItems,
-	fieldUIs,
-};
-`;
-
-		tsUI += `
-export const res:Res<any> = {
-	zh: {
-	},
-	en: {
-	}
-};
-`;
-		saveTsFileIfNotExists(uqFolder, `${cName}.ui`, tsUI, 'tsx');
-		replaceTsFileString(uqFolder, `${cName}.ui`, 'tsx', 
-			[
-				{begin:'/*==fieldItems==\n', end: '==fieldItems==*/\n', content:tsFieldItems},
-				{begin:'/*==fieldUIs==\n', end: '==fieldUIs==*/\n', content:tsFieldUIs},
-			]);
+		replaceTsFileFields(path, fields);
+		let tsImportFieldItemsBegin = 'import { FieldItem, ';
+		let tsImportFieldItemsEnd = ' } from "tonva-react";';
+		let tsImportFieldItems = 'FieldItemInt, FieldItemNum, FieldItemString, FieldItemId';
+		replaceTsFileString(path, 
+			{
+				begin: tsImportFieldItemsBegin, 
+				end: tsImportFieldItemsEnd, 
+				content: tsImportFieldItemsBegin + tsImportFieldItems + tsImportFieldItemsEnd,
+			}
+		);
+		replaceTsFileString(path, 
+			{begin:'export const fieldArr: FieldItem[] = [\n', end: '\n];\n', content:tsFieldArr}
+		);
 	}
 
 	let tsIndex = `import { UqExt as Uq } from './${uqAlias}';${imports}
@@ -75,102 +87,153 @@ export function setUI(uq: Uq) {${sets}
 }
 export * from './${uqAlias}';
 `;
-	overrideTsFile(uqFolder, 'index', tsIndex);
+	overrideTsFile(`${uqFolder}/index.ts`, tsIndex);
 }
 
-function buildFieldItems(i:ID|IDX|IX):string {
+function buildFields(i:ID|IDX|IX):{[name:string]:FieldItem} {
 	switch (i.typeName) {
-		case 'id': return buildIDFieldItems(i);
-		case 'idx': return buildIDXFieldItems(i);
-		case 'ix': return buildIXFieldItems(i);
+		case 'id': return buildIDFields(i);
+		case 'idx': return buildIDXFields(i);
+		case 'ix': return buildIXFields(i);
 	}
 };
 
-function buildIDFieldItems(ID:ID):string {
-	let ts = `const fieldItems:FieldItem[] = [`;
+function buildIDFields(ID:ID):{[name:string]:FieldItem} {
+	let ret:{[name:string]:FieldItem} = {};
 	let {schema} = ID;
 	let {keys, fields} = schema;
 	for (let f of fields) {
 		let {name} = f;
-		let isKey = (keys as any[]).findIndex(v => v.name === name) >= 0;
-		ts += `\n${buildFieldItem(f, isKey)},`;
+		let isKey = (keys as any[])?.findIndex(v => v.name === name) >= 0;
+		ret[name] = buildFieldItem(f, isKey);
 	}
-
-	ts += `\n];\n`;
-	return ts;
+	return ret;
 }
-function buildIDXFieldItems(IDX:IDX):string {
-	return `const fieldItems:FieldItem[] = [
-// IDX
-];
-`;
+function buildIDXFields(IDX:IDX):{[name:string]:FieldItem} {
+	let ret:{[name:string]:FieldItem} = {};
+	let {schema} = IDX;
+	let {keys, fields} = schema;
+	for (let f of fields) {
+		let {name} = f;
+		let isKey = (keys as any[])?.findIndex(v => v.name === name) >= 0;
+		ret[name] = buildFieldItem(f, isKey);
+	}
+	return ret;
 };
 
-function buildIXFieldItems(IX:IX):string {
-	return `const fieldItems:FieldItem[] = [
-// IX
-];
-`;
+function buildIXFields(IX:IX):{[name:string]:FieldItem} {
+	let ret:{[name:string]:FieldItem} = {};
+	let {schema} = IX;
+	let {keys, fields} = schema;
+	for (let f of fields) {
+		let {name} = f;
+		let isKey = (keys as any[])?.findIndex(v => v.name === name) >= 0;
+		ret[name] = buildFieldItem(f, isKey);
+	}
+	return ret;
 };
 
-
-function buildFieldUIs(i:ID|IDX|IX):string {
+function buildFieldArr(i:ID|IDX|IX):string {
+	let ts = 'export const fieldArr: FieldItem[] = [\n\t';
 	switch (i.typeName) {
-		case 'id': return buildIDFieldUIs(i);
-		case 'idx': return buildIDXFieldUIs(i);
-		case 'ix': return buildIXFieldUIs(i);
+		case 'id': ts += buildIDFieldArr(i); break;
+		case 'idx': ts += buildIDXFieldArr(i); break;
+		case 'ix': ts += buildIXFieldArr(i); break;
 	}
-};
-
-function buildIDFieldUIs(ID:ID):string {
-	return `const fieldUIs:{[name:string]:FieldUI} = {
-	"a": {
-		label: "中文",
-		placeholder: undefined,
-		// ID
-		widget: "string",
-	} as FieldUIString,
-};
-`;
-};
-
-function buildIDXFieldUIs(IDX:IDX):string {
-	return `const fieldUIs:{[name:string]:FieldUI} = {
-	"a": {
-		label: "中文",
-		placeholder: undefined,
-		// IDX
-		widget: "string",
-	} as FieldUIString,
-};
-`;
-};
-
-function buildIXFieldUIs(IX:IX):string {
-	return `const fieldUIs:{[name:string]:FieldUI} = {
-	"a": {
-		label: "中文",
-		placeholder: undefined,
-		// IX
-		widget: "string",
-	} as FieldUIString,
-};
-`;
-};
-
-function buildFieldItem(field:any, isKey:boolean, indent:number=1):string {
-	let {name} = field;
-	let tab = '\t'.repeat(indent);
-	let tab1 = tab + '\t';
-	let ts = `${tab}{`;
-	ts += `\n${tab1}name: '${name}',`;	
-	ts += `\n${tab1}key: ${isKey},`;
-	ts += `\n${tab}}`;
+	return ts += '\n];\n';
+}
+function buildIDFieldArr(i:ID):string {
+	let {schema} = i;
+	let ts = '';
+	for (let f of schema.fields) {
+		let {name} = f;
+		if (name === 'id') continue;
+		ts += `fields.${name}, `;
+	}
+	return ts;
+}
+function buildIDXFieldArr(i:IDX):string {
+	let {schema} = i;
+	let ts = '';
+	for (let f of schema.fields) {
+		let {name} = f;
+		if (name === 'id') continue;
+		ts += `fields.${name}, `;
+	}
+	return ts;
+}
+function buildIXFieldArr(i:IX):string {
+	let {schema} = i;
+	let ts = '';
+	for (let f of schema.fields) {
+		let {name} = f;
+		if (name === 'id') continue;
+		if (name === 'id2') continue;
+		ts += `fields.${name}, `;
+	}
 	return ts;
 }
 
-function buildFieldUI(field:any):string {
-	return '';
+function replaceTsFileFields(path: string, fields:{[name:string]:FieldItem}) {
+	let text = fs.readFileSync(path).toString();
+	let startStr = '\n/*--fields--*/';
+	let endStr = '\n/*==fields==*/\n';
+	let start = text.indexOf(startStr);
+	if (start > 0) {
+		let end = text.indexOf(endStr, start + startStr.length);
+		if (end > 0) {
+			let lBrace = text.indexOf('{', start + startStr.length);
+			let rBrace = text.lastIndexOf('}', end);
+			let oldText = text.substring(lBrace, rBrace+1);
+			let fieldsText = buildFieldsText(fields, oldText);
+			text = text.substring(0, start)
+				+ startStr + '\nconst fields = {'
+				+ fieldsText
+				+ '\n};'
+				+ text.substring(end);
+			fs.writeFileSync(path, text);
+		}
+	}
+}
+
+const fieldItemReplaceProps = ['label', 'placeholder', 'widget', 'type'];
+function buildFieldsText(fields:{[name:string]:FieldItem}, oldText:string):string {
+	let ret = '';
+	for (let i in fields) {
+		let field = fields[i];
+		setFieldOldProp(field, oldText);
+		ret += buildFieldText(field);
+	}
+	return ret;
+}
+
+function setFieldOldProp(field:FieldItem, text:string) {
+	let fieldStart = field.name + ':';
+	let start = text.indexOf('\t' + fieldStart);
+	if (start < 0) start = text.indexOf('\n' + fieldStart);
+	if (start < 0) start = text.indexOf(' ' + fieldStart);
+	if (start < 0) return;
+	++start;
+	let end = text.indexOf('}', start + fieldStart.length);
+	if (end < 0) return;
+	let fieldText = text.substring(start + fieldStart.length, end + 1);
+	/* eslint no-eval: 0 */
+	let obj = eval('(' + fieldText + ')');
+	fieldItemReplaceProps.forEach(v => {
+		let prop = obj[v];
+		if (!prop) return;
+		(field as any)[v] = prop;
+	});
+}
+
+function buildFieldText(field:FieldItem):string {
+	let {$FieldItemType} = field as any;
+	delete (field as any).$FieldItemType;
+	let ret = '\n\t' + field.name + ': ';
+	let json = JSON.stringify(field, null, '\t\t');
+	json = json.replace('}', '\t}');
+	ret += json;
+	return ret + ' as ' + $FieldItemType + ',';
 }
 
 interface ReplaceSection {
@@ -178,16 +241,13 @@ interface ReplaceSection {
 	end: string;
 	content: string;
 };
-function replaceTsFileString(uqFolder:string, file:string, suffix:string, secs:ReplaceSection[]) {
-	let path = `${uqFolder}/${file}.${suffix}`;
+function replaceTsFileString(path:string, sec:ReplaceSection) {
 	let text = fs.readFileSync(path).toString();
-	for (let sec of secs) {
-		let {begin, end, content} = sec;		
-		let b = text.indexOf(begin);
-		if (b < 0) continue;
-		let e = text.indexOf(end);
-		if (e < 0) continue;
-		text = text.substring(0, b) + begin + content + text.substr(e);
-	}
+	let {begin, end, content} = sec;
+	let b = text.indexOf(begin);
+	if (b < 0) return;
+	let e = text.indexOf(end, b + begin.length - 1);
+	if (e < 0) return;
+	text = text.substring(0, b) + content + text.substr(e + end.length);
 	fs.writeFileSync(path, text);
 }

@@ -6,8 +6,8 @@ import { CIDX } from "./CIDX";
 export class VEdit extends VPage<CIDX> {
 	header() {return 'Edit'}
 	content() {
-		let {item, mid: com} = this.controller;
-		let {props} = com;
+		let {mid} = this.controller;
+		let {props} = mid;
 		return <div className="py-3">
 			{props.map((v, index) => {
 				let {type} = v as any;
@@ -110,6 +110,7 @@ class VEditNumberField extends VPage<CIDX> {
 		let dateTicks = this.dateInput.valueAsNumber;
 		let timeTicks = this.timeInput.valueAsNumber;
 		let t = dateTicks + timeTicks + date.getTimezoneOffset()*60*1000;
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		let time = new Date(t);
 		await this.controller.saveFieldValue(this.prop.name, t, this.value);
 		this.closePage();

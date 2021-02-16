@@ -1,6 +1,6 @@
 import { ID, Uq } from "tonva-react";
 import { CList, MidIDListBase, MidList } from "../list";
-import { listRight, renderItem  } from '../tools';
+import { listRight  } from '../tools';
 import { IDBase } from "../base";
 
 export interface IDListProps<T extends IDBase> {
@@ -49,7 +49,7 @@ export class MidIDList<T extends IDBase> extends MidIDListBase<T> {
 	}
 
 	async init() {
-		await this.ID.loadSchema();
+		//await this.ID.loadSchema();
 	}
 
 	protected async loadPageItems(pageStart:any, pageSize:number):Promise<T[]> {

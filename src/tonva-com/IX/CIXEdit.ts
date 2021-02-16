@@ -46,6 +46,7 @@ export class CIXEdit extends CIX<IXEditProps> {
 		}
 		let id2Item = {id, id2: item.id};
 		param[IX.name] = [id2Item];
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		let ret = await this.props.uq.IDActs(param);
 		this.cIXList.update(id2Item);
 	} 

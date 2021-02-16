@@ -1,4 +1,4 @@
-import { ID, Schema, UiSchema, Uq, StringSchema, NumSchema, ButtonSchema, Prop } from "tonva-react";
+import { ID, Schema, UiSchema, Uq, ButtonSchema, Prop } from "tonva-react";
 import { buildGridProps } from "../tools";
 import { IDBase, Mid } from "../base";
 
@@ -38,30 +38,16 @@ export class MidID<T extends IDBase> extends Mid {
 
 	protected buildItemSchema(): Schema {
 		let ret:Schema = [];
-		let {schema} = this.ID;
-		let {keys, fields} = schema;
-		for (let f of fields) {
-			let {name, type} = f;
-			let required = (keys as any[]).findIndex(v => v.name === name) >= 0;
+		let {fieldArr} = this.ID.ui;
+		for (let f of fieldArr) {
+			let {type, isKey} = f;
+			let required = isKey; // (keys as any[]).findIndex(v => v.name === name) >= 0;
+			let fieldItem = {
+				...f,
+				required,
+			};
 			switch (type) {
-				default: throw new Error(`schema type ${type} not implemented`);
-				case 'id':
-					break;
-				case 'char':
-					ret.push({
-						name,
-						type: 'string',
-						required,
-						maxLength: f.size,
-					} as StringSchema);
-					break;
-				case 'number':
-					ret.push({
-						name,
-						type: 'number',
-						required,
-					} as NumSchema);
-					break;
+				default: ret.push(fieldItem); break;
 			}
 		}
 		ret.push({
@@ -78,12 +64,15 @@ export class MidID<T extends IDBase> extends Mid {
 	}
 
 	protected buildUISchema():UiSchema {
-		return;
+		let {fields} = this.ID.ui;
+		return {
+			items: fields as any,
+		};
 	}
 
 	private _props: Prop[];
 	get props():Prop[] {
 		if (this._props !== undefined) return this._props;
-		return this._props = buildGridProps(this.ID.schema)
+		return this._props = buildGridProps(this.ID.ui);
 	}
 }

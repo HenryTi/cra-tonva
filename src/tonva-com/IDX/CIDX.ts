@@ -61,8 +61,8 @@ export class CIDX extends Controller {
 	private async loadSum(timeSpan?: TimeSpan) {
 		let {far, near} = timeSpan ?? this.timeSpan;
 		let ret = await this.mid.loadSum(this.item.id, far, near);
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		let [values, sums] = ret;
-		//let value = values[0];
 		let sum = sums[0];
 		runInAction(() => {
 			this.spanValues = sum ?? {};

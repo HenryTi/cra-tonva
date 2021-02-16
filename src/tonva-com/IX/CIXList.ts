@@ -1,10 +1,9 @@
-import { ID, IX, IDX, Uq } from "tonva-react";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { ID, IX, Uq } from "tonva-react";
 import { CList, MidIDListBase, MidList } from "../list";
-//import { listRight  } from './parts';
 import { IXBase, IDBase } from "../base";
-import { listRight, renderItem } from "../tools/parts";
+import { listRight, renderItem } from "../tools";
 import { runInAction } from "mobx";
-import { ListPageItems } from "tonva-com/tools";
 
 export interface IXListProps<T extends IDBase> {
 	uq: Uq;

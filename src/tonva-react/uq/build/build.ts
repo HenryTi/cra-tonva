@@ -25,11 +25,11 @@ export async function build(options: UqsConfig) {
 	let tsIndex = buildTsIndex();
 	saveTsFile('index', tsIndex);
 	let tsCApp = buildTsCApp();
-	saveSrcTsFileIfNotExists('CApp', tsCApp);
+	saveSrcTsFileIfNotExists('CApp', 'ts', tsCApp);
 	let tsCBase = buildTsCBase();
 	saveTsFile('CBase', tsCBase);
 	let tsVMain = buildTsVMain();
-	saveSrcTsFileIfNotExists('VMain', tsVMain, 'tsx');
+	saveSrcTsFileIfNotExists('VMain', 'tsx', tsVMain);
 
 	saveTsFile('uqs', '');
 	fs.unlinkSync(uqTsSrcPath + '/uqs.ts');

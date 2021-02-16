@@ -1,6 +1,6 @@
 import { ID, IDX, Uq } from "tonva-react";
 import { CList, MidIDListBase, MidList } from "../list";
-import { ListPageItems, listRight, renderItem  } from '../tools';
+import { listRight, renderItem  } from '../tools';
 import { IDBase } from "../base";
 
 export interface IDXListProps<T extends IDBase> {

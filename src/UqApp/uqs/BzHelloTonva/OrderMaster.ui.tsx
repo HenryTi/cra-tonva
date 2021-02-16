@@ -1,60 +1,49 @@
 import { Res, UI } from "tonva-react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { FieldItem, FieldItemNumber } from "tonva-react";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { FieldUI, FieldUIString } from "tonva-react";
+import { FieldItem, FieldItemInt, FieldItemNum, FieldItemString, FieldItemId } from "tonva-react";
 import { OrderMaster } from "./BzHelloTonva";
 
-export function render(item: OrderMaster):JSX.Element {
-	return <>{JSON.stringify(item)}</>;
+/*--fields--*/
+const fields = {
+	id: {
+		"name": "id",
+		"type": "id",
+		"isKey": false,
+		"label": "Id"
+	} as FieldItemId,
+	no: {
+		"name": "no",
+		"type": "string",
+		"isKey": true,
+		"widget": "string",
+		"label": "No"
+	} as FieldItemString,
+	customer: {
+		"name": "customer",
+		"type": "id",
+		"isKey": false,
+		"label": "Customer"
+	} as FieldItemId,
 };
+/*==fields==*/
 
-const fieldItems:FieldItem[] = [
+export const fieldArr: FieldItem[] = [
+	fields.no, fields.customer, 
 ];
-/*==fieldItems==
-const fieldItems:FieldItem[] = [
-	{
-		name: 'id',
-		key: false,
-	},
-	{
-		name: 'no',
-		key: true,
-	},
-	{
-		name: 'customer',
-		key: false,
-	},
-];
-==fieldItems==*/
 
-const fieldUIs:{[name:string]:FieldUI} = {
-	"a": {
-		label: "中文",
-		placeholder: undefined,
-		widget: "string",
-	} as FieldUIString,
-};
-/*==fieldUIs==
-const fieldUIs:{[name:string]:FieldUI} = {
-	"a": {
-		label: "中文",
-		placeholder: undefined,
-		// ID
-		widget: "string",
-	} as FieldUIString,
-};
-==fieldUIs==*/
-
-export const ui:UI = {
+export const ui: UI = {
 	label: "OrderMaster",
-	fieldItems,
-	fieldUIs,
+	fieldArr,
+	fields,
 };
 
-export const res:Res<any> = {
+export const res: Res<any> = {
 	zh: {
 	},
 	en: {
 	}
+};
+
+export function render(item: OrderMaster):JSX.Element {
+	return <>{JSON.stringify(item)}</>;
 };

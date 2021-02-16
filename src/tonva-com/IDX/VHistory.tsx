@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { VPage, List, LMR, EasyTime, UserView, User } from "tonva-react";
 import { CIDX } from "./CIDX";
 

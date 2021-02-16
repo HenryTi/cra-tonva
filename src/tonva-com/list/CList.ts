@@ -1,5 +1,4 @@
 import { Controller } from "tonva-react";
-import { IDBase } from "../base";
 import { renderItem, renderItemContainer } from "../tools";
 import { ListPage, ListPageProps } from "./ListPage";
 import { MidList } from "./MidList";

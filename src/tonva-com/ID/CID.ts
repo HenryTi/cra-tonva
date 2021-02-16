@@ -18,7 +18,7 @@ export class CID<T extends IDBase> extends Controller {
 	}
 
 	protected async internalStart() {
-		await this.mid.loadSchema();
+		//await this.mid.loadSchema();
 		let {uq, ID} = this.mid;
 		this.idList = new CIDList({
 			uq,

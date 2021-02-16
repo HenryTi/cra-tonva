@@ -1,10 +1,15 @@
+import { FieldUIType } from "./fieldUI";
+
 export type FieldItemType = 'id' | 'integer' | 'number' | 'string' | 'image' | 'date' | 'boolean' 
 | 'object' | 'arr' | 'button' | 'submit';
 
 export interface FieldItem {
 	name: string;
 	type: FieldItemType;
+	label?: string;
+	isKey?: boolean;
     required?: boolean;
+	widget?: FieldUIType;
 }
 
 export interface FieldItemObject extends FieldItem {

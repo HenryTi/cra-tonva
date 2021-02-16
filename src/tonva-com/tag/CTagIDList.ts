@@ -5,6 +5,7 @@ import { MidTag, Tag } from "./MidTag";
 import { CID, CIDList, IDListProps, MidID, MidIDList } from "../ID";
 import { VTags } from "./VTags";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export class CTagIDList<T extends IDBase> extends  Controller {
 	readonly midTag: MidTag;
 	constructor(midTag: MidTag, res?:any) {
@@ -18,6 +19,7 @@ export class CTagIDList<T extends IDBase> extends  Controller {
 	}
 
 	async showID(tags: Tag[]) {
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		let {uq, ID, IX} = this.midTag;
 		let cShowTagIDList = new CShowTagIDList({
 			uq,

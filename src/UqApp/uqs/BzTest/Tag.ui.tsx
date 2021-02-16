@@ -1,60 +1,46 @@
 import { Res, UI } from "tonva-react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { FieldItem, FieldItemNumber } from "tonva-react";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { FieldUI, FieldUIString } from "tonva-react";
+import { FieldItem, FieldItemInt, FieldItemNum, FieldItemString, FieldItemId } from "tonva-react";
 import { Tag } from "./BzTest";
 
-export function render(item: Tag):JSX.Element {
-	return <>{JSON.stringify(item)}</>;
+/*--fields--*/
+const fields = {
+	id: {
+		"name": "id",
+		"type": "id",
+		"isKey": false,
+		"label": "Id"
+	} as FieldItemId,
+	type: {
+		"name": "type",
+		"isKey": true,
+		"label": "Type"
+	} as undefined,
+	name: {
+		"name": "name",
+		"isKey": true,
+		"label": "Name"
+	} as undefined,
 };
+/*==fields==*/
 
-const fieldItems:FieldItem[] = [
+export const fieldArr: FieldItem[] = [
+	fields.type, fields.name, 
 ];
-/*==fieldItems==
-const fieldItems:FieldItem[] = [
-	{
-		name: 'id',
-		key: false,
-	},
-	{
-		name: 'type',
-		key: true,
-	},
-	{
-		name: 'name',
-		key: true,
-	},
-];
-==fieldItems==*/
 
-const fieldUIs:{[name:string]:FieldUI} = {
-	"a": {
-		label: "中文",
-		placeholder: undefined,
-		widget: "string",
-	} as FieldUIString,
-};
-/*==fieldUIs==
-const fieldUIs:{[name:string]:FieldUI} = {
-	"a": {
-		label: "中文",
-		placeholder: undefined,
-		// ID
-		widget: "string",
-	} as FieldUIString,
-};
-==fieldUIs==*/
-
-export const ui:UI = {
+export const ui: UI = {
 	label: "Tag",
-	fieldItems,
-	fieldUIs,
+	fieldArr,
+	fields,
 };
 
-export const res:Res<any> = {
+export const res: Res<any> = {
 	zh: {
 	},
 	en: {
 	}
+};
+
+export function render(item: Tag):JSX.Element {
+	return <>{JSON.stringify(item)}</>;
 };

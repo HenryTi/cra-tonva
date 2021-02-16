@@ -1,4 +1,4 @@
-import { Controller, nav, Uq, UQsMan } from "tonva-react";
+import { Controller, nav, Uq } from "tonva-react";
 import { VRoles } from "./VRoles";
 import { CRoleAdmin } from './roleAdmin';
 

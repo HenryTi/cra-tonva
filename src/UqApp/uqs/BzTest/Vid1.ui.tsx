@@ -1,68 +1,61 @@
 import { Res, UI } from "tonva-react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { FieldItem, FieldItemNumber } from "tonva-react";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { FieldUI, FieldUIString } from "tonva-react";
+import { FieldItem, FieldItemInt, FieldItemNum, FieldItemString, FieldItemId } from "tonva-react";
 import { Vid1 } from "./BzTest";
 
-export function render(item: Vid1):JSX.Element {
-	return <>{JSON.stringify(item)}</>;
+/*--fields--*/
+const fields = {
+	id: {
+		"name": "id",
+		"type": "id",
+		"isKey": false,
+		"label": "Id"
+	} as FieldItemId,
+	b1: {
+		"name": "b1",
+		"type": "id",
+		"isKey": true,
+		"label": "B1"
+	} as FieldItemId,
+	b2: {
+		"name": "b2",
+		"type": "id",
+		"isKey": true,
+		"label": "B2"
+	} as FieldItemId,
+	b3: {
+		"name": "b3",
+		"type": "id",
+		"isKey": false,
+		"label": "B3"
+	} as FieldItemId,
+	m6: {
+		"name": "m6",
+		"type": "integer",
+		"isKey": false,
+		"widget": "updown",
+		"label": "M6"
+	} as FieldItemInt,
 };
+/*==fields==*/
 
-const fieldItems:FieldItem[] = [
+export const fieldArr: FieldItem[] = [
+	fields.b1, fields.b2, fields.b3, fields.m6, 
 ];
-/*==fieldItems==
-const fieldItems:FieldItem[] = [
-	{
-		name: 'id',
-		key: false,
-	},
-	{
-		name: 'b1',
-		key: true,
-	},
-	{
-		name: 'b2',
-		key: true,
-	},
-	{
-		name: 'b3',
-		key: false,
-	},
-	{
-		name: 'm6',
-		key: false,
-	},
-];
-==fieldItems==*/
 
-const fieldUIs:{[name:string]:FieldUI} = {
-	"a": {
-		label: "中文",
-		placeholder: undefined,
-		widget: "string",
-	} as FieldUIString,
-};
-/*==fieldUIs==
-const fieldUIs:{[name:string]:FieldUI} = {
-	"a": {
-		label: "中文",
-		placeholder: undefined,
-		// ID
-		widget: "string",
-	} as FieldUIString,
-};
-==fieldUIs==*/
-
-export const ui:UI = {
+export const ui: UI = {
 	label: "Vid1",
-	fieldItems,
-	fieldUIs,
+	fieldArr,
+	fields,
 };
 
-export const res:Res<any> = {
+export const res: Res<any> = {
 	zh: {
 	},
 	en: {
 	}
+};
+
+export function render(item: Vid1):JSX.Element {
+	return <>{JSON.stringify(item)}</>;
 };

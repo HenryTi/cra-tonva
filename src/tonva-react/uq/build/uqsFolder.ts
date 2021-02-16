@@ -6,7 +6,6 @@ import { UQsMan } from "../uqsMan";
 import { UqMan } from "../uqMan";
 import { buildTsHeader, getNameFromUq, overrideTsFile } from './tools';
 import { buildTsUqFolder } from './buildTsUqFolder';
-import ts from 'typescript';
 
 export async function buildUqsFolder(uqsFolder:string, options: UqsConfig) {
 	let uqErrors = await uqsStart(options);
@@ -57,8 +56,8 @@ export async function buildUqsFolder(uqsFolder:string, options: UqsConfig) {
 		tsUqsUI += `\n\t${uqAlias}.setUI(uqs.${uqAlias});`;
 	}
 
-	overrideTsFile(uqsFolder, 'index', 
-		tsUqsIndexHeader + tsUqsIndexContent + '\n}' + tsUqsIndexReExport + tsUqsUI + '\n}' + '\n');
+	overrideTsFile(`${uqsFolder}/index.ts`, 
+		tsUqsIndexHeader + tsUqsIndexContent + '\n}' + tsUqsIndexReExport + tsUqsUI + '\n}\n');
 }
 
 // 返回每个uq构建时的错误

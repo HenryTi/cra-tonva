@@ -1,8 +1,8 @@
+import { nav, QueryPager, Uq, User } from "tonva-react";
+import { makeObservable, observable } from "mobx";
 import { CUqBase } from "../UqApp";
-import { nav, QueryPager, Uq, UQsMan, User } from "tonva-react";
 import { VMe } from "./VMe";
 import { VEditMe } from "./VEditMe";
-import { makeObservable, observable } from "mobx";
 import { CRoles } from "tonva-com/roles";
 
 export interface RootUnitItem {

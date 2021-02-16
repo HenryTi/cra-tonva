@@ -1,49 +1,78 @@
 import { Res, UI } from "tonva-react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { FieldItem, FieldItemNumber } from "tonva-react";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { FieldUI, FieldUIString } from "tonva-react";
+import { FieldItem, FieldItemInt, FieldItemNum, FieldItemString, FieldItemId } from "tonva-react";
 import { Hours } from "./BzTimesChange";
 
-export function render(item: Hours):JSX.Element {
-	return <>{JSON.stringify(item)}</>;
+/*--fields--*/
+const fields = {
+	id: {
+		"name": "id",
+		"type": "id",
+		"isKey": false,
+		"label": "Id"
+	} as FieldItemId,
+	onsite: {
+		"name": "onsite",
+		"type": "integer",
+		"isKey": false,
+		"widget": "updown",
+		"label": "Onsite"
+	} as FieldItemInt,
+	offsite: {
+		"name": "offsite",
+		"type": "integer",
+		"isKey": false,
+		"widget": "updown",
+		"label": "Offsite"
+	} as FieldItemInt,
+	break: {
+		"name": "break",
+		"type": "integer",
+		"isKey": false,
+		"widget": "updown",
+		"label": "Break"
+	} as FieldItemInt,
+	sick: {
+		"name": "sick",
+		"type": "integer",
+		"isKey": false,
+		"widget": "updown",
+		"label": "Sick"
+	} as FieldItemInt,
+	over: {
+		"name": "over",
+		"type": "integer",
+		"isKey": false,
+		"widget": "updown",
+		"label": "Over"
+	} as FieldItemInt,
+	noTimeLog: {
+		"name": "noTimeLog",
+		"type": "integer",
+		"isKey": false,
+		"widget": "updown",
+		"label": "NoTimeLog"
+	} as FieldItemInt,
 };
+/*==fields==*/
 
-const fieldItems:FieldItem[] = [
+export const fieldArr: FieldItem[] = [
+	fields.onsite, fields.offsite, fields.break, fields.sick, fields.over, fields.noTimeLog, 
 ];
-/*==fieldItems==
-const fieldItems:FieldItem[] = [
-// IDX
-];
-==fieldItems==*/
 
-const fieldUIs:{[name:string]:FieldUI} = {
-	"a": {
-		label: "中文",
-		placeholder: undefined,
-		widget: "string",
-	} as FieldUIString,
-};
-/*==fieldUIs==
-const fieldUIs:{[name:string]:FieldUI} = {
-	"a": {
-		label: "中文",
-		placeholder: undefined,
-		// IDX
-		widget: "string",
-	} as FieldUIString,
-};
-==fieldUIs==*/
-
-export const ui:UI = {
+export const ui: UI = {
 	label: "Hours",
-	fieldItems,
-	fieldUIs,
+	fieldArr,
+	fields,
 };
 
-export const res:Res<any> = {
+export const res: Res<any> = {
 	zh: {
 	},
 	en: {
 	}
+};
+
+export function render(item: Hours):JSX.Element {
+	return <>{JSON.stringify(item)}</>;
 };
