@@ -2,21 +2,21 @@ import { ListPageItems } from "tonva-com/tools";
 import { ID, IX, PageItems, Uq } from "tonva-react";
 import { IDBase, IXBase } from "../base";
 import { MidList } from "../list";
-import { CSelect, SelectProps, MidSelectList } from "./CSelect";
+import { CIDSelect, IDSelectProps, MidIDSelectList } from "./CIDSelect";
 
-export interface IXSelectProps<T extends IXBase> extends SelectProps<T> {
+export interface IXSelectProps<T extends IXBase> extends IDSelectProps<T> {
 	IX: IX;
 	id: number;
 }
 
-export class CIXSelect<T extends IXBase> extends CSelect<T, IXSelectProps<T>> {
+export class CIXSelect<T extends IXBase> extends CIDSelect<T, IXSelectProps<T>> {
 	protected createMidList(): MidList<T> {
 		let {uq, ID, IX, id} = this.props;
 		return new MidIXSelectList(uq, ID, IX, id);
 	}
 }
 
-class MidIXSelectList<T extends IXBase> extends MidSelectList<T> {
+class MidIXSelectList<T extends IXBase> extends MidIDSelectList<T> {
 	readonly IX:IX;
 	readonly id:number;
 	constructor(uq:Uq, ID:ID, IX:IX, id:number) {

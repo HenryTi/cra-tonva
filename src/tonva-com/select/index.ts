@@ -1,2 +1,2 @@
-export * from './CSelect';
+export * from './CIDSelect';
 export * from './CIXSelect';

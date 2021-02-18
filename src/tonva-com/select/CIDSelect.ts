@@ -1,17 +1,17 @@
 import { ID, PageItems, Uq } from "tonva-react";
 import { IDBase } from "../base";
 import { CList, MidList } from "../list";
-import { ListPageItems, renderItem } from "../tools";
+import { ListPageItems } from "../tools";
 import { renderSelectItem } from "./parts";
 
-export interface SelectProps<T extends IDBase> {
+export interface IDSelectProps<T extends IDBase> {
 	uq: Uq;
 	ID: ID;
 	renderItem: (item:T, index:number)=>JSX.Element;
 	onSelectChange: (item:T, isSelected:boolean)=>any;
 }
 
-export class CSelect<T extends IDBase, P extends SelectProps<T>> extends CList<T> {
+export class CIDSelect<T extends IDBase, P extends IDSelectProps<T>> extends CList<T> {
 	props: P;
 	constructor(props: P, res:any) {
 		super(res);
@@ -19,7 +19,7 @@ export class CSelect<T extends IDBase, P extends SelectProps<T>> extends CList<T
 	}
 
 	protected createMidList(): MidList<T> {
-		return new MidSelectList(this.props.uq, this.props.ID);
+		return new MidIDSelectList(this.props.uq, this.props.ID);
 	}
 	protected onItemClick(item:any):void {
 		return; //this.props.onItemClick(item);
@@ -34,13 +34,14 @@ export class CSelect<T extends IDBase, P extends SelectProps<T>> extends CList<T
 			let {onSelectChange} = this.props;
 			onSelectChange?.(item, evt.currentTarget.checked);
 		}
-		let content = (this.props.renderItem ?? renderItem)(item, index);
+		let {renderItem, ID} = this.props;
+		let content = (renderItem ?? ID.render)(item, index);
 		let {$in} = item;
 		return renderSelectItem(onChange, content, $in===1);
 	}
 }
 
-export class MidSelectList<T extends IDBase> extends MidList<T> {
+export class MidIDSelectList<T extends IDBase> extends MidList<T> {
 	readonly ID:ID;
 	constructor(uq:Uq, ID:ID) {
 		super(uq);

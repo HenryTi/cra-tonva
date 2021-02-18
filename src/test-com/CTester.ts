@@ -1,9 +1,9 @@
 import { CBase } from "tonva-react";
+import { CID, MidID, CIDX, MidIDX, MidTag, CIDTagList, CTagIDList, SheetOptions } from "tonva-com";
+import { CSheetNew, MidSheet } from "tonva-com";
 import { CApp, UQs } from "UqApp";
+import { OrderDetail, OrderMaster } from "UqApp/uqs/BzHelloTonva";
 import { VTester } from "./VTester";
-import { CID, MidID, CIDX, MidIDX, MidTag, CIDTagList } from "tonva-com";
-import {  } from "tonva-com";
-import { CTagIDList } from "tonva-com/tag/CTagIDList";
 
 export interface UIItem {
 	name: string;
@@ -61,6 +61,31 @@ export class CTester extends CBase<CApp,UQs> {
 				let mid = new MidIDX(uq, uq.Hours, uq.Staff);
 				let cHours = new CIDX(mid);
 				await cHours.start();
+			}
+		},
+		{
+			name: 'sheet-order',
+			discription: 'Sheet Order Hello Tonva',
+			click: async () => {
+				let uq = this.uqs.BzHelloTonva;
+				let sheetOptions:SheetOptions = {
+					master: {
+						ID: uq.OrderMaster,
+						FieldNO: 'no',
+						FieldIDs: {
+							customer: uq.Customer,
+						}
+					},
+					detail: {
+						ID: uq.OrderDetail,
+						FieldIDs: {
+							product: uq.Customer,
+						}
+					}
+				}
+				let mid = new MidSheet<OrderMaster, OrderDetail>(uq, this.res, sheetOptions);
+				let cSheetNew = new CSheetNew(mid);
+				await cSheetNew.start();
 			}
 		},
 	];

@@ -1,3 +1,4 @@
 export * from './CID';
 export * from './CIDList';
-export * from './Mid';
+export * from './MidID';
+export * from './MidIDList';

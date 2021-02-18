@@ -1,4 +1,4 @@
-import { ID, Schema, UiSchema, Uq, ButtonSchema, Prop } from "tonva-react";
+import { ID, Schema, UiSchema, Uq, ButtonSchema, Prop, UiButton } from "tonva-react";
 import { buildGridProps } from "../tools";
 import { IDBase, Mid } from "../base";
 
@@ -33,10 +33,11 @@ export class MidID<T extends IDBase> extends Mid {
 	private _itemSchema: Schema;
 	get itemSchema(): Schema {
 		if (this._itemSchema !== undefined) return this._itemSchema;
-		return this._itemSchema = this.buildItemSchema();
+		return this._itemSchema = this.buildItemSchema(this.ID);
 	}
 
-	protected buildItemSchema(): Schema {
+	/*
+	buildItemSchema(): Schema {
 		let ret:Schema = [];
 		let {fieldArr} = this.ID.ui;
 		for (let f of fieldArr) {
@@ -56,19 +57,28 @@ export class MidID<T extends IDBase> extends Mid {
 		} as ButtonSchema);
 		return ret;
 	}
+	*/
 
 	private _uiSchema: UiSchema;
 	get uiSchema(): UiSchema {
 		if (this._uiSchema !== undefined) return this._uiSchema;
-		return this._uiSchema = this.buildUISchema();
+		return this._uiSchema = this.buildUISchema(this.ID);
 	}
 
+	/*
 	protected buildUISchema():UiSchema {
 		let {fields} = this.ID.ui;
-		return {
-			items: fields as any,
+		let items = {...fields as any};
+		let uiButton: UiButton = {
+			label: '提交',
+			className: 'btn btn-primary',
+			widget: 'button',
 		};
+		items['submit'] = uiButton;
+		let ret = {items};
+		return ret;
 	}
+	*/
 
 	private _props: Prop[];
 	get props():Prop[] {

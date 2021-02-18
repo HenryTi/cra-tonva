@@ -63,7 +63,7 @@ export function renderPageHeader(props: PageHeaderProps, inWebNav?: boolean) {
 				vBack = <nav onClick={onBack}>{nav.backIcon}</nav>;
 				break;
 			case 'close':
-				vBack = <nav onClick={onBack}>{nav.backIcon}</nav>;
+				vBack = <nav onClick={onBack}>{nav.closeIcon}</nav>;
 				break;
 		}
 	}

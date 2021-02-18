@@ -90,6 +90,10 @@ export interface RetIDDetail {
 	detail: number[];
 }
 
+export interface ParamIDNO {
+	ID: ID;
+}
+
 export interface ParamIDDetail2<M,D,D2> extends ParamIDDetail<M, D> {
 	detail2: {
 		ID: ID;
@@ -202,6 +206,7 @@ export interface Uq {
 	IDDetail<M,D>(param: ParamIDDetail<M,D>): Promise<RetIDDetail>;
 	IDDetail<M,D,D2>(param: ParamIDDetail2<M,D,D2>): Promise<RetIDDetail2>;
 	IDDetail<M,D,D2,D3>(param: ParamIDDetail3<M,D,D2,D3>): Promise<RetIDDetail3>;
+	IDNO(param: ParamIDNO): Promise<string>;
 	IDDetailGet<M,D>(param: ParamIDDetailGet): Promise<[M[], D[]]>;
 	IDDetailGet<M,D,D2>(param: ParamIDDetailGet): Promise<[M[], D[], D2[]]>;
 	IDDetailGet<M,D,D2,D3>(param: ParamIDDetailGet): Promise<[M[], D[], D2[], D3[]]>;
@@ -667,6 +672,7 @@ export class UqMan {
 					default: debugger; break;
 					case 'IDActs': return this.IDActs;
 					case 'IDDetail': return this.IDDetail;
+					case 'IDNO': return this.IDNO;
 					case 'IDDetailGet': return this.IDDetailGet;
 					case 'ID': return this.ID;
 					case 'KeyID': return this.KeyID;
@@ -769,6 +775,12 @@ export class UqMan {
 			detail2: ids(items[2]),
 			detail3: ids(items[3]),
 		};
+		return ret;
+	}
+
+	private IDNO = async (param: ParamIDNO): Promise<string> => {
+		let {ID} = param;
+		let ret = await this.uqApi.post(IDPath('id-no'), {ID: entityName(ID)});
 		return ret;
 	}
 

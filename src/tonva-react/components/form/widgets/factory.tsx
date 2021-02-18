@@ -19,15 +19,23 @@ import { ArrComponent } from './arrComponent';
 import { ImageWidget } from './imageWidget';
 import { TagSingleWidget, TagMultiWidget } from './tagWidget';
 
-const widgetsFactory: {[type: string]: {widget?: TypeWidget, dataTypes?: DataType[]}} = {
+interface WidgetFactory {
+	widget?: TypeWidget;
+	dataTypes?: DataType[];
+};
+
+const stringWidget: WidgetFactory = {
+	dataTypes: ['integer', 'number', 'string'],
+	widget: TextWidget
+};
+
+const widgetFactories: {[type: string]: WidgetFactory} = {
     id: {
         dataTypes: ['id'],
         widget: IdWidget,
     },
-    text: {
-        dataTypes: ['integer', 'number', 'string'],
-        widget: TextWidget
-    },
+    text: stringWidget,
+	string: stringWidget,
     textarea: {
         dataTypes: ['string'],
         widget: TextAreaWidget
@@ -146,7 +154,11 @@ export function factory(context: Context, itemSchema: ItemSchema, children:React
         switch (widgetType) {
         default:
             if (widgetType !== undefined) {
-                let widgetFactory = widgetsFactory[widgetType];
+                let widgetFactory = widgetFactories[widgetType];
+				if (!widgetFactory) {
+					debugger;
+					throw new Error(`unknown widget ${widgetType}`);
+				}
                 typeWidget = widgetFactory.widget;
             }
             if (typeWidget === undefined) typeWidget = getTypeWidget(type);

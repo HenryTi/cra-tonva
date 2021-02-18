@@ -1,6 +1,6 @@
 import { ID, IDX, Uq } from "tonva-react";
 import { CList, MidIDListBase, MidList } from "../list";
-import { listRight, renderItem  } from '../tools';
+import { listRight  } from '../tools';
 import { IDBase } from "../base";
 
 export interface IDXListProps<T extends IDBase> {
@@ -32,7 +32,8 @@ export class CIDXList<T extends IDBase> extends CList<T> {
 	}
 
 	protected renderItem(item:any, index:number):JSX.Element {
-		return (this.props.renderItem ?? renderItem)(item, index);
+		let {renderItem, ID} = this.props;
+		return (renderItem ?? ID.render)(item, index);
 	}
 }
 

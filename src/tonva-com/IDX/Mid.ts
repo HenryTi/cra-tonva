@@ -119,9 +119,9 @@ export class MidIDX extends Mid {
 	private _itemSchema: Schema;
 	get itemSchema(): Schema {
 		if (this._itemSchema !== undefined) return this._itemSchema;
-		return this._itemSchema = this.buildItemSchema();
+		return this._itemSchema = this.buildItemSchema(this.ID);
 	}
-
+	/*
 	protected buildItemSchema(): Schema {
 		let ret:Schema = [];
 		let {schema} = this.ID;
@@ -156,20 +156,22 @@ export class MidIDX extends Mid {
 		} as ButtonSchema);
 		return ret;
 	}
-
+	*/
 	private _uiSchema: UiSchema;
 	get uiSchema(): UiSchema {
 		if (this._uiSchema !== undefined) return this._uiSchema;
-		return this._uiSchema = this.buildUISchema();
+		return this._uiSchema = this.buildUISchema(this.ID);
 	}
 
+	/*
 	protected buildUISchema():UiSchema {
 		return;
 	}
+	*/
 
 	private _props: Prop[];
 	get props():Prop[] {
 		if (this._props !== undefined) return this._props;
-		return this._props = buildGridProps(this.IDX.schema);
+		return this._props = buildGridProps(this.IDX.ui);
 	}
 }

@@ -16,14 +16,14 @@ const fields = {
 		"type": "integer",
 		"isKey": false,
 		"widget": "updown",
-		"label": "Onsite"
+		"label": "现场"
 	} as FieldItemInt,
 	offsite: {
 		"name": "offsite",
 		"type": "integer",
 		"isKey": false,
 		"widget": "updown",
-		"label": "Offsite"
+		"label": "远程"
 	} as FieldItemInt,
 	break: {
 		"name": "break",

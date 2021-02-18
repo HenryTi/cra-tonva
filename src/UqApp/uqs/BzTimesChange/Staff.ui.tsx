@@ -53,5 +53,8 @@ export const res: Res<any> = {
 };
 
 export function render(item: Staff):JSX.Element {
-	return <>{JSON.stringify(item)}</>;
+	let {firstName, lastName, no} = item;
+	return <span>
+		<small className="d-inline-block w-3c">{no}</small> <b>{firstName} {lastName}</b>
+	</span>;
 };

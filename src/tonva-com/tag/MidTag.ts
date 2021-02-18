@@ -1,3 +1,4 @@
+import { Mid } from "tonva-com/base";
 import { ID, IX, Uq } from "tonva-react";
 
 interface TagTree {
@@ -21,18 +22,17 @@ export interface Tag {
 	sub: Tag[];
 }
 
-export class MidTag {
-	uq: Uq;
-	ID: ID;
-	IX: IX;
-	tag: ID;
-	type: string;
+export class MidTag extends Mid {
+	readonly ID: ID;
+	readonly IX: IX;
+	readonly tag: ID;
+	readonly type: string;
 	
 	typeArr: Tag[];
 	typeColl: {[id:number]: Tag};
 
 	constructor(uq: Uq, ID:ID, IX:IX, tag:ID, type: string) {
-		this.uq = uq;
+		super(uq);
 		this.ID = ID;
 		this.IX = IX;
 		this.tag = tag;

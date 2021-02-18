@@ -2,7 +2,7 @@ import { makeObservable, observable } from "mobx";
 import { IDBase } from "tonva-com/base";
 import { Controller } from "tonva-react";
 import { CIDList } from "./CIDList";
-import { MidID } from "./Mid";
+import { MidID } from "./MidID";
 import { VEdit } from "./VEdit";
 import { VView } from "./VView";
 
