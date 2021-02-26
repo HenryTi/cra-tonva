@@ -2,6 +2,7 @@ import { Res, UI } from "tonva-react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FieldItem, FieldItemInt, FieldItemNum, FieldItemString, FieldItemId } from "tonva-react";
 import { OrderDetail } from "./BzHelloTonva";
+import { render as renderCustomer } from './Customer.ui';
 
 /*--fields--*/
 const fields = {
@@ -72,5 +73,14 @@ export const res: Res<any> = {
 };
 
 export function render(item: OrderDetail):JSX.Element {
-	return <>{JSON.stringify(item)}</>;
+	let {product, price, quantity, amount} = item;
+	return <div>
+		<div>{renderCustomer(product as any)}</div>
+		<div className="d-flex">
+			<div className="w-3c"></div>
+			<div className="w-8c"><span>数量:</span>{quantity}</div>
+			单价:{price}
+			金额:{amount}
+		</div>
+	</div>;
 };

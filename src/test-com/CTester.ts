@@ -1,9 +1,10 @@
-import { CBase } from "tonva-react";
-import { CID, MidID, CIDX, MidIDX, MidTag, CIDTagList, CTagIDList, SheetOptions } from "tonva-com";
+import { CBase, Context } from "tonva-react";
+import { CID, MidID, CIDX, MidIDX, MidTag, CIDTagList, CTagIDList, SheetOptions, MidIDTagList } from "tonva-com";
 import { CSheetNew, MidSheet } from "tonva-com";
 import { CApp, UQs } from "UqApp";
 import { OrderDetail, OrderMaster } from "UqApp/uqs/BzHelloTonva";
 import { VTester } from "./VTester";
+import { isNumber } from "lodash";
 
 export interface UIItem {
 	name: string;
@@ -29,7 +30,8 @@ export class CTester extends CBase<CApp,UQs> {
 			click: async () => {
 				let uq = this.uqs.BzHelloTonva;
 				let midTag = new MidTag(uq, uq.Customer, uq.CustomerTag, uq.Tag, 'customer');
-				let cIDTagList = new CIDTagList({midTag});
+				let midIDTagList = new MidIDTagList(midTag);
+				let cIDTagList = new CIDTagList(midIDTagList);
 				await cIDTagList.start();
 			}
 		},
@@ -68,18 +70,27 @@ export class CTester extends CBase<CApp,UQs> {
 			discription: 'Sheet Order Hello Tonva',
 			click: async () => {
 				let uq = this.uqs.BzHelloTonva;
+				let onChanged = async (context:Context, value:any, prev:any) => {
+					let quantity = context.getValue('quantity');
+					let price = context.getValue('price');
+					if (isNumber(quantity) && isNumber(value)) {
+						context.setValue('amount', (price*quantity).toFixed(2));
+					}
+				}
 				let sheetOptions:SheetOptions = {
 					master: {
 						ID: uq.OrderMaster,
-						FieldNO: 'no',
-						FieldIDs: {
-							customer: uq.Customer,
+						fields: {
+							customer: {ID: uq.Customer},
 						}
 					},
 					detail: {
 						ID: uq.OrderDetail,
-						FieldIDs: {
-							product: uq.Customer,
+						fields: {
+							product: { ID: uq.Customer },
+							price: { onChanged },
+							quantity: { onChanged },
+							amount: { readOnly: true, }
 						}
 					}
 				}

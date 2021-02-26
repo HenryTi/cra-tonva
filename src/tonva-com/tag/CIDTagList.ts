@@ -1,7 +1,6 @@
-import { ID, IX, Uq } from "tonva-react";
 import { CList, MidList } from "../list";
 import { IXBase, IDBase } from "../base";
-import { ListPageItems, listRight } from "../tools";
+import { ListPageItems } from "../tools";
 import { CSelect } from "./select";
 import { MidTag, Tag } from "./MidTag";
 import { renderItemTags } from "./parts";
@@ -13,51 +12,26 @@ export interface ItemTags<T> {
 	typeColl: {[id:number]:Tag};
 }
 
-export interface IDTagListProps<T> {
-	midTag: MidTag;
-	onRightClick?: ()=>any;
-	renderItem?: (item:T, index:number)=>JSX.Element;
-	renderTags?: (typeArr: Tag[])=>JSX.Element;
-	renderRight?: ()=>JSX.Element;
-}
-
 export class CIDTagList<T extends IDBase> extends CList<ItemTags<T>> {
-	private props: IDTagListProps<T>;
-	protected midIDTagList: MidIDTagList<T>;
-	constructor(props: IDTagListProps<T>) {
-		super(undefined);
-		this.props = props;
+	private midIDTagList: MidIDTagList<T>;
+	constructor(midIDTagList: MidIDTagList<T>) {
+		super(midIDTagList);
+		this.midIDTagList = midIDTagList;
 	}
 
 	async beforeStart():Promise<boolean> {
-		await this.props.midTag.load();
+		await this.midIDTagList.midTag.load();
 		return true;
 	}
 
-	protected createMidList(): MidIDTagList<T> {
-		let {midTag} = this.props;
-		let {uq, ID, IX, tag} = midTag;
-		return this.midIDTagList = new MidIDTagList<T>(uq, ID, IX, tag, this.props.midTag);
-	}
-
 	protected onItemClick(item:any):void {
-		let {midTag} = this.props;
+		let {midTag} = this.midIDTagList;
 		let cSelect = new CSelect(this, item, midTag, this.res);
 		cSelect.start();
 	}
 
-	protected renderRight():JSX.Element {
-		let {onRightClick, renderRight} = this.props;
-		if (!onRightClick) return null;
-		return (renderRight ?? listRight)(onRightClick);
-	}
-
 	protected renderItem(itemTags:ItemTags<T>, index:number):JSX.Element {
-		//let {midTag, renderItem} = this.props;
-		//let {ID} = midTag;
-		//let {item, typeArr} = itemTags;
-		//return <div>{(renderItem ??  ID.render)(item, index)}</div>;
-		return renderItemTags(this.props, itemTags, index);
+		return renderItemTags(this.midIDTagList, itemTags, index);
 	}
 
 	async onTagSelectChanged(item:any, tag:Tag, selected:boolean) {
@@ -65,22 +39,17 @@ export class CIDTagList<T extends IDBase> extends CList<ItemTags<T>> {
 	}
 }
 
-class MidIDTagList<T extends IDBase> extends MidList<ItemTags<T>> {
-	readonly ID: ID;
-	readonly IX: IX;
-	readonly ID2: ID;
+export class MidIDTagList<T extends IDBase> extends MidList<ItemTags<T>> {
 	readonly midTag: MidTag;
 	private itemTagsColl:{[id:number]:ItemTags<T>};
-	constructor(uq:Uq, ID:ID, IX:IX, ID2:ID, midTag:MidTag) {
-		super(uq);
-		this.ID = ID;
-		this.IX = IX;
-		this.ID2 = ID2;
+	renderTags: (types:Tag[]) => JSX.Element;
+	constructor(midTag:MidTag) {
+		super(midTag.uq);
 		this.midTag = midTag;
 	}
 
 	async init() {
-		await this.IX.loadSchema();
+		await this.midTag.IX.loadSchema();
 	}
 
 	createPageItems():ItemTagsListPageItems<T> {
@@ -93,9 +62,9 @@ class MidIDTagList<T extends IDBase> extends MidList<ItemTags<T>> {
 
 	protected async loadPageItems(pageStart:any, pageSize:number):Promise<ItemTags<T>[]> {
 		let result = await this.uq.IDxID<T, any>({
-			ID: this.ID,
-			IX: this.IX,
-			ID2: this.ID2,
+			ID: this.midTag.ID,
+			IX: this.midTag.IX,
+			ID2: this.midTag.tag, //.ID2,
 			page: {start:pageStart, size:pageSize},
 		});
 		let [ret, ret2] = result;
@@ -161,7 +130,7 @@ class MidIDTagList<T extends IDBase> extends MidList<ItemTags<T>> {
 		let {id, parent} = tag;
 		let ix:IXBase = {id:undefined, id2: id};
 		let acts:{[name:string]: IXBase[]} = {};
-		acts[this.IX.name] = [ix];
+		acts[this.midTag.tag.name] = [ix];
 		if (selected === true) {
 			ix.id = itemId;
 			await this.uq.IDActs(acts);

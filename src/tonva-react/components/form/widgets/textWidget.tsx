@@ -2,7 +2,7 @@ import * as React from 'react';
 import classNames from 'classnames';
 import { Widget } from './widget';
 import { UiTextItem, StringSchema, ItemSchema } from '../../schema';
-import { makeObservable, observable } from 'mobx';
+import { makeObservable, observable, runInAction } from 'mobx';
 import { Context } from '../context';
 import { FieldProps } from '../field';
 
@@ -46,16 +46,20 @@ export class TextWidget extends Widget {
     }
 
     protected onBlur = (evt: React.FocusEvent<any>) => {
-        this.onInputChange(evt);
-        this.checkRules();
-		this.context.checkContextRules();
-		this.hasFocus = false;
+		runInAction(() => {
+			this.onInputChange(evt);
+			this.checkRules();
+			this.context.checkContextRules();
+			this.hasFocus = false;
+		});
     }
     protected onFocus = (evt: React.FocusEvent<any>) => {
-        this.clearError();
-        this.context.removeErrorWidget(this);
-        this.context.clearErrors();
-		this.hasFocus = true;
+		runInAction(() => {
+			this.clearError();
+			this.context.removeErrorWidget(this);
+			this.context.clearErrors();
+			this.hasFocus = true;	
+		});
     }
     protected onChange(evt: React.ChangeEvent<any>) {
     }

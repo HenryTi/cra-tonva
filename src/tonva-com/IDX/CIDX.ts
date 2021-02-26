@@ -1,7 +1,7 @@
 import { makeObservable, observable, runInAction } from "mobx";
 import { Controller, PageItems } from "tonva-react";
 import { HistoryPageItems, TimeSpan } from "../tools";
-import { CIDXList } from "./CIDXList";
+import { CIDXList, MidIDXList } from "./CIDXList";
 import { MidIDX } from "./Mid";
 import { res } from "./res";
 import { VEdit } from "./VEdit";
@@ -25,15 +25,9 @@ export class CIDX extends Controller {
 		this.setRes(res);
 		await this.mid.loadSchema();
 		let {uq, ID, IDX} = this.mid;
-		let idList = new CIDXList({
-			uq,
-			IDX,
-			ID,
-			onRightClick: this.onItemEdit,
-			renderItem: undefined,
-			onItemClick: this.onItemClick,
-			renderRight: undefined,
-		});
+		let midIDXList = new MidIDXList(uq, ID, IDX);
+		midIDXList.onItemClick = this.onItemClick;
+		let idList = new CIDXList(midIDXList);
 		await idList.start();
 	}
 
@@ -44,7 +38,7 @@ export class CIDX extends Controller {
 		this.openVPage(VView);
 	}
 
-	async onItemEdit():Promise<void> {
+	onItemEdit = async ():Promise<void> => {
 		this.openVPage(VEdit);
 	}
 

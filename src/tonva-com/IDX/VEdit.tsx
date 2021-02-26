@@ -15,6 +15,7 @@ export class VEdit extends VPage<CIDX> {
 					default: return null;
 					case 'string': 
 						return this.renderStringProp(v as StringProp);
+					case 'integer':
 					case 'number': 
 						return this.renderNumberProp(v as NumberProp);
 				}

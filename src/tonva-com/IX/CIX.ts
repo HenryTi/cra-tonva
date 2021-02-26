@@ -1,33 +1,36 @@
+import { Mid } from "tonva-com/base";
 import { Controller, ID, IX, Uq } from "tonva-react";
-import { CIXList } from "./CIXList";
+import { CIXList, MidIXList } from "./CIXList";
 
-export interface IXProps {
-	uq: Uq;
-	IX: IX;
-	ID?: ID;
-	id: number;
+export class MidIX extends Mid {
+	//readonly uq: Uq;
+	readonly IX: IX;
+	readonly ID: ID;
+	readonly id: number;
+	constructor(uq:Uq, IX:IX, ID:ID, id:number, res?:any) {
+		super(uq, res);
+		this.IX = IX;
+		this.ID = ID;
+		this.id = id;
+	}
 }
 
-export class CIX<P extends IXProps> extends Controller {
-	protected readonly props: P;
+export class CIX<P extends MidIX> extends Controller {
+	protected readonly mid: P;
 
-	constructor(props: P, res?:any) {
-		super(res);
-		this.props = props;
+	constructor(mid: P) {
+		super(mid.res);
+		this.mid = mid;
 	}
 
 	protected async internalStart() {
-		let {uq, IX, ID, id} = this.props;
-		let idList = new CIXList({
-			uq,
-			IX,
-			ID,
-			id,
-			onRightClick: this.onItemEdit,
-			renderItem: undefined,
-			onItemClick: this.onItemClick,
-			renderRight: undefined,
-		});
+		let {uq, IX, ID, id} = this.mid;
+		let midIXList = new MidIXList(uq, IX, ID, id);
+		midIXList.onRightClick = this.onItemEdit;
+		midIXList.renderItem = undefined;
+		midIXList.onItemClick = this.onItemClick;
+		midIXList.renderRight = undefined;
+		let idList = new CIXList(midIXList);
 		await idList.start();
 	}
 

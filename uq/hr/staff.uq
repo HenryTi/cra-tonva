@@ -1,0 +1,6 @@
+ID Staff (
+	id,
+	KEY no,
+	name char(50),
+	discription char(50),
+);

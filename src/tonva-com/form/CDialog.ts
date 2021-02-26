@@ -18,5 +18,6 @@ export class CDialog<T> extends CForm<T> {
 		else param = this.param;
 		Object.assign(param, data);
 		this.returnCall(param);
+		this.closePage();
 	}
 }

@@ -1,3 +1,5 @@
+import { ChangedHandler, ChangingHandler } from "tonva-react";
+import { ID } from "../uq";
 import { FieldUIType } from "./fieldUI";
 
 export type FieldItemType = 'id' | 'integer' | 'number' | 'string' | 'image' | 'date' | 'boolean' 
@@ -6,12 +8,16 @@ export type FieldItemType = 'id' | 'integer' | 'number' | 'string' | 'image' | '
 export interface FieldItem {
 	name: string;
 	type: FieldItemType;
+	ID?: ID;
 	label?: string;
 	isKey?: boolean;
     required?: boolean;
 	widget?: FieldUIType;
     className?: string;
 	defaultValue?: string;
+    onChanging?: ChangingHandler;
+	onChanged?: ChangedHandler;
+	readOnly?: boolean;
 }
 
 export interface FieldItemObject extends FieldItem {

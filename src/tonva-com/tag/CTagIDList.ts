@@ -1,8 +1,8 @@
-import { Controller, ID, IX, Uq } from "tonva-react";
+import { Controller } from "tonva-react";
 import { IDBase } from "../base";
 import { listRight } from "../tools";
 import { MidTag, Tag } from "./MidTag";
-import { CID, CIDList, IDListProps, MidID, MidIDList } from "../ID";
+import { CID, CIDList, MidID, MidIDList } from "../ID";
 import { VTags } from "./VTags";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -20,45 +20,54 @@ export class CTagIDList<T extends IDBase> extends  Controller {
 
 	async showID(tags: Tag[]) {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		let {uq, ID, IX} = this.midTag;
-		let cShowTagIDList = new CShowTagIDList({
+		//let {uq, ID, IX} = this.midTag;
+		let midIDList: MidTagIDList<T> = new MidTagIDList<any>(
+			this.midTag, tags.map(v => v.id)
+		);
+		let cShowTagIDList = new CShowTagIDList(midIDList
+			/*{
 			uq,
 			ID,
-			midTag: this.midTag,
+			//midTag: this.midTag,
 			tags: tags.map(v => v.id),
 			renderItem: undefined,
 			onItemClick: undefined,
-		});
+		}*/);
 		await cShowTagIDList.start();
 	}
 }
 
-interface TagIDListProps<T extends IDBase> extends IDListProps<T> {
-	midTag: MidTag;
+/*
+class TagIDListProps<T extends IDBase> extends MidIDList<T> {
+	//midTag: MidTag;
 	tags: number[];
 }
+*/
 
 class CShowTagIDList<T extends IDBase> extends CIDList<T> {
-	protected props: TagIDListProps<T>;
+	//protected props: TagIDListProps<T>;
 	protected midIDList: MidTagIDList<T>;
-	constructor(props: TagIDListProps<T>) {
+	constructor(midIDList: MidTagIDList<T>) {
 		super(undefined);
-		this.props = props;
+		this.midIDList = midIDList;
 	}
 
 	async beforeStart():Promise<boolean> {
-		await this.props.midTag.load();
+		await this.midIDList.midTag.load();
 		return true;
 	}
 
+	/*
 	protected createMidList(): MidTagIDList<T> {
-		let {midTag, tags} = this.props;
+		let {midTag, tags} = this.midIDList;
+		
 		let {uq, ID, IX, tag} = midTag;
 		return this.midIDList = new MidTagIDList<T>(uq, tag, IX, ID, tags);
 	}
+	*/
 	
 	protected async onItemClick(item:any):Promise<void> {
-		let {midTag} = this.props;
+		let {midTag} = this.midIDList;
 		let mid = new MidID(midTag.uq, midTag.ID);
 		await mid.loadSchema();
 		let cID = new CID(mid, this.res);
@@ -69,13 +78,13 @@ class CShowTagIDList<T extends IDBase> extends CIDList<T> {
 	
 
 	protected renderRight():JSX.Element {
-		let {onRightClick, renderRight} = this.props;
+		let {onRightClick, renderRight} = this.midIDList;
 		if (!onRightClick) return null;
 		return (renderRight ?? listRight)(onRightClick);
 	}
 
 	protected renderItem(item:T, index:number):JSX.Element {
-		let {midTag, renderItem} = this.props;
+		let {midTag, renderItem} = this.midIDList;
 		let {ID} = midTag;
 		//let {item, typeArr} = itemTags;
 		return (renderItem ??  ID.render)(item, index);
@@ -83,24 +92,27 @@ class CShowTagIDList<T extends IDBase> extends CIDList<T> {
 	}
 }
 
-class MidTagIDList<T extends IDBase> extends MidIDList<T> {
-	readonly tag: ID;
-	readonly IX: IX;
+export class MidTagIDList<T extends IDBase> extends MidIDList<T> {
+	readonly midTag: MidTag;
+	//readonly tag: ID;
+	//readonly IX: IX;
 	readonly ids: number[];
-	constructor(uq:Uq, tag:ID, IX:IX, ID:ID, ids:number[]) {
+	//tags: number[];
+	constructor(midTag:MidTag, /*IX:IX, /*ID:ID, */ids:number[]) {
+		let {uq, ID} = midTag;
 		super(uq, ID);
-		this.tag = tag;
-		this.IX = IX;
+		//this.tag = tag;
+		//this.IX = IX;
 		this.ids = ids;
 	}
  
 	async init() {
-		await this.IX.loadSchema();
+		await this.midTag.IX.loadSchema();
 	}
 
 	protected async loadPageItems(pageStart:any, pageSize:number):Promise<T[]> {
 		let result = await this.uq.IXr<T>({
-			IX: this.IX,
+			IX: this.midTag.IX,
 			IDX: [this.ID],
 			id: this.ids,
 			page: {start:pageStart, size:pageSize},

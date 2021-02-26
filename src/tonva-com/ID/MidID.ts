@@ -1,4 +1,4 @@
-import { ID, Schema, UiSchema, Uq, ButtonSchema, Prop, UiButton } from "tonva-react";
+import { ID, Schema, UiSchema, Uq, Prop } from "tonva-react";
 import { buildGridProps } from "../tools";
 import { IDBase, Mid } from "../base";
 

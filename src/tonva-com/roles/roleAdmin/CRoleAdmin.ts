@@ -1,6 +1,6 @@
 import { makeObservable, observable, runInAction } from "mobx";
 import { centerApi, Controller, UqApi, Uq } from "tonva-react";
-import { CIXEdit } from "../../IX";
+import { CIXEdit, MidIX } from "../../IX";
 import { VRoleAdmin } from "./VRoleAdmin";
 
 export interface UserRole {
@@ -163,12 +163,8 @@ export class CRoleAdmin extends Controller {
 		await IX.loadSchema();
 		let {id2Name} = IX.schema;
 		let ID = this.uq.$.getID(id2Name);
-		let cIXEdit = new CIXEdit({
-			uq: this.uq,
-			IX,
-			ID,
-			id: user,
-		});
+		let midIX = new MidIX(this.uq, IX, ID, user);
+		let cIXEdit = new CIXEdit(midIX);
 		await cIXEdit.start();
 	}
 }

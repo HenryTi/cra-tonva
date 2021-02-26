@@ -1,32 +1,24 @@
-import { FieldItem, FieldItemId, FieldItemString, ID, UI } from "tonva-react";
+import { ChangedHandler, ChangingHandler, FieldItem, FieldItemId, FieldItemString, ID, UI } from "tonva-react";
 
-export class UiForm {
+export class FormProps {
 	label: string;
 	readonly fieldArr: FieldItem[];
 	readonly fields: {[name:string]: FieldItem};
 	onSubmit: (values:any) => Promise<void>;
+	submitCaption: string;
 
-	constructor(ui: UI) {
+	constructor(ui: UI, exFields:{[name:string]: Partial<FieldItem>}) {
 		let {label, fieldArr, fields} = ui;
 		this.label = label;
 		this.fieldArr = [];
 		this.fields = {};
 		for (let i in fields) {
 			let field = fields[i];
+			let exField = exFields?.[i];
 			let index = fieldArr.findIndex(v => v === field);
-			let f = {...field};
+			let f = {...field, ...exField};
 			this.fields[i] = f;
 			this.fieldArr[index] = f;
-		}
-	}
-
-	setFieldIDs(FieldIDs: {[name:string]:ID}) {
-		for (let i in FieldIDs) {
-			let FieldID = FieldIDs[i];
-			if (FieldID === undefined) continue;
-			let field = this.fields[i];
-			if (field === undefined) continue;
-			this.setDefaultIDUi(field, FieldID);
 		}
 	}
 
@@ -56,5 +48,22 @@ export class UiForm {
 		let noField = field as FieldItemString;
 		noField.readOnly = true;
 		noField.defaultValue = no;
+	}
+
+	hideField(...fieldNames:string[]) {
+		for (let fieldName of fieldNames) {
+			let index = this.fieldArr.findIndex(v => v.name === fieldName);
+			if (index >= 0) this.fieldArr.splice(index, 1);
+		}
+	}
+
+	setFieldChanged(fieldName: string, onChanged: ChangedHandler) {
+		let field = this.fields[fieldName];
+		if (field) field.onChanged = onChanged;
+	}
+
+	setFieldChanging(fieldName: string, onChanging: ChangingHandler) {
+		let field = this.fields[fieldName];
+		if (field) field.onChanging = onChanging;
 	}
 }

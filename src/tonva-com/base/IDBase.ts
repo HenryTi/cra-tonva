@@ -1,4 +1,4 @@
-import { ID } from "tonva-react";
+//import { ID } from "tonva-react";
 
 export interface IDBase {
 	id: number;
@@ -16,10 +16,4 @@ export interface Detail {
 	id?: number;
 	master?: number;
 	row?: number;
-}
-
-export interface IDs {
-	ID: ID;
-	FieldNO?: string;					// NO field
-	FieldIDs?: {[name:string]: ID};
 }

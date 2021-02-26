@@ -213,9 +213,11 @@ export abstract class Context {
     };
 
     clearErrors() {
-        this.errors.splice(0);
-        this.errorWidgets.splice(0);
-        this.clearContextErrors();
+		runInAction(() => {
+			this.errors.splice(0);
+			this.errorWidgets.splice(0);
+			this.clearContextErrors();	
+		});
     }
 
     renderErrors = observer((): JSX.Element => {

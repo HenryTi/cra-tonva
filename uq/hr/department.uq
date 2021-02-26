@@ -1,0 +1,10 @@
+ID Department (
+	id,
+	key parent,				-- root '-', root + name 构成大类。大类+name构成组，组+name构成tag
+	key name TextId,		-- textID
+);
+
+IX DepartmentStaff (
+	id,
+	id2,
+);

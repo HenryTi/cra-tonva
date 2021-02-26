@@ -16,7 +16,6 @@ export abstract class Widget {
     protected _itemSchema: ItemSchema;
     protected _ui: UiItem;
 	protected defaultValue: any;
-	protected value: any;
     protected rules: Rule[];
     protected readOnly:boolean;
 	protected disabled:boolean;
@@ -25,6 +24,7 @@ export abstract class Widget {
     contextErrors: string[] = [];
     get hasError():boolean {return (this.errors.length + this.contextErrors.length)>0}
     visible:boolean = null;
+	value: any;
 
     constructor(context:Context, itemSchema:ItemSchema, fieldProps:FieldProps, children: React.ReactNode) {
 		makeObservable(this, {
@@ -32,6 +32,7 @@ export abstract class Widget {
 			contextErrors: observable,
 			hasError: computed,
 			visible: observable,
+			value: observable,
 		});
         this.context = context;
         let {name} = itemSchema;

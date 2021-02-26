@@ -715,9 +715,15 @@ export class UqMan {
 						let nv:any = {};
 						for (let n in val) {
 							let tv = val[n];
-							if (n === 'time') {
-								if (Object.prototype.toString.call(tv) === '[object Date]') {
-									tv = (tv as Date).getTime();
+							if (tv && typeof tv === 'object') {
+								if (n === 'time') {
+									if (Object.prototype.toString.call(tv) === '[object Date]') {
+										tv = (tv as Date).getTime();
+									}
+								}
+								else {
+									let id = tv['id'];
+									tv = id;
 								}
 							}
 							nv[n] = tv;
@@ -746,23 +752,23 @@ export class UqMan {
 		let postParam:any = {
 			master: {
 				name: entityName(master.ID),
-				value: master.value,
+				value: toScalars(master.value),
 			},
 			detail: {
 				name: entityName(detail.ID),
-				values: detail.values,
+				values: detail.values?.map(v => toScalars(v)),
 			},
 		}
 		if (detail2) {
 			postParam.detail2 = {
 				name: entityName(detail2.ID),
-				values: detail2.values,
+				values: detail2.values?.map(v => toScalars(v)),
 			}
 		}
 		if (detail3) {
 			postParam.detail3 = {
 				name: entityName(detail3.ID),
-				values: detail3.values,
+				values: detail3.values?.map(v => toScalars(v)),
 			}
 		}
 		let ret = await this.uqApi.post(IDPath('id-detail'), postParam);
@@ -915,4 +921,15 @@ function entityName(entity:Entity | string): string {
 	if (!entity) return;
 	if (typeof entity === 'string') return entity;
 	return entity.name;
+}
+
+function toScalars(value:any):any {
+	if (!value) return value;
+	let ret:any = {};
+	for (let i in value) {
+		let v = value[i];
+		if (typeof v === 'object') v = v['id'];
+		ret[i] = v;
+	}
+	return ret;
 }

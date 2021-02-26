@@ -1,0 +1,16 @@
+-- 任何一个实体，都可以拥有token。个人，员工，部门，客户。
+IDX Token (
+	id,
+	point INT LOG,
+);
+
+IDX KpiCustomerService (
+	id,
+	a INT LOG,
+);
+
+IDX KpiMarketingDevelop (
+	id,
+	b INT LOG,
+);
+

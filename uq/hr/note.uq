@@ -1,0 +1,5 @@
+ID Note (
+	id,
+	content TEXT,
+	stamp (create, update),
+);

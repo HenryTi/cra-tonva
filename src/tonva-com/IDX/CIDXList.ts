@@ -1,8 +1,8 @@
 import { ID, IDX, Uq } from "tonva-react";
-import { CList, MidIDListBase, MidList } from "../list";
-import { listRight  } from '../tools';
+import { CList, MidIDListBase } from "../list";
 import { IDBase } from "../base";
 
+/*
 export interface IDXListProps<T extends IDBase> {
 	uq: Uq;
 	IDX: IDX;
@@ -12,36 +12,28 @@ export interface IDXListProps<T extends IDBase> {
 	onItemClick: (item:T)=>any;
 	renderRight?: ()=>JSX.Element;
 }
-
+*/
 export class CIDXList<T extends IDBase> extends CList<T> {
-	private props: IDXListProps<T>;
-	constructor(props: IDXListProps<T>) {
-		super(undefined);
-		this.props = props;
-	}
-
-	protected createMidList(): MidList<T> {
-		return new MidIDXList(this.props.uq, this.props.ID);
-	}
-	protected onItemClick(item:any):void {
-		this.props.onItemClick(item);
-	}
-
-	protected renderRight():JSX.Element {
-		return (this.props.renderRight ?? listRight)(this.props.onRightClick);
+	private midIDList: MidIDXList<T>;
+	constructor(midIDList: MidIDXList<T>) {
+		super(midIDList);
+		this.midIDList = midIDList;
 	}
 
 	protected renderItem(item:any, index:number):JSX.Element {
-		let {renderItem, ID} = this.props;
-		return (renderItem ?? ID.render)(item, index);
+		let {ID} = this.midIDList;
+		if (ID) return ID.render(item);
+		return super.renderItem(item, index);
 	}
 }
 
-class MidIDXList<T extends IDBase> extends MidIDListBase<T> {
+export class MidIDXList<T extends IDBase> extends MidIDListBase<T> {
 	readonly ID:ID;
-	constructor(uq:Uq, ID:ID) {
+	readonly IDX: IDX;
+	constructor(uq:Uq, ID:ID, IDX:IDX) {
 		super(uq);
 		this.ID = ID;
+		this.IDX = IDX;
 	}
 
 	async init() {

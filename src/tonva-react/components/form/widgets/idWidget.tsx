@@ -10,13 +10,15 @@ const none = <small className="text-muted">[无]</small>;
 
 export class IdWidget extends Widget {
     protected get ui(): UiIdItem {return this._ui as UiIdItem};
-	value:number = null;
+	//value:number = null;
 
 	constructor(context:Context, itemSchema:ItemSchema, fieldProps:FieldProps, children: React.ReactNode) {
 		super(context, itemSchema, fieldProps, children);
+		/*
 		makeObservable(this, {
 			value: observable,
 		})
+		*/
 	}
 	
     setReadOnly(value:boolean) {this.readOnly = value}
@@ -36,6 +38,10 @@ export class IdWidget extends Widget {
 			this.checkRules();	
 		});
     }
+
+	setValue(value:any) {
+		super.setValue(value);
+	}
 
     render() {
         let placeholder:string|JSX.Element, Templet: TempletType;

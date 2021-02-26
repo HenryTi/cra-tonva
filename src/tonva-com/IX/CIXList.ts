@@ -1,10 +1,10 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { ID, IX, Uq } from "tonva-react";
-import { CList, MidIDListBase, MidList } from "../list";
-import { IXBase, IDBase } from "../base";
-import { listRight, renderItem } from "../tools";
 import { runInAction } from "mobx";
+import { ID, IX, Uq } from "tonva-react";
+import { CList, MidIDListBase } from "../list";
+import { IXBase, IDBase } from "../base";
 
+/*
 export interface IXListProps<T extends IDBase> {
 	uq: Uq;
 	IX: IX;
@@ -15,31 +15,12 @@ export interface IXListProps<T extends IDBase> {
 	onItemClick: (item:T)=>any;
 	renderRight?: ()=>JSX.Element;
 }
-
-export class CIXList<T extends IDBase, T2 extends IXBase> extends CList<T> {
-	private props: IXListProps<T>;
+*/
+export class CIXList<T extends IDBase, T2 extends IXBase> extends CList<T2> {
 	protected midIXList: MidIXList<T2>;
-	constructor(props: IXListProps<T>) {
-		super(undefined);
-		this.props = props;
-	}
-
-	protected createMidList(): MidList<T2> {
-		let {uq, IX, ID, id} = this.props;
-		return this.midIXList = new MidIXList<T2>(uq, IX, ID, id);
-	}
-	protected onItemClick(item:any):void {
-		this.props.onItemClick?.(item);
-	}
-
-	protected renderRight():JSX.Element {
-		let {onRightClick, renderRight} = this.props;
-		if (!onRightClick) return null;
-		return (renderRight ?? listRight)(onRightClick);
-	}
-
-	protected renderItem(item:any, index:number):JSX.Element {
-		return (this.props.renderItem ??  renderItem)(item, index);
+	constructor(midIXList: MidIXList<T2>) {
+		super(midIXList);
+		this.midIXList = midIXList;
 	}
 
 	update(item:any) {
@@ -47,7 +28,7 @@ export class CIXList<T extends IDBase, T2 extends IXBase> extends CList<T> {
 	}
 }
 
-class MidIXList<T extends IXBase> extends MidIDListBase<T> {
+export class MidIXList<T extends IXBase> extends MidIDListBase<T> {
 	readonly IX:IX;
 	readonly ID:ID;
 	readonly id: number;

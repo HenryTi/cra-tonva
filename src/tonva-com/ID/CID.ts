@@ -1,8 +1,9 @@
-import { makeObservable, observable } from "mobx";
+import { makeObservable, observable, runInAction } from "mobx";
 import { IDBase } from "tonva-com/base";
 import { Controller } from "tonva-react";
 import { CIDList } from "./CIDList";
 import { MidID } from "./MidID";
+import { MidIDList } from "./MidIDList";
 import { VEdit } from "./VEdit";
 import { VView } from "./VView";
 
@@ -18,27 +19,26 @@ export class CID<T extends IDBase> extends Controller {
 	}
 
 	protected async internalStart() {
-		//await this.mid.loadSchema();
 		let {uq, ID} = this.mid;
-		this.idList = new CIDList({
-			uq,
-			ID,
-			onRightClick: () => this.onItemEdit(),
-			renderItem: undefined,
-			onItemClick: this.onItemClick,
-			renderRight: undefined,
-		});
+		let midIDList = new MidIDList(uq, ID);
+		midIDList.onRightClick = this.onItemEdit;
+		midIDList.renderItem = undefined;
+		midIDList.onItemClick = this.onItemClick;
+		midIDList.renderRight = undefined;
+		this.idList = new CIDList(midIDList);
 		await this.idList.start();
 	}
 
 	renderItem: (item:any, index:number) => JSX.Element;
 	item:any;
 	onItemClick: (item:any) => void = (item:any) => {
-		this.item = item;
-		this.onItemView();
+		runInAction(() => {
+			this.item = item;
+			this.onItemView();	
+		});
 	}
 
-	onItemEdit():void {
+	onItemEdit = (): void => {
 		this.openVPage(VEdit);
 	}
 
@@ -60,7 +60,9 @@ export class CID<T extends IDBase> extends Controller {
 		let ret = await this.mid.saveID(item);
 		if (ret) id = ret;
 		this.idList.update(id, item);
-		Object.assign(this.item, item);
+		runInAction(() => {
+			Object.assign(this.item, item);
+		});
 		return ret;
 	}
 }

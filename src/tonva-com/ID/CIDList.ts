@@ -1,9 +1,8 @@
-import { ID, Uq } from "tonva-react";
-import { CList, MidList } from "../list";
-import { listRight  } from '../tools';
+import { CList } from "../list";
 import { IDBase } from "../base";
 import { MidIDList } from "./MidIDList";
 
+/*
 export interface IDListProps<T extends IDBase> {
 	uq: Uq;
 	ID: ID;
@@ -12,29 +11,19 @@ export interface IDListProps<T extends IDBase> {
 	onItemClick: (item:T)=>any;
 	renderRight?: ()=>JSX.Element;
 }
-
+*/
 export class CIDList<T extends IDBase> extends CList<T> {
-	protected props: IDListProps<T>;
-	protected midIDList: MidIDList<T>;
-	constructor(props: IDListProps<T>) {
-		super(undefined);
-		this.props = props;
-	}
-
-	protected createMidList(): MidList<T> {
-		return this.midIDList = new MidIDList(this.props.uq, this.props.ID);
-	}
-	protected onItemClick(item:any):void {
-		this.props.onItemClick(item);
-	}
-
-	protected renderRight():JSX.Element {
-		return (this.props.renderRight ?? listRight)(this.props.onRightClick);
+	//protected props: IDListProps<T>;
+	protected readonly midIDList: MidIDList<T>;
+	constructor(midIDList: MidIDList<T>) {
+		super(midIDList);
+		this.midIDList = midIDList;
 	}
 
 	protected renderItem(item:any, index:number):JSX.Element {
-		let {renderItem, ID } = this.props;
-		return (renderItem ?? ID.render)(item, index);
+		let {ID } = this.midIDList;
+		if (ID) return ID.render(item);
+		return super.renderItem(item, index);
 	}
 
 	update(id:number, item:any) {

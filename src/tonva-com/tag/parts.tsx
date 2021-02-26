@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
+import { IDBase } from "tonva-com/base";
 import { FA } from "tonva-react";
-import { IDTagListProps, ItemTags } from "./CIDTagList";
+import { MidIDTagList, ItemTags } from "./CIDTagList";
 import { Tag } from "./MidTag";
 
 export function renderRight(onClick: () => void) {
@@ -9,13 +10,14 @@ export function renderRight(onClick: () => void) {
 	</button>;
 }
 
-export function renderItemTags<T>(props: IDTagListProps<T>, itemTags:ItemTags<T>, index:number):JSX.Element {
+export function renderItemTags<T extends IDBase>(midIDTagList: MidIDTagList<T>, itemTags:ItemTags<T>, index:number):JSX.Element {
 	let V = observer(() => {
-		let {midTag, renderItem, renderTags} = props;
+		let {midTag, renderItem, renderTags} = midIDTagList;
+		//let {renderItem} = midTag;
 		let {ID} = midTag;
 		let {item, typeArr} = itemTags;
 		return <div className="d-block">
-			<div>{(renderItem ??  ID.render)(item, index)}</div>
+			<div>{(renderItem ??  ID.render)(item as any, index)}</div>
 			<div className="text-muted mt-1">{(renderTags ?? defaultRenderTags)(typeArr)}</div>
 		</div>;	
 	});

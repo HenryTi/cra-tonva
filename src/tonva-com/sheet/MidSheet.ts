@@ -1,23 +1,37 @@
-import { Uq } from "tonva-react";
-import { Detail, IDs, Master, Mid } from "../base";
+import { FormUI, Uq } from "tonva-react";
+import { Detail, Master, Mid } from "../base";
 
 export interface SheetOptions {
-	master: IDs;
-	detail: IDs;
+	master: FormUI;
+	detail: FormUI;
 }
 
 export class MidSheet<M extends Master, D extends Detail> extends Mid {
-	readonly MasterIDs: IDs;
-	readonly DetailIDs: IDs;
+	readonly master: FormUI;
+	readonly detail: FormUI;
 
 	constructor(uq:Uq, res:any, options: SheetOptions) {
 		super(uq, res);
 		let {master, detail} = options;
-		this.MasterIDs = master;
-		this.DetailIDs = detail;
+		this.master = master;
+		this.detail = detail;
 	}
 
 	async load(id:number):Promise<[M[],D[]]> {
 		return [[], []];
+	}
+
+	async save(master:M, details:D[]):Promise<any> {
+		let ret = await this.uq.IDDetail({
+			master: {
+				ID: this.master.ID,
+				value: master,
+			},
+			detail: {
+				ID: this.detail.ID,
+				values: details,
+			},
+		});
+		return ret;
 	}
 };

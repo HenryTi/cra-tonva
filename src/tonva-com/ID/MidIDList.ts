@@ -1,9 +1,10 @@
-import { IDBase } from "tonva-com/base";
-import { MidIDListBase } from "tonva-com/list";
 import { ID, Uq } from "tonva-react";
+import { IDBase } from "../base";
+import { MidIDListBase } from "../list";
 
 export class MidIDList<T extends IDBase> extends MidIDListBase<T> {
 	readonly ID:ID;
+	
 	constructor(uq:Uq, ID:ID) {
 		super(uq);
 		this.ID = ID;
