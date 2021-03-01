@@ -1,4 +1,4 @@
-import { FormProps } from "tonva-com";
+import { FormProps } from "tonva-uqui";
 import { Detail, Master } from "../base";
 import { CDialog, createPickId } from "../form";
 import { CSheet } from "./CSheet";

@@ -3,14 +3,3 @@ IDX Token (
 	id,
 	point INT LOG,
 );
-
-IDX KpiCustomerService (
-	id,
-	a INT LOG,
-);
-
-IDX KpiMarketingDevelop (
-	id,
-	b INT LOG,
-);
-

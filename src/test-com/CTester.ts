@@ -1,6 +1,6 @@
 import { CBase, Context } from "tonva-react";
-import { CID, MidID, CIDX, MidIDX, MidTag, CIDTagList, CTagIDList, SheetOptions, MidIDTagList } from "tonva-com";
-import { CSheetNew, MidSheet } from "tonva-com";
+import { CID, MidID, CIDX, MidIDX, MidTag, CIDTagList, CTagIDList, SheetOptions, MidIDTagList } from "tonva-uqui";
+import { CSheetNew, MidSheet } from "tonva-uqui";
 import { CApp, UQs } from "UqApp";
 import { OrderDetail, OrderMaster } from "UqApp/uqs/BzHelloTonva";
 import { VTester } from "./VTester";

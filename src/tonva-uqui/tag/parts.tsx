@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { IDBase } from "tonva-com/base";
+import { IDBase } from "tonva-uqui/base";
 import { FA } from "tonva-react";
 import { MidIDTagList, ItemTags } from "./CIDTagList";
 import { Tag } from "./MidTag";

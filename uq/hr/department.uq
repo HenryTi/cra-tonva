@@ -4,7 +4,18 @@ ID Department (
 	key name TextId,		-- textID
 );
 
-IX DepartmentStaff (
+OPEN IX DepartmentStaff (
 	id,
-	id2,
+	id2 log,
+);
+
+ID Position (
+	id,
+	KEY no,					-- 职位定义编号
+	name TextID,			-- 职位名称
+);
+
+OPEN IX StaffPosition (
+	id,						-- staff
+	id2 log,				-- Position
 );

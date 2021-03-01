@@ -1,4 +1,4 @@
-import { Mid } from "tonva-com/base";
+import { Mid } from "tonva-uqui/base";
 import { ID, IX, Uq } from "tonva-react";
 
 interface TagTree {

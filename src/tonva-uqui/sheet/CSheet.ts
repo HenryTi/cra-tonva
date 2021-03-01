@@ -1,5 +1,5 @@
 import { makeObservable, observable } from "mobx";
-import { CForm, createPickId, FormProps } from "tonva-com/form";
+import { CForm, createPickId, FormProps } from "tonva-uqui/form";
 import { Controller } from "tonva-react";
 import { Detail, Master } from "../base";
 import { MidSheet } from "./MidSheet";

@@ -1,5 +1,5 @@
 import { makeObservable, observable, runInAction } from "mobx";
-import { IDBase } from "tonva-com/base";
+import { IDBase } from "tonva-uqui/base";
 import { Controller } from "tonva-react";
 import { CIDList } from "./CIDList";
 import { MidID } from "./MidID";

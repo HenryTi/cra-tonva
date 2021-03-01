@@ -1,0 +1,6 @@
+UQ [BizDev]/Note version='0.01' author='henry';
+
+import HR = BizDev/Hr;
+
+IX DepartmentStaff from HR.DepartmentStaff (
+);

@@ -1,4 +1,4 @@
-import { ListPageItems } from "tonva-com/tools";
+import { ListPageItems } from "tonva-uqui/tools";
 import { ID, IX, PageItems, Uq } from "tonva-react";
 import { IDBase, IXBase } from "../base";
 import { MidList } from "../list";

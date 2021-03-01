@@ -3,7 +3,7 @@ import { makeObservable, observable } from "mobx";
 import { CUqBase } from "../UqApp";
 import { VMe } from "./VMe";
 import { VEditMe } from "./VEditMe";
-import { CRoles } from "tonva-com/roles";
+import { CRoles } from "tonva-uqui/roles";
 
 export interface RootUnitItem {
 	id: number;					// root unit id
