@@ -1,13 +1,15 @@
 import { DebugItem } from "bug/CBug";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { BzTest, BzHelloTonva, BzCustomerPayment, UQs } from "UqApp";
+import { UQs } from "UqApp";
 import { Log } from "../Logger";
+
+//BzTest, BzHelloTonva, BzCustomerPayment, 
 
 export const testItem1:DebugItem = {
 	name: 'HelloTonva.GetProductStock',
 	discription: '{product: 1}',
 	test: async ( log: Log, uqs: UQs):Promise<void> => {
-		
+		/*
 		let a = await uqs.BzTest.ID({
 			IDX: uqs.BzTest.X1,
 			id: 7077888,
@@ -71,6 +73,7 @@ export const testItem1:DebugItem = {
 
 		let ret = await uqs.BzHelloTonva.GetProductStock.query({product: 1});
 		log(ret);
+		*/
 		log('test1');
 		log('test1');
 		log('test1');

@@ -1,7 +1,7 @@
 import { Res, UI } from "tonva-react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FieldItem, FieldItemInt, FieldItemNum, FieldItemString, FieldItemId } from "tonva-react";
-import { OrderMaster } from "./BzHelloTonva";
+import { $PiecewiseDetail } from "./BzHelloTonva";
 
 /*--fields--*/
 const fields = {
@@ -11,40 +11,42 @@ const fields = {
 		"isKey": false,
 		"label": "Id"
 	} as FieldItemId,
-	no: {
-		"name": "no",
-		"type": "string",
-		"isKey": true,
-		"widget": "string",
-		"label": "No"
-	} as FieldItemString,
-	customer: {
-		"name": "customer",
+	parent: {
+		"name": "parent",
 		"type": "id",
-		"isKey": false,
-		"label": "Customer"
+		"isKey": true,
+		"label": "Parent"
 	} as FieldItemId,
-	$owner: {
-		"name": "$owner",
+	row: {
+		"name": "row",
+		"type": "integer",
+		"isKey": true,
+		"widget": "updown",
+		"label": "Row"
+	} as FieldItemInt,
+	sec: {
+		"name": "sec",
 		"type": "integer",
 		"isKey": false,
 		"widget": "updown",
-		"label": "$owner"
+		"label": "Sec"
 	} as FieldItemInt,
-	$create: {
-		"name": "$create",
+	value: {
+		"name": "value",
+		"type": "integer",
 		"isKey": false,
-		"label": "$create"
-	} as undefined,
+		"widget": "updown",
+		"label": "Value"
+	} as FieldItemInt,
 };
 /*==fields==*/
 
 export const fieldArr: FieldItem[] = [
-	fields.no, fields.customer, fields.$owner, fields.$create, 
+	fields.parent, fields.row, fields.sec, fields.value, 
 ];
 
 export const ui: UI = {
-	label: "OrderMaster",
+	label: "$PiecewiseDetail",
 	fieldArr,
 	fields,
 };
@@ -56,6 +58,6 @@ export const res: Res<any> = {
 	}
 };
 
-export function render(item: OrderMaster):JSX.Element {
+export function render(item: $PiecewiseDetail):JSX.Element {
 	return <>{JSON.stringify(item)}</>;
 };

@@ -1,7 +1,9 @@
-import { CMe } from './CMe';
-import { Image, VPage, nav, IconText, PropGrid, LMR, FA, Prop } from 'tonva-react';
+import React from 'react';
 import { observer } from 'mobx-react';
-import { name, version } from '../../package.json';
+import { Image, VPage, nav, IconText, PropGrid, LMR, FA, Prop } from 'tonva-react';
+import { CMe } from './CMe';
+import { appConfig } from '../appConfig';
+import { VAbout } from './VAbout';
 
 export class VMe extends VPage<CMe> {
 	header() {return this.t('me')}
@@ -12,11 +14,13 @@ export class VMe extends VPage<CMe> {
             '',
             {
                 type: 'component',
-                component: <div className="w-100 d-flex justify-content-between">
-                    <IconText iconClass="text-info mr-2" icon="smile-o" text={this.t('aboutTheApp')} />
-                    <div className="py-2 small"><b>{name}</b> {version}</div>
-                </div>,
-            }
+                component: <LMR className="w-100" onClick={this.about}
+					right={<FA className="align-self-center" name="angle-right" />}>
+                    <IconText iconClass="text-info mr-2" 
+						icon="smile-o" 
+						text={<>{this.t('aboutTheApp')} <small>版本 {appConfig.version}</small></>} />                    
+                </LMR>,
+            },
         ];
 
         let rows: Prop[];
@@ -33,14 +37,6 @@ export class VMe extends VPage<CMe> {
         }
         else {
             let logOutRows: Prop[] = [
-                '',
-                {
-                    type: 'component',
-                    bk: '',
-                    component: <button className="btn btn-danger w-100" onClick={this.onExit}>
-                        <FA name="sign-out" size="lg" /> {this.t('logout')}
-                </button>
-                },
             ];
 
             rows = [
@@ -49,39 +45,13 @@ export class VMe extends VPage<CMe> {
                     type: 'component',
                     component: <this.meInfo />
                 },
-			];
-			if (this.controller.roles) {
-				rows.push(
-					'',
-					{
-						type: 'component',
-						component: <IconText iconClass="text-success mr-2" icon="database" text={this.t('backend')} />,
-						onClick: this.controller.backend
-					},
-				);
-			}
-			rows.push(
-                '',
-                {
-                    type: 'component',
-                    component: <IconText iconClass="text-info mr-2" icon="key" text={this.t('changePassword')} />,
-                    onClick: this.changePassword
-				},
-			);
+            ]
             rows.push(...aboutRows, ...logOutRows);
         }
         return <PropGrid rows={[...rows]} values={{}} />;
 	}
 
-	private onExit = () => {
-        nav.showLogout();
-    }
-
-    private changePassword = async () => {
-        await nav.changePassword();
-    }
-
-    private meInfo = observer(() => {
+	private meInfo = observer(() => {
         let { user } = nav;
         if (user === undefined) return null;
         let { id, name, nick, icon } = user;
@@ -95,6 +65,10 @@ export class VMe extends VPage<CMe> {
             </div>
         </LMR>;
     });
+
+	private about = () => {
+		this.openVPage(VAbout);
+	}
 }
 
 function userSpan(name: string, nick: string): JSX.Element {

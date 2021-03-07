@@ -1,7 +1,8 @@
+import * as React from 'react';
 import { observable } from 'mobx';
 import {
     userApi, ItemSchema, StringSchema, ImageSchema, UiTextItem, UiImageItem, nav, Page,
-    Edit, UiSchema, VPage
+    Edit, UiSchema, VPage, Prop, FA, IconText, PropGrid
 } from 'tonva-react';
 import { CMe } from './CMe';
 
@@ -40,12 +41,51 @@ export class VEditMe extends VPage<CMe>{
         nav.saveLocalUser();
     }
 
+	private onExit = () => {
+        nav.showLogout();
+    }
+
+	private changePassword = async () => {
+        await nav.changePassword();
+    }
+
     private page = () => {
 		let { schema, uiSchema, data, onItemChanged } = this;
+		let gridRows: Prop[] = [
+			'',
+			{
+				type: 'component',
+				component: <IconText iconClass="text-info mr-2" icon="key" text={this.t('changePassword')} />,
+				onClick: this.changePassword
+			},
+			'',
+			'',
+			{
+				type: 'component',
+				bk: '',
+				component: <div className="w-100 text-center">
+					<button className="btn btn-danger w-100 w-max-20c" onClick={this.onExit}>
+						<FA name="sign-out" size="lg" /> {this.t('logout')}
+					</button>
+				</div>
+			},
+		];
+
+
+		/*
+		let vAdmin: any;
+		
+		let { role } = this.controller;
+		if ((role & 2) === 2) {
+			vAdmin = <div className="px-3 py-2 cursor-pointer bg-white border-bottom" onClick={this.controller.showAdmin}>管理员</div>;
+		}
+		{vAdmin}
+		*/
         return <Page header="个人信息">
             <Edit schema={schema} uiSchema={uiSchema}
                 data={data}
                 onItemChanged={onItemChanged} />
+			<PropGrid rows={gridRows} values={{}} />
         </Page>;
     }
 }

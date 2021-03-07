@@ -5,6 +5,7 @@ export const testItem3 = {
 	name: '第三测试', 
 	discription: 'third test', 
 	test: async (log: Log, uqs: UQs):Promise<void> => {
+		/*
 		let a = await uqs.BzTest.IDLog({
 			IDX: uqs.BzTest.IBook1,
 			field: 'f2',
@@ -53,5 +54,6 @@ export const testItem3 = {
 		log('test2 - ddd ');
 		log('test2 - ddd ');
 		log('test2 - ddd ');
+		*/
 	}
 }

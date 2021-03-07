@@ -1,7 +1,7 @@
 import { Res, UI } from "tonva-react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FieldItem, FieldItemInt, FieldItemNum, FieldItemString, FieldItemId } from "tonva-react";
-import { OrderMaster } from "./BzHelloTonva";
+import { $Piecewise } from "./BzHelloTonva";
 
 /*--fields--*/
 const fields = {
@@ -11,40 +11,46 @@ const fields = {
 		"isKey": false,
 		"label": "Id"
 	} as FieldItemId,
-	no: {
-		"name": "no",
-		"type": "string",
+	name: {
+		"name": "name",
 		"isKey": true,
-		"widget": "string",
-		"label": "No"
-	} as FieldItemString,
-	customer: {
-		"name": "customer",
-		"type": "id",
-		"isKey": false,
-		"label": "Customer"
-	} as FieldItemId,
-	$owner: {
-		"name": "$owner",
+		"label": "Name"
+	} as undefined,
+	mul: {
+		"name": "mul",
 		"type": "integer",
 		"isKey": false,
 		"widget": "updown",
-		"label": "$owner"
+		"label": "Mul"
 	} as FieldItemInt,
-	$create: {
-		"name": "$create",
+	div: {
+		"name": "div",
+		"type": "integer",
 		"isKey": false,
-		"label": "$create"
+		"widget": "updown",
+		"label": "Div"
+	} as FieldItemInt,
+	offset: {
+		"name": "offset",
+		"type": "integer",
+		"isKey": false,
+		"widget": "updown",
+		"label": "Offset"
+	} as FieldItemInt,
+	asc: {
+		"name": "asc",
+		"isKey": false,
+		"label": "Asc"
 	} as undefined,
 };
 /*==fields==*/
 
 export const fieldArr: FieldItem[] = [
-	fields.no, fields.customer, fields.$owner, fields.$create, 
+	fields.name, fields.mul, fields.div, fields.offset, fields.asc, 
 ];
 
 export const ui: UI = {
-	label: "OrderMaster",
+	label: "$Piecewise",
 	fieldArr,
 	fields,
 };
@@ -56,6 +62,6 @@ export const res: Res<any> = {
 	}
 };
 
-export function render(item: OrderMaster):JSX.Element {
+export function render(item: $Piecewise):JSX.Element {
 	return <>{JSON.stringify(item)}</>;
 };

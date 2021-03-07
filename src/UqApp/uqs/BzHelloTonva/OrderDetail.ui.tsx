@@ -12,11 +12,11 @@ const fields = {
 		"isKey": false,
 		"label": "Id"
 	} as FieldItemId,
-	master: {
-		"name": "master",
+	parent: {
+		"name": "parent",
 		"type": "id",
 		"isKey": true,
-		"label": "Master"
+		"label": "Parent"
 	} as FieldItemId,
 	row: {
 		"name": "row",
@@ -56,7 +56,7 @@ const fields = {
 /*==fields==*/
 
 export const fieldArr: FieldItem[] = [
-	fields.master, fields.row, fields.product, fields.price, fields.quantity, fields.amount, 
+	fields.parent, fields.row, fields.product, fields.price, fields.quantity, fields.amount, 
 ];
 
 export const ui: UI = {

@@ -7,8 +7,8 @@ import reportWebVitals from './reportWebVitals';
 import { CApp } from './UqApp';
 import { appConfig } from './appConfig';
 
-nav.setSettings(appConfig);
 const App: React.FC = () => {
+	nav.setSettings(appConfig);
 	const onLogined = async (isUserLogin?:boolean) => {
 		await start(CApp, appConfig, isUserLogin);
 	}

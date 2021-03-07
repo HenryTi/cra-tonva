@@ -1,6 +1,6 @@
-//=== UqApp builder created on Mon Feb 15 2021 23:34:25 GMT-0500 (GMT-05:00) ===//
+//=== UqApp builder created on Thu Mar 04 2021 21:23:54 GMT-0500 (GMT-05:00) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { IDXValue, Uq, UqTuid, UqAction, UqBook, UqQuery, UqID, UqIX } from "tonva-react";
+import { IDXValue, Uq, UqTuid, UqQuery, UqID, UqIDX, UqIX } from "tonva-react";
 
 
 //===============================
@@ -29,60 +29,14 @@ export interface Tuid$user {
 	poke: number;
 }
 
-export interface TuidProduct {
-	name: string;
-}
-
-export interface ParamWriteProductStock {
-	product: number;
-	stock: number;
-}
-interface ResultWriteProductStock {
-}
-
-export interface ParamTestArr {
-	rows: {
-		a: number;
-		b: number;
-	}[];
-
-}
-interface ReturnTestArrRet {
-	a: number;
-	b: number;
-}
-interface ResultTestArr {
-	ret: ReturnTestArrRet[];
-}
-
-export interface ParamGetProductStock {
-	product: number;
-}
-interface ReturnGetProductStockRet {
-	product: number;
-	stock: number;
-}
-interface ResultGetProductStock {
-	ret: ReturnGetProductStockRet[];
-}
-
 export interface Param$poked {
 }
 interface Return$pokedRet {
 	poke: number;
+	$id: number;
 }
 interface Result$poked {
 	ret: Return$pokedRet[];
-}
-
-export interface ParamBookProduct {
-}
-interface ReturnBookProduct$page {
-	product: number;
-	stock: number;
-}
-interface ResultBookProduct {
-	$page: ReturnBookProduct$page[];
 }
 
 export interface Customer {
@@ -96,11 +50,13 @@ export interface OrderMaster {
 	id?: number;
 	no?: string;
 	customer: number;
+	$owner?: number;
+	$create?: any;
 }
 
 export interface OrderDetail {
 	id?: number;
-	master?: number;
+	parent: number;
 	row?: number;
 	product: number;
 	price: number;
@@ -114,7 +70,52 @@ export interface Tag {
 	name: string;
 }
 
+export interface Staff {
+	id?: number;
+	no?: string;
+	firstName: string;
+	lastName: string;
+}
+
+export interface $Piecewise {
+	id?: number;
+	name: string;
+	mul: number;
+	div: number;
+	offset: number;
+	asc: number;
+}
+
+export interface $PiecewiseDetail {
+	id?: number;
+	parent: number;
+	row?: number;
+	sec: number;
+	value: number;
+}
+
+export interface Achieve {
+	id: number;
+	saleAmount?: number;
+	deliver?: number|IDXValue;
+}
+
+export interface Hours {
+	id: number;
+	onsite?: number|IDXValue;
+	offsite?: number|IDXValue;
+	break?: number|IDXValue;
+	sick?: number|IDXValue;
+	over?: number|IDXValue;
+	noTimeLog?: number;
+}
+
 export interface CustomerTag {
+	id: number;
+	id2: number;
+}
+
+export interface UserStaff {
 	id: number;
 	id2: number;
 }
@@ -124,7 +125,13 @@ export interface ParamIDActs {
 	orderMaster?: OrderMaster[];
 	orderDetail?: OrderDetail[];
 	tag?: Tag[];
+	staff?: Staff[];
+	$Piecewise?: $Piecewise[];
+	$PiecewiseDetail?: $PiecewiseDetail[];
+	achieve?: Achieve[];
+	hours?: Hours[];
 	customerTag?: CustomerTag[];
+	userStaff?: UserStaff[];
 }
 
 
@@ -133,15 +140,16 @@ export interface UqExt extends Uq {
 
 	$sheet: UqTuid<Tuid$sheet>;
 	$user: UqTuid<Tuid$user>;
-	Product: UqTuid<TuidProduct>;
-	WriteProductStock: UqAction<ParamWriteProductStock, ResultWriteProductStock>;
-	TestArr: UqAction<ParamTestArr, ResultTestArr>;
-	BookProduct: UqBook<ParamBookProduct, ResultBookProduct>;
-	GetProductStock: UqQuery<ParamGetProductStock, ResultGetProductStock>;
 	$poked: UqQuery<Param$poked, Result$poked>;
 	Customer: UqID<any>;
 	OrderMaster: UqID<any>;
 	OrderDetail: UqID<any>;
 	Tag: UqID<any>;
+	Staff: UqID<any>;
+	$Piecewise: UqID<any>;
+	$PiecewiseDetail: UqID<any>;
+	Achieve: UqIDX<any>;
+	Hours: UqIDX<any>;
 	CustomerTag: UqIX<any>;
+	UserStaff: UqIX<any>;
 }

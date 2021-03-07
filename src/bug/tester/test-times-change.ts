@@ -5,6 +5,7 @@ export const testTimesChange = {
 	name: 'TimesChange', 
 	discription: 'Test Times Change hours', 
 	test: async (log: Log, uqs: UQs):Promise<void> => {
+		/*
 		let tc = uqs.BzTimesChange;
 		let ret = await tc.IDActs({
 			staff: [
@@ -12,16 +13,6 @@ export const testTimesChange = {
 			]
 		});
 		log(ret);
-		/*
-		export interface Hours {
-			id: number;
-			onsite?: number|IDXValue;
-			offsite?: number|IDXValue;
-			break?: number|IDXValue;
-			sick?: number|IDXValue;
-			over?: number|IDXValue;
-		}
-		*/
 		let id = 13369344;
 		let r1 = await tc.IDActs({
 			hours: [
@@ -52,5 +43,6 @@ export const testTimesChange = {
 			near: new Date().getTime(),
 		});
 		log(sum);
+		*/
 	}
 }
